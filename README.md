@@ -15,6 +15,15 @@ Embedded MongoDB will provide a platform neutral way for running mongodb in unit
 - its easy, much easier as installing right version by hand
 - you can change version per test
 
+## How?
+
+- download mongodb (and cache it)
+- extract it (and cache it)
+- java uses its process api to start and monitor the mongo process
+- you run your tests
+- java kills the mongo process
+
+
 ## License
 
 We use http://www.apache.org/licenses/LICENSE-2.0
