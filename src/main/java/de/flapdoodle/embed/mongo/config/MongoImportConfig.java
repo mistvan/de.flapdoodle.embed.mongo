@@ -21,16 +21,53 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
+import org.immutables.value.Value.Default;
+import org.immutables.value.Value.Immutable;
+
+import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.process.config.SupportConfig;
+
 /**
  * Created by canyaman can@yaman.me on 10/04/14.
  */
-public interface IMongoImportConfig extends IMongoConfig{
-    public String getDatabaseName();
-    public String getCollectionName();
-    public String getImportFile();
-	public String getType();
-	public boolean isHeaderline();
-    public boolean isJsonArray();
-    public boolean isDropCollection();
-    public boolean isUpsertDocuments();
+@Immutable
+public interface MongoImportConfig extends MongoCommonConfig {
+	String getDatabaseName();
+
+	String getCollectionName();
+
+	String getImportFile();
+
+	@Default
+	default String getType() {
+		return "json";
+	}
+
+	@Default
+	default boolean isHeaderline() {
+		return false;
+	}
+
+	boolean isJsonArray();
+
+	boolean isDropCollection();
+
+	boolean isUpsertDocuments();
+	
+	@Default
+	@Override
+	default String pidFile() {
+		return "mongoimport.pid";
+	}
+
+	@Default
+	@Override
+	default SupportConfig supportConfig() {
+		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.MongoImport);
+	}
+	
+	static ImmutableMongoImportConfig.Builder builder() {
+		return ImmutableMongoImportConfig.builder();
+	}
+
 }

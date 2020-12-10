@@ -23,23 +23,23 @@ package de.flapdoodle.embed.mongo;
 
 import java.io.IOException;
 
-import de.flapdoodle.embed.mongo.config.IMongoImportConfig;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.mongo.config.MongoImportConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Executable;
 
 /**
  * Created by canyaman on 10/04/14.
  */
-public class MongoImportExecutable extends Executable<IMongoImportConfig, MongoImportProcess> {
-    public MongoImportExecutable(Distribution distribution, IMongoImportConfig mongodConfig, IRuntimeConfig runtimeConfig,
-                            IExtractedFileSet files) {
+public class MongoImportExecutable extends Executable<MongoImportConfig, MongoImportProcess> {
+    public MongoImportExecutable(Distribution distribution, MongoImportConfig mongodConfig, RuntimeConfig runtimeConfig,
+                            ExtractedFileSet files) {
         super(distribution, mongodConfig, runtimeConfig, files);
     }
 
     @Override
-    protected MongoImportProcess start(Distribution distribution, IMongoImportConfig config, IRuntimeConfig runtime)
+    protected MongoImportProcess start(Distribution distribution, MongoImportConfig config, RuntimeConfig runtime)
             throws IOException {
         return new MongoImportProcess(distribution, config, runtime, this);
     }

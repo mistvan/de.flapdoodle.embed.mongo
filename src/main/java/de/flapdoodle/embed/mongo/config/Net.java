@@ -64,4 +64,12 @@ public class Net {
 		}
 		return Network.getLocalHost();
 	}
+	
+	public static Net defaults() {
+		try {
+			return new Net();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

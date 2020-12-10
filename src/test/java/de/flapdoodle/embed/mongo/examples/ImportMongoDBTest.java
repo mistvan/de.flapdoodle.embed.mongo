@@ -34,10 +34,8 @@ import de.flapdoodle.embed.mongo.MongoImportStarter;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongoImportConfig;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoImportConfigBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongoImportConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -75,14 +73,14 @@ public class ImportMongoDBTest extends TestCase {
 
     private MongoImportProcess startMongoImport(int port, String dbName, String collection, String jsonFile, Boolean jsonArray,Boolean upsert, Boolean drop) throws UnknownHostException,
             IOException {
-        IMongoImportConfig mongoImportConfig = new MongoImportConfigBuilder()
+        MongoImportConfig mongoImportConfig = MongoImportConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(new Net(port, Network.localhostIsIPv6()))
-                .db(dbName)
-                .collection(collection)
-                .upsert(upsert)
-                .dropCollection(drop)
-                .jsonArray(jsonArray)
+                .databaseName(dbName)
+                .collectionName(collection)
+                .isUpsertDocuments(upsert)
+                .isDropCollection(drop)
+                .isJsonArray(jsonArray)
                 .importFile(jsonFile)
                 .build();
 
@@ -92,7 +90,7 @@ public class ImportMongoDBTest extends TestCase {
     }
 
     private MongodProcess startMongod(int defaultConfigPort) throws UnknownHostException, IOException {
-        IMongodConfig mongoConfigConfig = new MongodConfigBuilder()
+        MongodConfig mongoConfigConfig = MongodConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
                 .build();

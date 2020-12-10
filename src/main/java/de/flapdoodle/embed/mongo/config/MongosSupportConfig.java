@@ -20,25 +20,21 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import de.flapdoodle.embed.process.config.ISupportConfig;
-
-import java.util.concurrent.TimeUnit;
-
-
 public class MongosSupportConfig extends AbstractSupportConfig {
 
 	private static MongosSupportConfig _instance=new MongosSupportConfig();
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "mongos";
 	}
 
 	@Override
-	public String getSupportUrl() {
+	public String supportUrl() {
 		return "https://github.com/flapdoodle-oss/embedmongo.flapdoodle.de/issues\n";
 	}
-	public static ISupportConfig getInstance() {
+	
+	public static de.flapdoodle.embed.process.config.SupportConfig getInstance() {
 		return _instance;
 	}
 

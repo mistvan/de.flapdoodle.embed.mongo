@@ -24,21 +24,21 @@ package de.flapdoodle.embed.mongo;
 import java.io.IOException;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongoDumpConfig;
+import de.flapdoodle.embed.mongo.config.MongoDumpConfig;
 import de.flapdoodle.embed.mongo.runtime.MongoDump;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
-public class MongoDumpProcess extends AbstractMongoProcess<IMongoDumpConfig, MongoDumpExecutable, MongoDumpProcess> {
+public class MongoDumpProcess extends AbstractMongoProcess<MongoDumpConfig, MongoDumpExecutable, MongoDumpProcess> {
 
-    public MongoDumpProcess(Distribution distribution, IMongoDumpConfig config, IRuntimeConfig runtimeConfig,
+    public MongoDumpProcess(Distribution distribution, MongoDumpConfig config, RuntimeConfig runtimeConfig,
                             MongoDumpExecutable mongosExecutable) throws IOException {
         super(distribution, config, runtimeConfig, mongosExecutable);
     }
 
     @Override
-    protected List<String> getCommandLine(Distribution distribution, IMongoDumpConfig config, IExtractedFileSet files)
+    protected List<String> getCommandLine(Distribution distribution, MongoDumpConfig config, ExtractedFileSet files)
             throws IOException {
         return MongoDump.getCommandLine(getConfig(), files);
     }

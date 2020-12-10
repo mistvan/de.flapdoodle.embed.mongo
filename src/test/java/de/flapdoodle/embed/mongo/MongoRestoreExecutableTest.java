@@ -27,14 +27,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.flapdoodle.embed.mongo.config.IMongoRestoreConfig;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoRestoreConfigBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
 import junit.framework.TestCase;
 
@@ -49,8 +47,8 @@ public class MongoRestoreExecutableTest extends TestCase {
       final int serverPort = Network.getFreeServerPort();
       final String dumpLocation = Thread.currentThread().getContextClassLoader().getResource("dump").getFile();
 
-      final IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION).net(new Net(serverPort, Network.localhostIsIPv6())).build();
-      final IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder().defaults(Command.MongoD).build();
+      final MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(new Net(serverPort, Network.localhostIsIPv6())).build();
+      final RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 
       final MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
       final MongodProcess mongod = mongodExe.start();
@@ -85,10 +83,10 @@ public class MongoRestoreExecutableTest extends TestCase {
                                                          final String dumpLocation,
                                                          final Boolean drop) throws IOException {
 
-      IMongoRestoreConfig mongoRestoreConfig = new MongoRestoreConfigBuilder()
+      MongoRestoreConfig mongoRestoreConfig = MongoRestoreConfig.builder()
          .version(Version.Main.PRODUCTION)
          .net(new Net(port, Network.localhostIsIPv6()))
-         .dropCollection(drop)
+         .isDropCollection(drop)
          .dir(dumpLocation)
          .build();
 
@@ -99,12 +97,12 @@ public class MongoRestoreExecutableTest extends TestCase {
                                                                               final String dumpLocation,
                                                                               final Boolean drop) throws IOException {
 
-      IMongoRestoreConfig mongoRestoreConfig = new MongoRestoreConfigBuilder()
+      MongoRestoreConfig mongoRestoreConfig = MongoRestoreConfig.builder()
          .version(Version.Main.PRODUCTION)
          .archive(String.format("%s/%s", dumpLocation, _archiveFileCompressed))
-         .gzip(true)
+         .isGzip(true)
          .net(new Net(port, Network.localhostIsIPv6()))
-         .dropCollection(drop)
+         .isDropCollection(drop)
          .build();
 
       return MongoRestoreStarter.getDefaultInstance().prepare(mongoRestoreConfig);

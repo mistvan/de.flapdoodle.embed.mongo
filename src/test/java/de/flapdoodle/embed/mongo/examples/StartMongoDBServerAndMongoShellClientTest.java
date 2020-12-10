@@ -34,10 +34,8 @@ import de.flapdoodle.embed.mongo.MongoShellStarter;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongoShellConfig;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoShellConfigBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongoShellConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -79,10 +77,10 @@ public class StartMongoDBServerAndMongoShellClientTest {
 	// ->
 	private MongoShellProcess startMongoShell(int defaultConfigPort, String defaultHost) throws UnknownHostException,
 			IOException {
-		IMongoShellConfig mongoShellConfig = new MongoShellConfigBuilder()
+		MongoShellConfig mongoShellConfig = MongoShellConfig.builder()
 			.version(Version.Main.PRODUCTION)
 			.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
-			.parameters(Lists.newArrayList("var hight=3","var width=2","function multip() { print('area ' + hight * width); }","multip()"))
+			.scriptParameters(Lists.newArrayList("var hight=3","var width=2","function multip() { print('area ' + hight * width); }","multip()"))
 			.build();
 
 		MongoShellExecutable mongosExecutable = MongoShellStarter.getDefaultInstance().prepare(mongoShellConfig);
@@ -91,7 +89,7 @@ public class StartMongoDBServerAndMongoShellClientTest {
 	}
 
 	private MongodProcess startMongod(int defaultConfigPort) throws UnknownHostException, IOException {
-		IMongodConfig mongoConfigConfig = new MongodConfigBuilder()
+		MongodConfig mongoConfigConfig = MongodConfig.builder()
 			.version(Version.Main.PRODUCTION)
 			.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
 			.build();

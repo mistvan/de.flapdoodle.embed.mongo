@@ -20,16 +20,19 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import de.flapdoodle.embed.process.config.ISupportConfig;
+import java.util.function.BiFunction;
+
 import de.flapdoodle.embed.process.extract.ExecutableFileAlreadyExistsException;
 
-import java.util.concurrent.TimeUnit;
 
-
-public abstract class AbstractSupportConfig implements ISupportConfig {
+public abstract class AbstractSupportConfig implements de.flapdoodle.embed.process.config.SupportConfig {
 
 	@Override
-	public String messageOnException(Class<?> context, Exception exception) {
+	public BiFunction<Class<?>, Exception, String> messageOnException() {
+		return this::messageOnException;
+	}
+	
+	private String messageOnException(Class<?> context, Exception exception) {
 		if (exception instanceof ExecutableFileAlreadyExistsException) {
 			return "\n\n" +
 					"-----------------------------------------------------\n" +
@@ -39,12 +42,4 @@ public abstract class AbstractSupportConfig implements ISupportConfig {
 		}
 		return null;
 	}
-
-
-	@Override
-	public long maxStopTimeoutMillis() {
-		return TimeUnit.SECONDS.toMillis(5);
-	}
-
-
 }

@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,15 +36,14 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.handler.ResourceHandler;
 
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
-import de.flapdoodle.embed.process.config.store.DownloadPath;
-import de.flapdoodle.embed.process.config.store.IDownloadConfig;
+import de.flapdoodle.embed.process.config.store.DownloadConfig;
 import de.flapdoodle.embed.process.distribution.BitSize;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.distribution.GenericVersion;
 import de.flapdoodle.embed.process.distribution.Platform;
-import de.flapdoodle.embed.process.io.progress.IProgressListener;
+import de.flapdoodle.embed.process.distribution.Version;
+import de.flapdoodle.embed.process.io.progress.ProgressListener;
 import de.flapdoodle.embed.process.store.Downloader;
+import de.flapdoodle.embed.process.store.UrlConnectionDownloader;
 
 /**
  * Created with IntelliJ IDEA.
@@ -59,8 +59,8 @@ public class DownloaderTest {
 
 	@Rule
 	public TemporaryFolder tempDir = new TemporaryFolder();
-	private IDownloadConfig dc;
-	private IProgressListener pl;
+	private DownloadConfig dc;
+	private ProgressListener pl;
 
 	@Before
 	public void setUp() throws Exception {
@@ -86,8 +86,8 @@ public class DownloaderTest {
 			}
 			Thread.sleep(100);
 		}
-		dc = mock(IDownloadConfig.class);
-		pl = mock(IProgressListener.class);
+		dc = mock(DownloadConfig.class);
+		pl = mock(ProgressListener.class);
 	}
 
 	@After
@@ -98,22 +98,22 @@ public class DownloaderTest {
 	//@Test
 	public void testDownload() throws Exception {
 		initRuntime();
-		Distribution d = new Distribution(new GenericVersion("3.1.1"), Platform.detect(), BitSize.B64);
-		Downloader downloader = new Downloader();
-		File f = downloader.download(dc, d);
+		Distribution d = Distribution.of(Version.of("3.1.1"), Platform.detect(), BitSize.B64);
+		Downloader downloader = new UrlConnectionDownloader();
+		assertNotNull(downloader.download(dc, d));
 	}
 
 	private void initRuntime() {
 		//when(rc.getDefaultfileNaming()).thenReturn(new UUIDTempNaming());
-		when(dc.getDownloadPath()).thenReturn(new DownloadPath("http://localhost:" + LISTEN_PORT + "/"));
+		when(dc.getDownloadPath()).thenReturn((__) -> "http://localhost:" + LISTEN_PORT + "/");
 		when(dc.getProgressListener()).thenReturn(pl);
 	}
 
 	@Test(expected = Exception.class)
 	public void testDownloadShouldThrowExceptionForUnknownVersion() throws Exception {
 		initRuntime();
-		Distribution d = new Distribution(new GenericVersion("3013.1.1"), Platform.detect(), BitSize.B64);
-		Downloader downloader = new Downloader();
-		File f = downloader.download(dc, d);
+		Distribution d = Distribution.of(Version.of("3013.1.1"), Platform.detect(), BitSize.B64);
+		Downloader downloader = Downloader.platformDefault();
+		assertNotNull(downloader.download(dc, d));
 	}
 }

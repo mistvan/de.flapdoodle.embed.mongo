@@ -24,16 +24,16 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongosConfig;
+import de.flapdoodle.embed.mongo.config.MongosConfig;
 import de.flapdoodle.embed.mongo.distribution.Feature;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
 /**
  *
  */
 public class Mongos extends AbstractMongo {
 
-	public static List<String> getCommandLine(IMongosConfig config, IExtractedFileSet files)
+	public static List<String> getCommandLine(MongosConfig config, ExtractedFileSet files)
 			throws UnknownHostException {
 		List<String> ret = new ArrayList<>();
 

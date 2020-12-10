@@ -24,8 +24,9 @@ import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.io.directories.PropertyOrPlatformTempDir;
-import de.flapdoodle.embed.process.store.ArtifactStoreBuilder;
+import de.flapdoodle.embed.process.store.ArtifactStore;
 import de.flapdoodle.embed.process.store.IArtifactStore;
+import de.flapdoodle.embed.process.store.ImmutableArtifactStore.Builder;
 
 public class ArtifactStores {
 
@@ -45,12 +46,14 @@ public class ArtifactStores {
 		return builder(command).build();
 	}
 
-	public static ArtifactStoreBuilder builder(Command command) {
-		return defaultBuilder().download(new DownloadConfigBuilder().defaults().packageResolver(new Paths(command)).build());
+	public static Builder builder(Command command) {
+		return defaultBuilder().downloadConfig(Defaults.downloadConfigDefaults().packageResolver(new Paths(command)).build());
 	}
 
-	public static ArtifactStoreBuilder defaultBuilder() {
-		return new ArtifactStoreBuilder().tempDir(new PropertyOrPlatformTempDir()).executableNaming(new UUIDTempNaming());
+	public static Builder defaultBuilder() {
+		return ArtifactStore.builder()
+				.tempDirFactory(new PropertyOrPlatformTempDir())
+				.executableNaming(new UUIDTempNaming());
 	}
 
 }

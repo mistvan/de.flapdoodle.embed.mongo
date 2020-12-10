@@ -29,14 +29,12 @@ import org.junit.Test;
 
 import com.mongodb.MongoClient;
 
-import de.flapdoodle.embed.mongo.config.IMongoImportConfig;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoImportConfigBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongoImportConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
 import junit.framework.TestCase;
 
@@ -49,9 +47,9 @@ public class MongoImportExecutableTest extends TestCase {
     public void testStartMongoImport() throws IOException, InterruptedException {
 
         Net net = new Net(Network.getFreeServerPort(), Network.localhostIsIPv6());
-        IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION).net(net).build();
+        MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(net).build();
 
-        IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder().defaults(Command.MongoD).build();
+        RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 
         MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
         MongodProcess mongod = mongodExe.start();
@@ -74,9 +72,9 @@ public class MongoImportExecutableTest extends TestCase {
     @Test
     public void testMongoImportDoesNotStopMainMongodProcess() throws IOException, InterruptedException {
 
-        IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION).net(new Net(12346, Network.localhostIsIPv6())).build();
+        MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(new Net(12346, Network.localhostIsIPv6())).build();
 
-        IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder().defaults(Command.MongoD).build();
+        RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 
         MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
         MongodProcess mongod = mongodExe.start();
@@ -100,14 +98,14 @@ public class MongoImportExecutableTest extends TestCase {
 
     private MongoImportExecutable mongoImportExecutable(int port, String dbName, String collection, String jsonFile, Boolean jsonArray, Boolean upsert, Boolean drop) throws
             IOException {
-        IMongoImportConfig mongoImportConfig = new MongoImportConfigBuilder()
+        MongoImportConfig mongoImportConfig = MongoImportConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(new Net(port, Network.localhostIsIPv6()))
-                .db(dbName)
-                .collection(collection)
-                .upsert(upsert)
-                .dropCollection(drop)
-                .jsonArray(jsonArray)
+                .databaseName(dbName)
+                .collectionName(collection)
+                .isUpsertDocuments(upsert)
+                .isDropCollection(drop)
+                .isJsonArray(jsonArray)
                 .importFile(jsonFile)
                 .build();
 

@@ -25,14 +25,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import org.apache.commons.lang3.StringUtils;
 
 public class ExtractMarkdownFromCode {
 

@@ -29,4 +29,7 @@ public interface IMongoProcessListener {
 
 	void onAfterProcessStop(File dbDir, boolean dbDirIsTemp);
 
+	default IMongoProcessListener andThen(IMongoProcessListener second) {
+		return new JoinedProcessListener(this,second);
+	}
 }

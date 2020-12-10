@@ -25,13 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongoDumpConfig;
+import de.flapdoodle.embed.mongo.config.MongoDumpConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
 public class MongoDump extends AbstractMongo {
 
-   public static List<String> getCommandLine(IMongoDumpConfig config, IExtractedFileSet files)
+   public static List<String> getCommandLine(MongoDumpConfig config, ExtractedFileSet files)
       throws UnknownHostException {
       List<String> ret = new ArrayList<>();
       ret.addAll(Arrays.asList(files.executable().getAbsolutePath()));
@@ -40,39 +40,39 @@ public class MongoDump extends AbstractMongo {
       }
       applyNet(config.net(), ret);
 
-      if (config.getDatabaseName() != null) {
+      if (config.getDatabaseName().isPresent()) {
          ret.add("--db");
-         ret.add(config.getDatabaseName());
+         ret.add(config.getDatabaseName().get());
       }
-      if (config.getCollectionName() != null) {
+      if (config.getCollectionName().isPresent()) {
          ret.add("--collection");
-         ret.add(config.getCollectionName());
+         ret.add(config.getCollectionName().get());
       }
 
-      if (config.getQuery() != null) {
+      if (config.getQuery().isPresent()) {
          ret.add("--query");
-         ret.add(config.getQuery());
+         ret.add(config.getQuery().get());
       }
-      if (config.getQueryFile() != null) {
+      if (config.getQueryFile().isPresent()) {
          ret.add("--queryFile");
-         ret.add(config.getQueryFile());
+         ret.add(config.getQueryFile().get());
       }
-      if (config.getReadPreference() != null) {
+      if (config.getReadPreference().isPresent()) {
          ret.add("--readPreference");
-         ret.add(config.getReadPreference());
+         ret.add(config.getReadPreference().get());
       }
       if (config.isForceTableScan()) {
          ret.add("--forceTableScan");
       }
-      if (config.getArchive() != null) {
-         ret.add("--archive=" + config.getArchive());
+      if (config.getArchive().isPresent()) {
+         ret.add("--archive=" + config.getArchive().get());
       }
       if (config.isDumpDbUsersAndRoles()) {
          ret.add("--dumpDbUsersAndRoles");
       }
-      if (config.getOut() != null) {
+      if (config.getOut().isPresent()) {
          ret.add("--out");
-         ret.add(config.getOut());
+         ret.add(config.getOut().get());
       }
       if (config.isGzip()) {
          ret.add("--gzip");
@@ -83,17 +83,17 @@ public class MongoDump extends AbstractMongo {
       if (config.isOplog()) {
          ret.add("--oplog");
       }
-      if (config.getExcludeCollection() != null) {
+      if (config.getExcludeCollection().isPresent()) {
          ret.add("--excludeCollection");
-         ret.add(config.getExcludeCollection());
+         ret.add(config.getExcludeCollection().get());
       }
-      if (config.getExcludeCollectionWithPrefix() != null) {
+      if (config.getExcludeCollectionWithPrefix().isPresent()) {
          ret.add("--excludeCollectionWithPrefix");
-         ret.add(config.getExcludeCollectionWithPrefix());
+         ret.add(config.getExcludeCollectionWithPrefix().get());
       }
-      if (config.getNumberOfParallelCollections() != null) {
+      if (config.getNumberOfParallelCollections().isPresent()) {
          ret.add("--numParallelCollections");
-         ret.add(config.getNumberOfParallelCollections().toString());
+         ret.add(""+config.getNumberOfParallelCollections().getAsInt());
       }
 
       return ret;

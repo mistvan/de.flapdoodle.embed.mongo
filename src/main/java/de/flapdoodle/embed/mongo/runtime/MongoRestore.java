@@ -25,13 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongoRestoreConfig;
+import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
 public class MongoRestore extends AbstractMongo {
 
-   public static List<String> getCommandLine(IMongoRestoreConfig config, IExtractedFileSet files)
+   public static List<String> getCommandLine(MongoRestoreConfig config, ExtractedFileSet files)
       throws UnknownHostException {
       List<String> ret = new ArrayList<>();
       ret.addAll(Arrays.asList(files.executable().getAbsolutePath()));
@@ -40,13 +40,13 @@ public class MongoRestore extends AbstractMongo {
       }
       applyNet(config.net(), ret);
 
-      if (config.getDatabaseName() != null) {
+      if (config.getDatabaseName().isPresent()) {
          ret.add("--db");
-         ret.add(config.getDatabaseName());
+         ret.add(config.getDatabaseName().get());
       }
-      if (config.getCollectionName() != null) {
+      if (config.getCollectionName().isPresent()) {
          ret.add("--collection");
-         ret.add(config.getCollectionName());
+         ret.add(config.getCollectionName().get());
       }
       if (config.isObjectCheck()) {
          ret.add("--objCheck");
@@ -54,19 +54,19 @@ public class MongoRestore extends AbstractMongo {
       if (config.isOplogReplay()) {
          ret.add("--oplogReplay");
       }
-      if (config.getOplogLimit() != null) {
+      if (config.getOplogLimit().isPresent()) {
          ret.add("--oplogLimit");
-         ret.add(config.getOplogLimit().toString());
+         ret.add(""+config.getOplogLimit().getAsLong());
       }
-      if (config.getArchive() != null) {
-         ret.add(String.format("--archive=%s", config.getArchive()));
+      if (config.getArchive().isPresent()) {
+         ret.add(String.format("--archive=%s", config.getArchive().get()));
       }
       if (config.isRestoreDbUsersAndRoles()) {
          ret.add("--restoreDbUsersAndRoles");
       }
-      if (config.getDir() != null) {
+      if (config.getDir().isPresent()) {
          ret.add("--dir");
-         ret.add(config.getDir());
+         ret.add(config.getDir().get());
       }
       if (config.isGzip()) {
          ret.add("--gzip");
@@ -74,9 +74,9 @@ public class MongoRestore extends AbstractMongo {
       if (config.isDropCollection()) {
          ret.add("--drop");
       }
-      if (config.getWriteConcern() != null) {
+      if (config.getWriteConcern().isPresent()) {
          ret.add("--writeConcern");
-         ret.add(config.getWriteConcern());
+         ret.add(config.getWriteConcern().get());
       }
       if (config.isNoIndexRestore()) {
          ret.add("--noIndexRestore");
@@ -90,13 +90,13 @@ public class MongoRestore extends AbstractMongo {
       if (config.isMaintainInsertionOrder()) {
          ret.add("--maintainInsertionOrder");
       }
-      if (config.getNumberOfParallelCollections() != null) {
+      if (config.getNumberOfParallelCollections().isPresent()) {
          ret.add("--numParallelCollections");
-         ret.add(config.getNumberOfParallelCollections().toString());
+         ret.add(""+config.getNumberOfParallelCollections().getAsInt());
       }
-      if (config.getNumberOfInsertionWorkersPerCollection() != null) {
+      if (config.getNumberOfInsertionWorkersPerCollection().isPresent()) {
          ret.add("--numInsertionWorkersPerCollection");
-         ret.add(config.getNumberOfInsertionWorkersPerCollection().toString());
+         ret.add(""+config.getNumberOfInsertionWorkersPerCollection().getAsInt());
       }
       if (config.isStopOnError()) {
          ret.add("--stopOnError");

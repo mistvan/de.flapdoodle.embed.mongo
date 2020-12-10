@@ -23,20 +23,20 @@ package de.flapdoodle.embed.mongo;
 
 import java.io.IOException;
 
-import de.flapdoodle.embed.mongo.config.IMongoRestoreConfig;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Executable;
 
-public class MongoRestoreExecutable extends Executable<IMongoRestoreConfig, MongoRestoreProcess> {
-    public MongoRestoreExecutable(Distribution distribution, IMongoRestoreConfig mongodConfig, IRuntimeConfig runtimeConfig,
-                                  IExtractedFileSet files) {
+public class MongoRestoreExecutable extends Executable<MongoRestoreConfig, MongoRestoreProcess> {
+    public MongoRestoreExecutable(Distribution distribution, MongoRestoreConfig mongodConfig, RuntimeConfig runtimeConfig,
+                                  ExtractedFileSet files) {
         super(distribution, mongodConfig, runtimeConfig, files);
     }
 
     @Override
-    protected MongoRestoreProcess start(Distribution distribution, IMongoRestoreConfig config, IRuntimeConfig runtime)
+    protected MongoRestoreProcess start(Distribution distribution, MongoRestoreConfig config, RuntimeConfig runtime)
             throws IOException {
         return new MongoRestoreProcess(distribution, config, runtime, this);
     }

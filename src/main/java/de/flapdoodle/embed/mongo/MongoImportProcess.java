@@ -24,24 +24,24 @@ package de.flapdoodle.embed.mongo;
 import java.io.IOException;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongoImportConfig;
+import de.flapdoodle.embed.mongo.config.MongoImportConfig;
 import de.flapdoodle.embed.mongo.runtime.MongoImport;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
 /**
  * Created by canyaman on 10/04/14.
  */
-public class MongoImportProcess  extends AbstractMongoProcess<IMongoImportConfig, MongoImportExecutable, MongoImportProcess> {
+public class MongoImportProcess  extends AbstractMongoProcess<MongoImportConfig, MongoImportExecutable, MongoImportProcess> {
 
-    public MongoImportProcess(Distribution distribution, IMongoImportConfig config, IRuntimeConfig runtimeConfig,
+    public MongoImportProcess(Distribution distribution, MongoImportConfig config, RuntimeConfig runtimeConfig,
                          MongoImportExecutable mongosExecutable) throws IOException {
         super(distribution, config, runtimeConfig, mongosExecutable);
     }
 
     @Override
-    protected List<String> getCommandLine(Distribution distribution, IMongoImportConfig config, IExtractedFileSet files)
+    protected List<String> getCommandLine(Distribution distribution, MongoImportConfig config, ExtractedFileSet files)
             throws IOException {
         return MongoImport.getCommandLine(getConfig(), files);
     }

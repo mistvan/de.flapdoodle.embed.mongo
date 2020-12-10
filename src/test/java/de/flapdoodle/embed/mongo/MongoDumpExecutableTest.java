@@ -20,29 +20,31 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import com.mongodb.MongoClient;
-import de.flapdoodle.embed.mongo.config.*;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
-import de.flapdoodle.embed.process.runtime.Network;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Arrays;
+import com.mongodb.MongoClient;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongoDumpConfig;
+import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
+import de.flapdoodle.embed.process.runtime.Network;
 
 public class MongoDumpExecutableTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(MongoDumpExecutableTest.class.getName());
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
@@ -56,9 +58,9 @@ public class MongoDumpExecutableTest {
         net = new Net(Network.getLocalHost().getHostAddress(),
                 Network.getFreeServerPort(),
                 Network.localhostIsIPv6());
-        IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION).net(net).build();
+        MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(net).build();
 
-        IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder().defaults(Command.MongoD).build();
+        RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
         mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
         mongod = mongodExe.start();
         MongoClient mongoClient = new MongoClient(net.getServerAddress().getHostName(), net.getPort());
@@ -76,7 +78,7 @@ public class MongoDumpExecutableTest {
 
     @Test
     public void testStartMongoDump() throws IOException {
-        IMongoDumpConfig mongoDumpConfig = new MongoDumpConfigBuilder()
+        MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(net)
                 .out(temp.getRoot().getAbsolutePath())
@@ -88,7 +90,7 @@ public class MongoDumpExecutableTest {
 
     @Test
     public void testStartMongoDumpToArchive() throws IOException {
-        IMongoDumpConfig mongoDumpConfig = new MongoDumpConfigBuilder()
+        MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(net)
                 .archive(temp.getRoot().getAbsolutePath())
@@ -99,10 +101,10 @@ public class MongoDumpExecutableTest {
     }
 
     private MongoRestoreExecutable mongoRestoreExecutable(String dumpLocation) throws IOException {
-        IMongoRestoreConfig mongoRestoreConfig = new MongoRestoreConfigBuilder()
+        MongoRestoreConfig mongoRestoreConfig = MongoRestoreConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(net)
-                .dropCollection(true)
+                .isDropCollection(true)
                 .dir(dumpLocation)
                 .build();
 

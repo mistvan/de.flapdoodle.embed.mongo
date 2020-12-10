@@ -30,9 +30,8 @@ import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import junit.framework.TestCase;
 
@@ -47,10 +46,10 @@ public class ConfigServerMongoDBTest extends TestCase {
 	protected void setUp() throws Exception {
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
-		IMongodConfig config = new MongodConfigBuilder()
+		MongodConfig config = MongodConfig.builder()
 		    .version(Version.Main.PRODUCTION)
-		    .cmdOptions(new MongoCmdOptionsBuilder().useNoJournal(false).build())
-		    .configServer(true)
+		    .cmdOptions(MongoCmdOptions.builder().useNoJournal(false).build())
+		    .isConfigServer(true)
 		    .build();
 		
 		_mongodExe = runtime.prepare(config);

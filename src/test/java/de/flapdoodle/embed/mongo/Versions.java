@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Comparator;
 
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
-import de.flapdoodle.embed.process.distribution.IVersion;
+import de.flapdoodle.embed.process.distribution.Version;
 
 public class Versions {
 
@@ -36,7 +36,7 @@ public class Versions {
 		return Enums.unique(Enums.filter(Enums.values(type), new Enums.NotDeprecated<T>(type)), new IVersionComparator<>());
 	}
 
-	static class IVersionComparator<T extends Enum<T> & IVersion> implements Comparator<T> {
+	static class IVersionComparator<T extends Enum<T> & Version> implements Comparator<T> {
 
 		@Override
 		public int compare(T o1, T o2) {

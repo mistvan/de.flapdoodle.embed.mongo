@@ -24,22 +24,21 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.UUID;
 
-import com.mongodb.Mongo;
-import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mongodb.DB;
+import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 
@@ -77,17 +76,15 @@ public class MongodForTestsFactory {
 	 *            version of MongoDB.
 	 */
 	public MongodForTestsFactory(final IFeatureAwareVersion version) throws IOException {
-
-		final MongodStarter runtime = MongodStarter.getInstance(new RuntimeConfigBuilder()
-			.defaultsWithLogger(Command.MongoD, logger)
+		final MongodStarter runtime = MongodStarter.getInstance(Defaults.runtimeConfigFor(Command.MongoD, logger)
 			.build());
 		mongodExecutable = runtime.prepare(newMongodConfig(version));
 		mongodProcess = mongodExecutable.start();
 
 	}
 
-	protected IMongodConfig newMongodConfig(final IFeatureAwareVersion version) throws IOException {
-		return new MongodConfigBuilder().version(version).build();
+	protected MongodConfig newMongodConfig(final IFeatureAwareVersion version) throws IOException {
+		return MongodConfig.builder().version(version).build();
 	}
 
 	/**

@@ -26,16 +26,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongoImportConfig;
+import de.flapdoodle.embed.mongo.config.MongoImportConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
 /**
  * Created by canyaman on 10/04/14.
  */
 public class MongoImport extends AbstractMongo {
 
-    public static List<String> getCommandLine(IMongoImportConfig config, IExtractedFileSet files)
+    public static List<String> getCommandLine(MongoImportConfig config, ExtractedFileSet files)
             throws UnknownHostException {
         List<String> ret = new ArrayList<>();
         ret.addAll(Arrays.asList(files.executable().getAbsolutePath()));

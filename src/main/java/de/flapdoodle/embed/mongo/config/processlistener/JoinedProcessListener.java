@@ -18,26 +18,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.embed.mongo.config;
+package de.flapdoodle.embed.mongo.config.processlistener;
 
+import java.io.File;
 
-public interface IMongoCmdOptions {
+public class JoinedProcessListener implements IMongoProcessListener {
 
-	Integer syncDelay();
+	private IMongoProcessListener first;
+	private IMongoProcessListener second;
 
-	String storageEngine();
-
-	boolean isVerbose();
-
-	boolean useNoPrealloc();
-
-	boolean useSmallFiles();
-
-	boolean useNoJournal();
+	public JoinedProcessListener(IMongoProcessListener first, IMongoProcessListener second) {
+		this.first = first;
+		this.second = second;
+	}
 	
-	boolean enableTextSearch();
+	@Override
+	public void onBeforeProcessStart(File dbDir, boolean dbDirIsTemp) {
+		first.onBeforeProcessStart(dbDir, dbDirIsTemp);
+		second.onBeforeProcessStart(dbDir, dbDirIsTemp);
+	}
 
-	boolean auth();
+	@Override
+	public void onAfterProcessStop(File dbDir, boolean dbDirIsTemp) {
+		first.onAfterProcessStop(dbDir, dbDirIsTemp);
+		second.onAfterProcessStop(dbDir, dbDirIsTemp);
+	}
 
-	boolean master();
 }

@@ -37,10 +37,9 @@ import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongosExecutable;
 import de.flapdoodle.embed.mongo.MongosProcess;
 import de.flapdoodle.embed.mongo.MongosStarter;
-import de.flapdoodle.embed.mongo.config.IMongosConfig;
-import de.flapdoodle.embed.mongo.config.MongosConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongosConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -84,14 +83,12 @@ public class MongosForTestsFactory {
 	 *            version of MongoDB.
 	 */
 	public MongosForTestsFactory(final IFeatureAwareVersion version) throws IOException {
-
-		final MongosStarter mongoConfigRuntime = MongosStarter.getInstance(new RuntimeConfigBuilder()
-			.defaultsWithLogger(Command.MongoS,logger)
+		final MongosStarter mongoConfigRuntime = MongosStarter.getInstance(Defaults.runtimeConfigFor(Command.MongoS, logger)
 			.build());
 
 		int configServerPort = 27019;
 		int mongosPort = 27017;
-		IMongosConfig config = new MongosConfigBuilder()
+		MongosConfig config = MongosConfig.builder()
 			.version(version)
 			.net(new Net(configServerPort, Network.localhostIsIPv6()))
 			.configDB("testDB")
@@ -100,11 +97,10 @@ public class MongosForTestsFactory {
 		mongoConfigExecutable = mongoConfigRuntime.prepare(config);
 		mongoConfigProcess = mongoConfigExecutable.start();
 
-		final MongosStarter runtime = MongosStarter.getInstance(new RuntimeConfigBuilder()
-			.defaultsWithLogger(Command.MongoS, logger)
+		final MongosStarter runtime = MongosStarter.getInstance(Defaults.runtimeConfigFor(Command.MongoS, logger)
 			.build());
 		
-		config = new MongosConfigBuilder()
+		config = MongosConfig.builder()
 			.version(version)
 			.net(new Net(mongosPort, Network.localhostIsIPv6()))
 			.configDB(Network.getLocalHost().getHostName() + ":" + configServerPort)
@@ -138,5 +134,6 @@ public class MongosForTestsFactory {
 	public void shutdown() {
 		mongosProcess.stop();
 		mongosExecutable.stop();
+		mongoConfigProcess.stop();
 	}
 }

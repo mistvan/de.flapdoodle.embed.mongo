@@ -24,25 +24,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import org.junit.Test;
-
-import de.flapdoodle.embed.process.distribution.GenericVersion;
-
 import java.util.EnumSet;
+
+import org.junit.Test;
 
 public class VersionsTest {
 
 	@Test
 	public void testEquals() {
-		assertEquals(Versions.withFeatures(new GenericVersion("2.6.5")), Versions.withFeatures(new GenericVersion("2.6.5")));
-		assertEquals(Versions.withFeatures(new GenericVersion("2.6.5"), Feature.TEXT_SEARCH), Versions.withFeatures(new GenericVersion("2.6.5"), Feature.TEXT_SEARCH));
-		assertNotEquals(Versions.withFeatures(new GenericVersion("2.6.5")), Versions.withFeatures(new GenericVersion("2.6.5"), Feature.TEXT_SEARCH));
+		assertEquals(Versions.withFeatures(genericVersion("2.6.5")), Versions.withFeatures(genericVersion("2.6.5")));
+		assertEquals(Versions.withFeatures(genericVersion("2.6.5"), Feature.TEXT_SEARCH), Versions.withFeatures(genericVersion("2.6.5"), Feature.TEXT_SEARCH));
+		assertNotEquals(Versions.withFeatures(genericVersion("2.6.5")), Versions.withFeatures(genericVersion("2.6.5"), Feature.TEXT_SEARCH));
+	}
+
+	private de.flapdoodle.embed.process.distribution.Version genericVersion(String version) {
+		return de.flapdoodle.embed.process.distribution.Version.of(version);
 	}
 
 	@Test
     public void toStringOfGenericVersion() {
       String version = "9.6.9";
-      IFeatureAwareVersion iFeatureAwareVersion = Versions.withFeatures(new GenericVersion(version));
+      IFeatureAwareVersion iFeatureAwareVersion = Versions.withFeatures(genericVersion(version));
 
       assertThat(iFeatureAwareVersion.toString()).contains(version);
       assertThat(iFeatureAwareVersion.asInDownloadPath()).isEqualTo(version);
@@ -51,7 +53,7 @@ public class VersionsTest {
 	@Test
 	public void getFeatures() {
 		EnumSet<Feature> features = Version.Main.PRODUCTION.getFeatures();
-		IFeatureAwareVersion iFeatureAwareVersion = Versions.withFeatures(new GenericVersion("6.6.6"), features);
+		IFeatureAwareVersion iFeatureAwareVersion = Versions.withFeatures(genericVersion("6.6.6"), features);
 
 		assertThat(iFeatureAwareVersion.getFeatures()).containsAll(features);
 	}

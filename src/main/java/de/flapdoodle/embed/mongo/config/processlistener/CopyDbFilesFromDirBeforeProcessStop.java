@@ -20,10 +20,10 @@
  */
 package de.flapdoodle.embed.mongo.config.processlistener;
 
-import de.flapdoodle.embed.mongo.util.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
+
+import de.flapdoodle.embed.mongo.util.FileUtils;
 
 public class CopyDbFilesFromDirBeforeProcessStop implements IMongoProcessListener {
 

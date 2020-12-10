@@ -20,6 +20,8 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -34,14 +36,12 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
-import junit.framework.TestCase;
 
 /**
  * Integration test for starting and stopping MongodExecutable
@@ -58,9 +58,9 @@ public class MongoExecutableTest {
 		boolean useMongodb = true;
 		int loops = 10;
 
-		IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION).stopTimeoutInMillis(5).net(new Net(Network.getFreeServerPort(), Network.localhostIsIPv6())).build();
+		MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).stopTimeoutInMillis(5L).net(new Net(Network.getFreeServerPort(), Network.localhostIsIPv6())).build();
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder().defaults(Command.MongoD).build();
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 
 		for (int i = 0; i < loops; i++) {
 			logger.info("Loop: {}", i);
@@ -87,9 +87,9 @@ public class MongoExecutableTest {
 	public void testStartMongodOnNonFreePort() throws IOException, InterruptedException {
 		int port = Network.getFreeServerPort();
 		
-		IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION).net(new Net(port, Network.localhostIsIPv6())).build();
+		MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(new Net(port, Network.localhostIsIPv6())).build();
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder().defaults(Command.MongoD).build();
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 
 		MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
 		MongodProcess mongod = mongodExe.start();
@@ -101,7 +101,8 @@ public class MongoExecutableTest {
 			MongodExecutable innerExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
 			try {
 				MongodProcess innerMongod = innerExe.start();
-			} catch (IOException iox) {
+				assertNotNull(innerMongod);
+			} catch (RuntimeException iox) {
 				innerMongodCouldNotStart = true;
 			} finally {
 				innerExe.stop();

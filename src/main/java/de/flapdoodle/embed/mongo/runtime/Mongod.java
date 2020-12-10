@@ -33,7 +33,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,13 +40,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.config.IMongoCmdOptions;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.config.SupportConfig;
 import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.io.file.Files;
 import de.flapdoodle.embed.process.runtime.NUMA;
 
@@ -61,16 +60,16 @@ public class Mongod extends AbstractMongo {
 	/**
 	 * Binary sample of shutdown command
 	 */
-	static final byte[] SHUTDOWN_COMMAND = { 0x58, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	private static final byte[] SHUTDOWN_COMMAND = { 0x58, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
  			(byte) 0xD4, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x61, 0x64, 0x6D, 0x69, 0x6E, 0x2E, 0x24, 0x63, 0x6D, 
  			0x64, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x2C, 0x00, 0x00, 
  			0x00, 0x10, 0x73, 0x68, 0x75, 0x74, 0x64, 0x6F, 0x77, 0x6E, 0x00, 0x01, 0x00, 0x00, 0x00, 0x08, 0x66, 0x6F, 
  			0x72, 0x63, 0x65, 0x00, 0x01, 0x10, 0x74, 0x69, 0x6D, 0x65, 0x6F, 0x75, 0x74, 0x53, 0x65, 0x63, 0x73, 0x00, 
                         0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00 };
-	public static final int SOCKET_TIMEOUT = 2000;
-	public static final int CONNECT_TIMEOUT = 2000;
-	public static final int BYTE_BUFFER_LENGTH = 512;
-	public static final int WAITING_TIME_SHUTDOWN_IN_MS = 100;
+	private static final int SOCKET_TIMEOUT = 2000;
+	private static final int CONNECT_TIMEOUT = 2000;
+	private static final int BYTE_BUFFER_LENGTH = 512;
+	private static final int WAITING_TIME_SHUTDOWN_IN_MS = 100;
 
 	public static boolean sendShutdown(InetAddress hostname, int port) {
 		if (!hostname.isLoopbackAddress()) {
@@ -124,7 +123,7 @@ public class Mongod extends AbstractMongo {
 		return defaultValue;
 	}
 
-	public static List<String> getCommandLine(IMongodConfig config, IExtractedFileSet files, File dbDir)
+	public static List<String> getCommandLine(MongodConfig config, ExtractedFileSet files, File dbDir)
 			throws UnknownHostException {
 		List<String> ret = new ArrayList<>();
 		ret.addAll(asList(Files.fileOf(files.baseDir(), files.executable()).getAbsolutePath(),
@@ -163,9 +162,9 @@ public class Mongod extends AbstractMongo {
 		}
 
 		if (config.version().enabled(Feature.STORAGE_ENGINE)) { 
-			if (config.cmdOptions().storageEngine() != null) {
+			if (config.cmdOptions().storageEngine().isPresent()) {
 				ret.add("--storageEngine");
-				ret.add(config.cmdOptions().storageEngine());
+				ret.add(config.cmdOptions().storageEngine().get());
 			}
 		}
 
@@ -202,14 +201,14 @@ public class Mongod extends AbstractMongo {
 		return ret;
 	}
 
-	private static void applySyncDelay(List<String> ret, IMongoCmdOptions cmdOptions) {
-		Integer syncDelay = cmdOptions.syncDelay();
-		if (syncDelay != null) {
+	private static void applySyncDelay(List<String> ret, MongoCmdOptions cmdOptions) {
+		int syncDelay = cmdOptions.syncDelay();
+		if (!cmdOptions.useDefaultSyncDelay()) {
 			ret.add("--syncdelay=" + syncDelay);
 		}
 	}
 
-	private static void applyTextSearch(List<String> ret, IMongoCmdOptions cmdOptions) {
+	private static void applyTextSearch(List<String> ret, MongoCmdOptions cmdOptions) {
 		if (cmdOptions.enableTextSearch()) {
 			ret.add("--setParameter");
 			ret.add("textSearchEnabled=true");
@@ -217,8 +216,8 @@ public class Mongod extends AbstractMongo {
 	}
 
 	public static List<String> enhanceCommandLinePlattformSpecific(Distribution distribution, List<String> commands) {
-		if (NUMA.isNUMA(new SupportConfig(Command.MongoD, TimeUnit.SECONDS.toMillis(5)), distribution.getPlatform())) {
-			switch (distribution.getPlatform()) {
+		if (NUMA.isNUMA(new SupportConfig(Command.MongoD), distribution.platform())) {
+			switch (distribution.platform()) {
 			case Linux:
 				List<String> ret = new ArrayList<>();
 				ret.add("numactl");

@@ -20,26 +20,31 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import com.mongodb.*;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Date;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.Date;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
+
+import de.flapdoodle.embed.mongo.config.MongodConfig;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.runtime.Network;
 
 
 public class FeatureNoBindIpToLocalhostTest {
 
     private static MongodStarter mongodStarter = MongodStarter.getDefaultInstance();
     private static Net net = getNet();
-    private static IMongodConfig mongodConfig = createMongoConfig(net);
+    private static MongodConfig mongodConfig = createMongoConfig(net);
 
     private MongodExecutable mongodExecutable;
     private MongodProcess mongodProcess;
@@ -73,15 +78,11 @@ public class FeatureNoBindIpToLocalhostTest {
         col.save(new BasicDBObject("testDoc", new Date()));
     }
 
-    private static IMongodConfig createMongoConfig(Net net) {
-        try {
-            return new MongodConfigBuilder()
-                    .version(Version.V3_6_0)
-                    .net(net)
-                    .build();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+    private static MongodConfig createMongoConfig(Net net) {
+        return MongodConfig.builder()
+		        .version(Version.V3_6_0)
+		        .net(net)
+		        .build();
     }
 
     private static Net getNet() {

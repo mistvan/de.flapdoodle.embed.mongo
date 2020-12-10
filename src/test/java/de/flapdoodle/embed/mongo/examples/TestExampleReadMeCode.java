@@ -20,12 +20,15 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -37,35 +40,32 @@ import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.DownloadConfigBuilder;
-import de.flapdoodle.embed.mongo.config.ExtractedArtifactStoreBuilder;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.config.Timeout;
-import de.flapdoodle.embed.mongo.config.processlistener.ProcessListenerBuilder;
+import de.flapdoodle.embed.mongo.config.processlistener.CopyDbFilesFromDirBeforeProcessStop;
 import de.flapdoodle.embed.mongo.distribution.Feature;
+import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.distribution.Versions;
 import de.flapdoodle.embed.mongo.doc.HowToDocTest;
 import de.flapdoodle.embed.mongo.tests.MongodForTestsFactory;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
-import de.flapdoodle.embed.process.distribution.GenericVersion;
-import de.flapdoodle.embed.process.distribution.IVersion;
-import de.flapdoodle.embed.process.extract.ITempNaming;
+import de.flapdoodle.embed.process.extract.TempNaming;
 import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.extract.UserTempNaming;
-import de.flapdoodle.embed.process.io.IStreamProcessor;
 import de.flapdoodle.embed.process.io.Processors;
+import de.flapdoodle.embed.process.io.Slf4jLevel;
+import de.flapdoodle.embed.process.io.StreamProcessor;
+import de.flapdoodle.embed.process.io.directories.Directory;
 import de.flapdoodle.embed.process.io.directories.FixedPath;
-import de.flapdoodle.embed.process.io.directories.IDirectory;
-import de.flapdoodle.embed.process.io.progress.LoggingProgressListener;
-import de.flapdoodle.embed.process.runtime.ICommandLinePostProcessor;
+import de.flapdoodle.embed.process.io.progress.Slf4jProgressListener;
+import de.flapdoodle.embed.process.runtime.CommandLinePostProcessor;
 import de.flapdoodle.embed.process.runtime.Network;
 
 /**
@@ -82,7 +82,7 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		MongodStarter starter = MongodStarter.getDefaultInstance();
 
 		int port = Network.getFreeServerPort();
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.net(new Net(port, Network.localhostIsIPv6()))
 				.build();
@@ -127,16 +127,13 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 
 		Command command = Command.MongoD;
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-		.defaults(command)
-		.artifactStore(new ExtractedArtifactStoreBuilder()
-				.defaults(command)
-				.download(new DownloadConfigBuilder()
-						.defaultsForCommand(command).build())
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
+		.artifactStore(Defaults.extractedArtifactStoreFor(command)
+				.withDownloadConfig(Defaults.downloadConfigFor(command).build())
 				.executableNaming(new UserTempNaming()))
 		.build();
 
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.net(new Net(port, Network.localhostIsIPv6()))
 				.build();
@@ -192,14 +189,12 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		// ->
 		// ...
 		Command command = Command.MongoD;
+		
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaults(command)
-				.artifactStore(new ExtractedArtifactStoreBuilder()
-						.defaults(command)
-						.download(new DownloadConfigBuilder()
-								.defaultsForCommand(command)
-								.downloadPath("http://my.custom.download.domain/")))
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
+				.artifactStore(Defaults.extractedArtifactStoreFor(command)
+						.download(Defaults.downloadConfigFor(command)
+								.downloadPath((__) -> "http://my.custom.download.domain/")))
 				.build();
 		// ...
 		// <-
@@ -211,12 +206,9 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		// ...
 		Command command = Command.MongoD;
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaults(command)
-				.artifactStore(new ExtractedArtifactStoreBuilder()
-						.defaults(command)
-						.download(new DownloadConfigBuilder()
-								.defaultsForCommand(command)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
+				.artifactStore(Defaults.extractedArtifactStoreFor(command)
+						.download(Defaults.downloadConfigFor(command)
 								.proxyFactory(new HttpProxyFactory("fooo", 1234))))
 				.build();
 		// ...
@@ -226,24 +218,22 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	// ### Customize Artifact Storage
 	public void testCustomizeArtifactStorage() throws IOException {
 
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.net(new Net(Network.getFreeServerPort(), Network.localhostIsIPv6()))
 				.build();
 
 		// ->
 		// ...
-		IDirectory artifactStorePath = new FixedPath(System.getProperty("user.home") + "/.embeddedMongodbCustomPath");
-		ITempNaming executableNaming = new UUIDTempNaming();
+		Directory artifactStorePath = new FixedPath(System.getProperty("user.home") + "/.embeddedMongodbCustomPath");
+		TempNaming executableNaming = new UUIDTempNaming();
 
 		Command command = Command.MongoD;
+		
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaults(command)
-				.artifactStore(new ExtractedArtifactStoreBuilder()
-						.defaults(command)
-						.download(new DownloadConfigBuilder()
-								.defaultsForCommand(command)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
+				.artifactStore(Defaults.extractedArtifactStoreFor(command)
+						.download(Defaults.downloadConfigFor(command)
 								.artifactStorePath(artifactStorePath))
 						.executableNaming(executableNaming))
 				.build();
@@ -266,8 +256,7 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		ProcessOutput processOutput = new ProcessOutput(Processors.namedConsole("[mongod>]"),
 				Processors.namedConsole("[MONGOD>]"), Processors.namedConsole("[console>]"));
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaults(Command.MongoD)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
 				.processOutput(processOutput)
 				.build();
 
@@ -280,13 +269,12 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testCustomOutputToFile() throws IOException {
 		// ->
 		// ...
-		IStreamProcessor mongodOutput = Processors.named("[mongod>]",
+		StreamProcessor mongodOutput = Processors.named("[mongod>]",
 				new FileStreamProcessor(File.createTempFile("mongod", "log")));
-		IStreamProcessor mongodError = new FileStreamProcessor(File.createTempFile("mongod-error", "log"));
-		IStreamProcessor commandsOutput = Processors.namedConsole("[console>]");
+		StreamProcessor mongodError = new FileStreamProcessor(File.createTempFile("mongod-error", "log"));
+		StreamProcessor commandsOutput = Processors.namedConsole("[console>]");
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaults(Command.MongoD)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
 				.processOutput(new ProcessOutput(mongodOutput, mongodError, commandsOutput))
 				.build();
 
@@ -309,19 +297,16 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testCustomOutputToLogging() throws IOException {
 		// ->
 		// ...
-		Logger logger = Logger.getLogger(getClass().getName());
+		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-		ProcessOutput processOutput = new ProcessOutput(Processors.logTo(logger, Level.INFO), Processors.logTo(logger,
-				Level.SEVERE), Processors.named("[console>]", Processors.logTo(logger, Level.FINE)));
+		ProcessOutput processOutput = new ProcessOutput(Processors.logTo(logger, Slf4jLevel.INFO), Processors.logTo(logger,
+				Slf4jLevel.ERROR), Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)));
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaultsWithLogger(Command.MongoD, logger)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
 				.processOutput(processOutput)
-				.artifactStore(new ExtractedArtifactStoreBuilder()
-						.defaults(Command.MongoD)
-						.download(new DownloadConfigBuilder()
-								.defaultsForCommand(Command.MongoD)
-								.progressListener(new LoggingProgressListener(logger, Level.FINE))))
+				.artifactStore(Defaults.extractedArtifactStoreFor(Command.MongoD)
+						.download(Defaults.downloadConfigFor(Command.MongoD)
+								.progressListener(new Slf4jProgressListener(logger, Slf4jLevel.DEBUG))))
 				.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
@@ -333,10 +318,9 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testDefaultOutputToLogging() throws IOException {
 		// ->
 		// ...
-		Logger logger = Logger.getLogger(getClass().getName());
+		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaultsWithLogger(Command.MongoD, logger)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
 				.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
@@ -347,16 +331,15 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	// #### ... to null device
 	public void testDefaultOutputToNone() throws IOException {
 		int port = 12345;
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
-				.version(Versions.withFeatures(new GenericVersion("2.0.7-rc1"), Feature.SYNC_DELAY))
+		MongodConfig mongodConfig = MongodConfig.builder()
+				.version(Versions.withFeatures(de.flapdoodle.embed.process.distribution.Version.of("2.0.7-rc1"), Feature.SYNC_DELAY))
 				.net(new Net(port, Network.localhostIsIPv6()))
 				.build();
 		// ->
 		// ...
-		Logger logger = Logger.getLogger(getClass().getName());
+		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaultsWithLogger(Command.MongoD, logger)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
 				.processOutput(ProcessOutput.getDefaultInstanceSilent())
 				.build();
 
@@ -389,8 +372,8 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		// ->
 		// ...
 		int port = 12345;
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
-				.version(Versions.withFeatures(new GenericVersion("2.0.7-rc1"), Feature.SYNC_DELAY))
+		MongodConfig mongodConfig = MongodConfig.builder()
+				.version(Versions.withFeatures(genericVersion("2.0.7-rc1"), Feature.SYNC_DELAY))
 				.net(new Net(port, Network.localhostIsIPv6()))
 				.build();
 
@@ -422,10 +405,14 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 
 	}
 
+	private de.flapdoodle.embed.process.distribution.Version genericVersion(String asInDownloadPath) {
+		return de.flapdoodle.embed.process.distribution.Version.of(asInDownloadPath);
+	}
+
 	// ### Main Versions
 	public void testMainVersions() throws IOException {
 		// ->
-		IVersion version = Version.V2_2_5;
+		IFeatureAwareVersion version = Version.V2_2_5;
 		// uses latest supported 2.2.x Version
 		version = Version.Main.V2_2;
 		// uses latest supported production version
@@ -454,7 +441,7 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testFreeServerPortAuto() throws IOException {
 		// ->
 		// ...
-		IMongodConfig mongodConfig = new MongodConfigBuilder().version(Version.Main.PRODUCTION).build();
+		MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).build();
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
 
@@ -488,12 +475,13 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testCustomTimeouts() throws IOException {
 		// ->
 		// ...
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.timeout(new Timeout(30000))
 				.build();
 		// ...
 		// <-
+		assertNotNull(mongodConfig);
 	}
 
 	// ### Command Line Post Processing
@@ -501,17 +489,17 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 
 		// ->
 		// ...
-		ICommandLinePostProcessor postProcessor = // ...
+		CommandLinePostProcessor postProcessor = // ...
 				// <-
 				(distribution, args) -> null;
 		// ->
 
-		IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
-				.defaults(Command.MongoD)
+		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
 				.commandLinePostProcessor(postProcessor)
 				.build();
 		// ...
 		// <-
+		assertNotNull(runtimeConfig);
 	}
 
 	// ### Custom Command Line Options
@@ -522,9 +510,9 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	 */
 	public void testCommandLineOptions() throws IOException {
 		// ->
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
-				.cmdOptions(new MongoCmdOptionsBuilder()
+				.cmdOptions(MongoCmdOptions.builder()
 						.syncDelay(10)
 						.useNoPrealloc(false)
 						.useSmallFiles(false)
@@ -534,7 +522,7 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 				.build();
 		// ...
 		// <-
-
+		assertNotNull(mongodConfig);
 	}
 
 	// ### Snapshot database files from temp dir
@@ -546,17 +534,16 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testSnapshotDbFiles() throws IOException {
 		File destination = null;
 		// ->
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
-				.processListener(new ProcessListenerBuilder()
-						.copyDbFilesBeforeStopInto(destination)
-						.build())
-				.cmdOptions(new MongoCmdOptionsBuilder()
-						.defaultSyncDelay()
+				.processListener(new CopyDbFilesFromDirBeforeProcessStop(destination))
+				.cmdOptions(MongoCmdOptions.builder()
+						.useDefaultSyncDelay(true)
 						.build())
 				.build();
 		// ...
 		// <-
+		assertNotNull(mongodConfig);
 	}
 	// ### Custom database directory  
 	/*
@@ -568,12 +555,13 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		// ->
 		Storage replication = new Storage("/custom/databaseDir",null,0);
 		
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.replication(replication)
 				.build();
 		// ...
 		// <-
+		assertNotNull(mongodConfig);
 	}
 	// ### Start mongos with mongod instance
 	// @include StartConfigAndMongoDBServerTest.java

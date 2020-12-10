@@ -29,8 +29,8 @@ import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -67,12 +67,12 @@ public abstract class AbstractMongoDBTest extends TestCase {
 		return port;
 	}
 
-	protected IMongodConfig createMongodConfig() throws UnknownHostException, IOException {
+	protected MongodConfig createMongodConfig() throws UnknownHostException, IOException {
 		return createMongodConfigBuilder().build();
 	}
 
-	protected MongodConfigBuilder createMongodConfigBuilder() throws UnknownHostException, IOException {
-		return new MongodConfigBuilder()
+	protected ImmutableMongodConfig.Builder createMongodConfigBuilder() throws UnknownHostException, IOException {
+		return MongodConfig.builder()
 			.version(Version.Main.PRODUCTION)
 			.net(new Net(port, Network.localhostIsIPv6()));
 	}

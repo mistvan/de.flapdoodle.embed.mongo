@@ -21,32 +21,31 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import de.flapdoodle.embed.mongo.config.IMongoRestoreConfig;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Starter;
 
-public class MongoRestoreStarter extends Starter<IMongoRestoreConfig,MongoRestoreExecutable,MongoRestoreProcess> {
+public class MongoRestoreStarter extends Starter<MongoRestoreConfig,MongoRestoreExecutable,MongoRestoreProcess> {
 
-    private MongoRestoreStarter(IRuntimeConfig config) {
+    private MongoRestoreStarter(RuntimeConfig config) {
         super(config);
     }
 
-    public static MongoRestoreStarter getInstance(IRuntimeConfig config) {
+    public static MongoRestoreStarter getInstance(RuntimeConfig config) {
         return new MongoRestoreStarter(config);
     }
 
     public static MongoRestoreStarter getDefaultInstance() {
-        return getInstance(new RuntimeConfigBuilder()
-                .defaults(Command.MongoRestore)
-                .daemonProcess(false)
+		return getInstance(Defaults.runtimeConfigFor(Command.MongoRestore)
+                .isDaemonProcess(false)
                 .build());
     }
 
     @Override
-    protected MongoRestoreExecutable newExecutable(IMongoRestoreConfig mongoRestoreConfig, Distribution distribution, IRuntimeConfig runtime, IExtractedFileSet files) {
+    protected MongoRestoreExecutable newExecutable(MongoRestoreConfig mongoRestoreConfig, Distribution distribution, RuntimeConfig runtime, ExtractedFileSet files) {
         return new MongoRestoreExecutable(distribution, mongoRestoreConfig, runtime, files);
     }
 }

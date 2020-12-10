@@ -20,32 +20,32 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import de.flapdoodle.embed.mongo.config.IMongosConfig;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongosConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Starter;
 
 /**
  *
  */
-public class MongosStarter extends Starter<IMongosConfig,MongosExecutable,MongosProcess> {
+public class MongosStarter extends Starter<MongosConfig,MongosExecutable,MongosProcess> {
 
-	private MongosStarter(IRuntimeConfig config) {
+	private MongosStarter(RuntimeConfig config) {
 		super(config);
 	}
 
-	public static MongosStarter getInstance(IRuntimeConfig config) {
+	public static MongosStarter getInstance(RuntimeConfig config) {
 		return new MongosStarter(config);
 	}
 
 	public static MongosStarter getDefaultInstance() {
-		return getInstance(new RuntimeConfigBuilder().defaults(Command.MongoS).build());
+		return getInstance(Defaults.runtimeConfigFor(Command.MongoS).build());
 	}
 
 	@Override
-	protected MongosExecutable newExecutable(IMongosConfig mongosConfig, Distribution distribution, IRuntimeConfig runtime, IExtractedFileSet files) {
+	protected MongosExecutable newExecutable(MongosConfig mongosConfig, Distribution distribution, RuntimeConfig runtime, ExtractedFileSet files) {
 		return new MongosExecutable(distribution, mongosConfig, runtime, files);
 	}
 }

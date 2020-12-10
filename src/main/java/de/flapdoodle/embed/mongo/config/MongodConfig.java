@@ -22,19 +22,54 @@ package de.flapdoodle.embed.mongo.config;
 
 import java.util.Map;
 
+import org.immutables.value.Value.Default;
+import org.immutables.value.Value.Immutable;
+
+import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.config.processlistener.IMongoProcessListener;
+import de.flapdoodle.embed.mongo.config.processlistener.NoopProcessListener;
+import de.flapdoodle.embed.process.config.SupportConfig;
 
-public interface IMongodConfig extends IMongoConfig {
+@Immutable
+public interface MongodConfig extends MongoCommonConfig {
 
-	Storage replication();
+	@Default
+	default Storage replication() {
+		return new Storage();
+	}
 
-	boolean isConfigServer();
+	@Default
+	default boolean isConfigServer() {
+		return false;
+	}
 
-	boolean isShardServer();
+	@Default
+	default boolean isShardServer() {
+		return false;
+	}
 
-	IMongoProcessListener processListener();
+	@Default
+	default IMongoProcessListener processListener() {
+		return new NoopProcessListener();
+	}
 
 	Map<String, String> params();
 	
 	Map<String, String> args();
+	
+	@Default
+	@Override
+	default String pidFile() {
+		return "mongod.pid";
+	}
+	
+	@Override
+	@Default
+	default SupportConfig supportConfig() {
+		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.MongoD);
+	}
+	
+	public static ImmutableMongodConfig.Builder builder() {
+		return ImmutableMongodConfig.builder();
+	}
 }

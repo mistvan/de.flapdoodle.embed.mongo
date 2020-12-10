@@ -44,21 +44,21 @@ public class TestPaths extends TestCase {
 	
 	public void testDistributionPaths() {
 		
-		checkPath(new Distribution(Version.V1_6_5, Platform.Windows, BitSize.B32),
+		checkPath(Distribution.of(Version.V1_6_5, Platform.Windows, BitSize.B32),
 				"win32/mongodb-win32-i386-1.6.5.zip");
-		checkPath(new Distribution(Version.V1_6_5, Platform.Windows, BitSize.B64),
+		checkPath(Distribution.of(Version.V1_6_5, Platform.Windows, BitSize.B64),
 				"win32/mongodb-win32-x86_64-1.6.5.zip");
-		checkPath(new Distribution(Version.V1_8_0, Platform.Linux, BitSize.B32), "linux/mongodb-linux-i686-1.8.0.tgz");
-		checkPath(new Distribution(Version.V1_8_0, Platform.Linux, BitSize.B64),
+		checkPath(Distribution.of(Version.V1_8_0, Platform.Linux, BitSize.B32), "linux/mongodb-linux-i686-1.8.0.tgz");
+		checkPath(Distribution.of(Version.V1_8_0, Platform.Linux, BitSize.B64),
 				"linux/mongodb-linux-x86_64-1.8.0.tgz");
-		checkPath(new Distribution(Version.V1_8_0, Platform.OS_X, BitSize.B32), "osx/mongodb-osx-i386-1.8.0.tgz");
-		checkPath(new Distribution(Version.V1_8_0, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-x86_64-1.8.0.tgz");
-		checkPath(new Distribution(Version.V1_8_1, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-x86_64-1.8.1.tgz");
-		checkPath(new Distribution(Version.V1_8_2_rc0, Platform.OS_X, BitSize.B64),
+		checkPath(Distribution.of(Version.V1_8_0, Platform.OS_X, BitSize.B32), "osx/mongodb-osx-i386-1.8.0.tgz");
+		checkPath(Distribution.of(Version.V1_8_0, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-x86_64-1.8.0.tgz");
+		checkPath(Distribution.of(Version.V1_8_1, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-x86_64-1.8.1.tgz");
+		checkPath(Distribution.of(Version.V1_8_2_rc0, Platform.OS_X, BitSize.B64),
 				"osx/mongodb-osx-x86_64-1.8.2-rc0.tgz");
-		checkPath(new Distribution(Version.V1_9_0, Platform.OS_X, BitSize.B32), "osx/mongodb-osx-i386-1.9.0.tgz");
-		checkPath(new Distribution(Version.V1_9_0, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-x86_64-1.9.0.tgz");
-		checkPath(new Distribution(Version.V3_6_0, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-ssl-x86_64-3.6.0.tgz");
+		checkPath(Distribution.of(Version.V1_9_0, Platform.OS_X, BitSize.B32), "osx/mongodb-osx-i386-1.9.0.tgz");
+		checkPath(Distribution.of(Version.V1_9_0, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-x86_64-1.9.0.tgz");
+		checkPath(Distribution.of(Version.V3_6_0, Platform.OS_X, BitSize.B64), "osx/mongodb-osx-ssl-x86_64-3.6.0.tgz");
 	}
 
 	private void checkPath(Distribution distribution, String match) {

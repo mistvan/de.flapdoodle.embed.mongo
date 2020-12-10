@@ -23,18 +23,18 @@ package de.flapdoodle.embed.mongo;
 import java.io.IOException;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongoShellConfig;
+import de.flapdoodle.embed.mongo.config.MongoShellConfig;
 import de.flapdoodle.embed.mongo.runtime.MongoShell;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
 /**
  *
  */
-public class MongoShellProcess extends AbstractMongoProcess<IMongoShellConfig, MongoShellExecutable, MongoShellProcess> {
+public class MongoShellProcess extends AbstractMongoProcess<MongoShellConfig, MongoShellExecutable, MongoShellProcess> {
 
-	public MongoShellProcess(Distribution distribution, IMongoShellConfig config, IRuntimeConfig runtimeConfig,
+	public MongoShellProcess(Distribution distribution, MongoShellConfig config, RuntimeConfig runtimeConfig,
 			MongoShellExecutable mongoShellExecutable) throws IOException {
 		super(distribution, config, runtimeConfig, mongoShellExecutable);
 	}
@@ -45,7 +45,7 @@ public class MongoShellProcess extends AbstractMongoProcess<IMongoShellConfig, M
 	}
 	
 	@Override
-	protected List<String> getCommandLine(Distribution distribution, IMongoShellConfig config, IExtractedFileSet files) throws IOException {
+	protected List<String> getCommandLine(Distribution distribution, MongoShellConfig config, ExtractedFileSet files) throws IOException {
 		return MongoShell.getCommandLine(getConfig(), files);
 	}
 

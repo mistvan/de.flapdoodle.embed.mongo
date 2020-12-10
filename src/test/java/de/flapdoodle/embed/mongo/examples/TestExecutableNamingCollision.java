@@ -32,15 +32,18 @@ import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.ArtifactStoreBuilder;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
+import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.extract.UserTempNaming;
+import de.flapdoodle.embed.process.io.directories.PropertyOrPlatformTempDir;
 import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.embed.process.store.ArtifactStore;
+import de.flapdoodle.embed.process.store.UrlConnectionDownloader;
 import junit.framework.TestCase;
 
 public class TestExecutableNamingCollision extends TestCase {
@@ -50,15 +53,18 @@ public class TestExecutableNamingCollision extends TestCase {
 
 	private MongoClient _mongo;
 	
-	private static final IRuntimeConfig _runtimeConfig=runtimeConfig();
+	private static final RuntimeConfig _runtimeConfig=runtimeConfig();
 
-	private static IRuntimeConfig runtimeConfig() {
-		return new RuntimeConfigBuilder()
-		.defaults(Command.MongoD)
-		.artifactStore(new ArtifactStoreBuilder()
-				.defaults(Command.MongoD)
+	private static RuntimeConfig runtimeConfig() {
+		return Defaults.runtimeConfigFor(Command.MongoD)
+		.artifactStore(ArtifactStore.builder()
+		.tempDirFactory(new PropertyOrPlatformTempDir())
+		.executableNaming(new UUIDTempNaming())
+		.downloadConfig(Defaults.downloadConfigFor(Command.MongoD).build())
+		.downloader(new UrlConnectionDownloader())
 				.executableNaming(new UserTempNaming())
-				.build())
+				.build()
+				.withCache())
 		.build();
 	}
 	
@@ -74,12 +80,12 @@ public class TestExecutableNamingCollision extends TestCase {
 		_mongo = new MongoClient("localhost", 12345);
 	}
 
-	protected IMongodConfig createMongodConfig() throws UnknownHostException, IOException {
+	protected MongodConfig createMongodConfig() throws UnknownHostException, IOException {
 		return createMongodConfigBuilder().build();
 	}
 
-	protected MongodConfigBuilder createMongodConfigBuilder() throws UnknownHostException, IOException {
-		return new MongodConfigBuilder().version(Version.Main.PRODUCTION).net(new Net(12345, Network.localhostIsIPv6()));
+	protected ImmutableMongodConfig.Builder createMongodConfigBuilder() throws UnknownHostException, IOException {
+		return MongodConfig.builder().version(Version.Main.PRODUCTION).net(new Net(12345, Network.localhostIsIPv6()));
 	}
 
 	@Override

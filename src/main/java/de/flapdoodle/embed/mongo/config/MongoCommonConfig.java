@@ -20,14 +20,39 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import java.util.List;
+import org.immutables.value.Value.Default;
 
+import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.process.config.ExecutableProcessConfig;
 
-public interface IMongoShellConfig extends IMongoConfig {
+public interface MongoCommonConfig extends ExecutableProcessConfig {
+	@Override
+	public IFeatureAwareVersion version();
 
-	List<String> getScriptParameters();
+	@Default
+	default Timeout timeout() {
+		return new Timeout();
+	}
 
-	String getScriptName();
+	@Default
+	default Net net() {
+		return Net.defaults();
+	}
 
-	String getDbName();
+	@Default
+	default MongoCmdOptions cmdOptions() {
+		return MongoCmdOptions.defaults();
+	}
+
+	@Default
+	default String password() {
+		return "";
+	}
+
+	@Default
+	default String userName() {
+		return "";
+	}
+
+    String pidFile();    
 }

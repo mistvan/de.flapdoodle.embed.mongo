@@ -20,23 +20,23 @@
  */
 package de.flapdoodle.embed.mongo.runtime;
 
-import de.flapdoodle.embed.mongo.config.IMongoConfig;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Feature;
-
 import java.util.List;
 import java.util.Objects;
+
+import de.flapdoodle.embed.mongo.config.MongoCommonConfig;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.distribution.Feature;
 
 
 public abstract class AbstractMongo {
 
-    protected static <T extends IMongoConfig> void applyDefaultOptions(T config, List<String> ret) {
+    protected static <T extends MongoCommonConfig> void applyDefaultOptions(T config, List<String> ret) {
         if (!config.version().enabled(Feature.NO_HTTP_INTERFACE_ARG)) {
             ret.add("--nohttpinterface");
         }
     }
 
-    protected static <T extends IMongoConfig> void applyNet(T config, List<String> ret) {
+    protected static <T extends MongoCommonConfig> void applyNet(T config, List<String> ret) {
         Net net = config.net();
 
         ret.add("--port");

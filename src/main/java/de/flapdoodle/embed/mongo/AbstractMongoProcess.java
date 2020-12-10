@@ -28,9 +28,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.flapdoodle.embed.mongo.config.IMongoConfig;
+import de.flapdoodle.embed.mongo.config.MongoCommonConfig;
 import de.flapdoodle.embed.mongo.runtime.Mongod;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.io.LogWatchStreamProcessor;
@@ -42,20 +42,20 @@ import de.flapdoodle.embed.process.runtime.IStopable;
 import de.flapdoodle.embed.process.runtime.ProcessControl;
 
 
-public abstract class AbstractMongoProcess<T extends IMongoConfig, E extends Executable<T, P>, P extends IStopable> extends AbstractProcess<T, E, P> {
+public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extends Executable<T, P>, P extends IStopable> extends AbstractProcess<T, E, P> {
 
 	private static Logger logger = LoggerFactory.getLogger(AbstractMongoProcess.class);
 	
-	boolean stopped=false;
+	private boolean stopped=false;
 	
-	public AbstractMongoProcess(Distribution distribution, T config, IRuntimeConfig runtimeConfig, E executable)
+	public AbstractMongoProcess(Distribution distribution, T config, RuntimeConfig runtimeConfig, E executable)
 			throws IOException {
 		super(distribution, config, runtimeConfig, executable);
 	}
 
 	@Override
-	protected final void onAfterProcessStart(ProcessControl process, IRuntimeConfig runtimeConfig) throws IOException {
-		ProcessOutput outputConfig = runtimeConfig.getProcessOutput();
+	protected final void onAfterProcessStart(ProcessControl process, RuntimeConfig runtimeConfig) {
+		ProcessOutput outputConfig = runtimeConfig.processOutput();
 		LogWatchStreamProcessor logWatch = new LogWatchStreamProcessor(successMessage(), knownFailureMessages(),
 				StreamToLineProcessor.wrap(outputConfig.getOutput()));
 		Processors.connect(process.getReader(), logWatch);
@@ -76,10 +76,10 @@ public abstract class AbstractMongoProcess<T extends IMongoConfig, E extends Exe
 			try {
 				// Process could be finished with success here! In this case no need to throw an exception!
 				if(process.waitFor() != 0){
-					throw new IOException("Could not start process: "+failureFound);
+					throw new RuntimeException("Could not start process: "+failureFound);
 				}
 			} catch (InterruptedException e) {
-				throw new IOException("Could not start process: "+failureFound, e);
+				throw new RuntimeException("Could not start process: "+failureFound, e);
 			}
 		}
 	}

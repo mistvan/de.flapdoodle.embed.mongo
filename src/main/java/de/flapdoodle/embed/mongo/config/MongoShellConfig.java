@@ -20,14 +20,36 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
+import java.util.List;
 
-import java.util.Map;
+import org.immutables.value.Value.Default;
+import org.immutables.value.Value.Immutable;
 
-public interface IMongosConfig extends IMongoConfig {
+import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.process.config.SupportConfig;
 
-	String getConfigDB();
+
+@Immutable
+public interface MongoShellConfig extends MongoCommonConfig {
+	List<String> getScriptParameters();
+
+	String getScriptName();
+
+	String getDbName();
 	
-	String replicaSet();
-
-	Map<String, String> args();
+	@Default
+	@Override
+	default String pidFile() {
+		return "mongo.pid";
+	}
+	
+	@Default
+	@Override
+	default SupportConfig supportConfig() {
+		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.Mongo);
+	}
+	
+	public static ImmutableMongoShellConfig.Builder builder() {
+		return ImmutableMongoShellConfig.builder();
+	}
 }

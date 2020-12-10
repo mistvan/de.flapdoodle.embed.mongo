@@ -20,24 +20,39 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
+import java.util.Map;
+
+import org.immutables.value.Value.Default;
+import org.immutables.value.Value.Immutable;
+
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.process.extract.UUIDTempNaming;
-import de.flapdoodle.embed.process.io.directories.PropertyOrPlatformTempDir;
-import de.flapdoodle.embed.process.store.Downloader;
+import de.flapdoodle.embed.process.config.SupportConfig;
 
-@Deprecated
-/**
- * @see ExtractedArtifactStoreBuilder
- * @author mosmann
- *
- */
-public class ArtifactStoreBuilder extends de.flapdoodle.embed.process.store.ArtifactStoreBuilder {
+@Immutable
+public interface MongosConfig extends MongoCommonConfig {
 
-	public ArtifactStoreBuilder defaults(Command command) {
-		tempDir().setDefault(new PropertyOrPlatformTempDir());
-		executableNaming().setDefault(new UUIDTempNaming());
-		download().setDefault(new DownloadConfigBuilder().defaultsForCommand(command).build());
-		downloader().setDefault(new Downloader());
-		return this;
+	String getConfigDB();
+
+	@Default
+	default String replicaSet() {
+		return "";
+	}
+
+	Map<String, String> args();
+
+	@Default
+	@Override
+	default String pidFile() {
+		return "mongos.pid";
+	}
+
+	@Default
+	@Override
+	default SupportConfig supportConfig() {
+		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.MongoS);
+	}
+	
+	public static ImmutableMongosConfig.Builder builder() {
+		return ImmutableMongosConfig.builder();
 	}
 }

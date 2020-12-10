@@ -34,10 +34,8 @@ import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.MongosExecutable;
 import de.flapdoodle.embed.mongo.MongosProcess;
 import de.flapdoodle.embed.mongo.MongosStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.IMongosConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.MongosConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
+import de.flapdoodle.embed.mongo.config.MongosConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -80,7 +78,7 @@ public class StartConfigAndMongoDBServerTest {
 
 	private MongosProcess startMongos(int port, int defaultConfigPort, String defaultHost) throws
 			IOException {
-		IMongosConfig mongosConfig = new MongosConfigBuilder()
+		MongosConfig mongosConfig = MongosConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.net(new Net(port, Network.localhostIsIPv6()))
 				.configDB(defaultHost + ":" + defaultConfigPort)
@@ -92,11 +90,11 @@ public class StartConfigAndMongoDBServerTest {
 	}
 
 	private MongodProcess startMongod(int defaultConfigPort) throws IOException {
-		IMongodConfig mongoConfigConfig = new MongodConfigBuilder()
+		MongodConfig mongoConfigConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
 				.replication(new Storage(null, "testRepSet", 5000))
-				.configServer(true)
+				.isConfigServer(true)
 				.build();
 
 		MongodExecutable mongodExecutable = MongodStarter.getDefaultInstance().prepare(mongoConfigConfig);

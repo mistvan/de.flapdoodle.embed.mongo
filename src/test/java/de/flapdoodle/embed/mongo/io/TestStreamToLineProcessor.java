@@ -20,10 +20,12 @@
  */
 package de.flapdoodle.embed.mongo.io;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import de.flapdoodle.embed.process.collections.Collections;
-import de.flapdoodle.embed.process.io.IStreamProcessor;
+import com.google.common.collect.ImmutableList;
+
+import de.flapdoodle.embed.process.io.StreamProcessor;
 import de.flapdoodle.embed.process.io.StreamToLineProcessor;
 import junit.framework.TestCase;
 
@@ -31,7 +33,7 @@ import junit.framework.TestCase;
 public class TestStreamToLineProcessor extends TestCase {
 
 	public void testNewlines() {
-		List<String> checks = Collections.newArrayList("line 1\n", "line 2\n", "line 3\n", "line 4\n");
+		List<String> checks = arrayListOf("line 1\n", "line 2\n", "line 3\n", "line 4\n");
 		StreamToLineProcessor processor = new StreamToLineProcessor(new AssertStreamProcessor(checks));
 		processor.process("li");
 		processor.process("ne 1");
@@ -43,7 +45,11 @@ public class TestStreamToLineProcessor extends TestCase {
 		processor.onProcessed();
 	}
 
-	static class AssertStreamProcessor implements IStreamProcessor {
+	private List<String> arrayListOf(String ...values) {
+		return new ArrayList<>(ImmutableList.copyOf(values));
+	}
+
+	static class AssertStreamProcessor implements StreamProcessor {
 
 		private final List<String> _checks;
 		private boolean _done = false;

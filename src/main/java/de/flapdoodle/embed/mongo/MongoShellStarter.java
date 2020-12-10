@@ -20,32 +20,31 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import de.flapdoodle.embed.mongo.config.IMongoShellConfig;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongoShellConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Starter;
 
-public class MongoShellStarter extends Starter<IMongoShellConfig, MongoShellExecutable ,MongoShellProcess> {
+public class MongoShellStarter extends Starter<MongoShellConfig, MongoShellExecutable ,MongoShellProcess> {
 
-	private MongoShellStarter(IRuntimeConfig config) {
+	private MongoShellStarter(RuntimeConfig config) {
 		super(config);
 	}
 
-	public static MongoShellStarter getInstance(IRuntimeConfig config) {
+	public static MongoShellStarter getInstance(RuntimeConfig config) {
 		return new MongoShellStarter(config);
 	}
 
 	public static MongoShellStarter getDefaultInstance() {
-		return getInstance(new RuntimeConfigBuilder()
-				.defaults(Command.Mongo)
-				.daemonProcess(false)
+		return getInstance(Defaults.runtimeConfigFor(Command.Mongo)
+				.isDaemonProcess(false)
 				.build());
 	}
 
 	@Override
-	protected MongoShellExecutable newExecutable(IMongoShellConfig mongoShellConfig, Distribution distribution, IRuntimeConfig runtime, IExtractedFileSet files) {
+	protected MongoShellExecutable newExecutable(MongoShellConfig mongoShellConfig, Distribution distribution, RuntimeConfig runtime, ExtractedFileSet files) {
 		return new MongoShellExecutable(distribution, mongoShellConfig, runtime, files);
 	}
 }

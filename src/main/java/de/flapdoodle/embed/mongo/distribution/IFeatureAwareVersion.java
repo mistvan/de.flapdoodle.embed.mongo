@@ -20,12 +20,12 @@
  */
 package de.flapdoodle.embed.mongo.distribution;
 
-import de.flapdoodle.embed.process.distribution.IVersion;
-
 import java.util.EnumSet;
 
+import de.flapdoodle.embed.process.distribution.Version;
 
-public interface IFeatureAwareVersion extends IVersion {
+
+public interface IFeatureAwareVersion extends Version {
 	boolean enabled(Feature feature);
 
 	EnumSet<Feature> getFeatures();

@@ -24,21 +24,21 @@ package de.flapdoodle.embed.mongo;
 import java.io.IOException;
 import java.util.List;
 
-import de.flapdoodle.embed.mongo.config.IMongoRestoreConfig;
+import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
 import de.flapdoodle.embed.mongo.runtime.MongoRestore;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
-public class MongoRestoreProcess extends AbstractMongoProcess<IMongoRestoreConfig, MongoRestoreExecutable, MongoRestoreProcess> {
+public class MongoRestoreProcess extends AbstractMongoProcess<MongoRestoreConfig, MongoRestoreExecutable, MongoRestoreProcess> {
 
-    public MongoRestoreProcess(Distribution distribution, IMongoRestoreConfig config, IRuntimeConfig runtimeConfig,
+    public MongoRestoreProcess(Distribution distribution, MongoRestoreConfig config, RuntimeConfig runtimeConfig,
                                MongoRestoreExecutable mongosExecutable) throws IOException {
         super(distribution, config, runtimeConfig, mongosExecutable);
     }
 
     @Override
-    protected List<String> getCommandLine(Distribution distribution, IMongoRestoreConfig config, IExtractedFileSet files)
+    protected List<String> getCommandLine(Distribution distribution, MongoRestoreConfig config, ExtractedFileSet files)
             throws IOException {
         return MongoRestore.getCommandLine(getConfig(), files);
     }

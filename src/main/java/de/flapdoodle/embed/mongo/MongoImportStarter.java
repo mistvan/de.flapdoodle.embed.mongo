@@ -21,32 +21,31 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import de.flapdoodle.embed.mongo.config.IMongoImportConfig;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.MongoImportConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.IExtractedFileSet;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Starter;
 
-public class MongoImportStarter extends Starter<IMongoImportConfig,MongoImportExecutable,MongoImportProcess> {
+public class MongoImportStarter extends Starter<MongoImportConfig,MongoImportExecutable,MongoImportProcess> {
 
-    private MongoImportStarter(IRuntimeConfig config) {
+    private MongoImportStarter(RuntimeConfig config) {
         super(config);
     }
 
-    public static MongoImportStarter getInstance(IRuntimeConfig config) {
+    public static MongoImportStarter getInstance(RuntimeConfig config) {
         return new MongoImportStarter(config);
     }
 
     public static MongoImportStarter getDefaultInstance() {
-        return getInstance(new RuntimeConfigBuilder()
-                .defaults(Command.MongoImport)
-                .daemonProcess(false)
+		return getInstance(Defaults.runtimeConfigFor(Command.MongoImport)
+                .isDaemonProcess(false)
                 .build());
     }
 
     @Override
-    protected MongoImportExecutable newExecutable(IMongoImportConfig mongoImportConfig, Distribution distribution, IRuntimeConfig runtime, IExtractedFileSet files) {
+    protected MongoImportExecutable newExecutable(MongoImportConfig mongoImportConfig, Distribution distribution, RuntimeConfig runtime, ExtractedFileSet files) {
         return new MongoImportExecutable(distribution, mongoImportConfig, runtime, files);
     }
 }

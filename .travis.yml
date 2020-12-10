@@ -11,12 +11,11 @@ addons:
   hostname: mongo-test-host
 script: $TARGET
 jdk:
-- oraclejdk8
-- oraclejdk9
+- openjdk8
 
 env:
   matrix:
-    - TARGET='./mvnw test'
+    - TARGET='./mvnw test -Ptravis'
 
 notifications:
   email:

@@ -39,11 +39,10 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.distribution.IVersion;
 import de.flapdoodle.embed.process.runtime.Network;
 
 /**
@@ -61,9 +60,9 @@ public class MongoDBExampleAllVersionsTest {
 	public static java.util.Collection<Object[]> data() {
 		final Collection<Object[]> result = new ArrayList<>();
 		int unknownId = 0;
-		for (final IVersion version : Versions.testableVersions(Version.Main.class)) {
+		for (final de.flapdoodle.embed.process.distribution.Version version : Versions.testableVersions(Version.Main.class)) {
 			if (version instanceof Enum) {
-				result.add(new Object[]{((Enum) version).name(), version});
+				result.add(new Object[]{((Enum<?>) version).name(), version});
 			} else {
 				result.add(new Object[]{"unknown version " + (unknownId++), version});
 			}
@@ -89,7 +88,7 @@ public class MongoDBExampleAllVersionsTest {
 	public void setUp() throws Exception {
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
-		mongodExe = runtime.prepare(new MongodConfigBuilder().version(this.mongoVersion).net(new Net(PORT,
+		mongodExe = runtime.prepare(MongodConfig.builder().version(this.mongoVersion).net(new Net(PORT,
 				Network.localhostIsIPv6())).build());
 		mongod = mongodExe.start();
 
@@ -113,16 +112,20 @@ public class MongoDBExampleAllVersionsTest {
 
 	@Test
 	public void testInsert1() {
+		System.out.println("-1-8<---------------");
 		DB db = mongo.getDB("test");
 		DBCollection col = db.createCollection("testCol", new BasicDBObject());
 		col.save(new BasicDBObject("testDoc", new Date()));
+		System.out.println("-1->8---------------");
 	}
 
 	@Test
 	public void testInsert2() {
+		System.out.println("-2-8<---------------");
 		DB db = mongo.getDB("test");
 		DBCollection col = db.createCollection("testCol", new BasicDBObject());
 		col.save(new BasicDBObject("testDoc", new Date()));
+		System.out.println("-2->8---------------");
 	}
 
 }

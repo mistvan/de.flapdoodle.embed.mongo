@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.0.0
+
+- big refactoring
+
 #### 2.1.1 / 2.1.0
 
 - implemented getFeatures of an IFeatureAwareVersion to create your own GenericVersion with Features of Version X

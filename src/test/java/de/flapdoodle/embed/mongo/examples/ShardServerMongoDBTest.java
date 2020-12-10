@@ -20,6 +20,12 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
@@ -30,15 +36,9 @@ import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
 
 public class ShardServerMongoDBTest {
 
@@ -51,10 +51,10 @@ public class ShardServerMongoDBTest {
     public void setUp() throws Exception {
 
         MongodStarter runtime = MongodStarter.getDefaultInstance();
-        IMongodConfig config = new MongodConfigBuilder()
+        MongodConfig config = MongodConfig.builder()
                 .version(Version.Main.PRODUCTION)
-                .cmdOptions(new MongoCmdOptionsBuilder().useNoJournal(false).build())
-                .shardServer(true)
+                .cmdOptions(MongoCmdOptions.builder().useNoJournal(false).build())
+                .isShardServer(true)
                 .build();
 
         mongodExe = runtime.prepare(config);
