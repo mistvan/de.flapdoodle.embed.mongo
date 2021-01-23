@@ -220,18 +220,17 @@ public class MongosSystemForTestFactory {
 			for (Entry<String, List<MongodConfig>> entry : this.replicaSets
 					.entrySet()) {
 				String replicaName = entry.getKey();
-				String command = "";
+				StringBuilder command = new StringBuilder();
 				for (MongodConfig mongodConfig : entry.getValue()) {
-					if (command.isEmpty()) {
-						command = replicaName + "/";
+					if (command.length() == 0) {
+						command = new StringBuilder(replicaName + "/");
 					} else {
-						command += ",";
+						command.append(",");
 					}
-					command += mongodConfig.net().getServerAddress().getHostName()
-							+ ":" + mongodConfig.net().getPort();
+					command.append(mongodConfig.net().getServerAddress().getHostName()).append(":").append(mongodConfig.net().getPort());
 				}
-				logger.info("Execute add shard command: {}", command);
-				cr = mongoAdminDB.command(new BasicDBObject("addShard", command));
+				logger.info("Execute add shard command: {}", command.toString());
+				cr = mongoAdminDB.command(new BasicDBObject("addShard", command.toString()));
 				logger.info(cr.toString());
 			}
 	

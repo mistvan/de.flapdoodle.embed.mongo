@@ -52,7 +52,7 @@ public class TestStreamToLineProcessor extends TestCase {
 	static class AssertStreamProcessor implements StreamProcessor {
 
 		private final List<String> _checks;
-		private boolean _done = false;
+		private boolean _done;
 
 		public AssertStreamProcessor(List<String> checks) {
 			_checks = checks;

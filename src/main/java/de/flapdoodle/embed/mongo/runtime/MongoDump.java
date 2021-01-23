@@ -23,6 +23,7 @@ package de.flapdoodle.embed.mongo.runtime;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import de.flapdoodle.embed.mongo.config.MongoDumpConfig;
@@ -34,7 +35,7 @@ public class MongoDump extends AbstractMongo {
    public static List<String> getCommandLine(MongoDumpConfig config, ExtractedFileSet files)
       throws UnknownHostException {
       List<String> ret = new ArrayList<>();
-      ret.addAll(Arrays.asList(files.executable().getAbsolutePath()));
+      ret.addAll(Collections.singletonList(files.executable().getAbsolutePath()));
       if (config.isVerbose()) {
          ret.add("-v");
       }

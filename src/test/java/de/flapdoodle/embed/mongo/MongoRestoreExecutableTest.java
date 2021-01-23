@@ -59,7 +59,7 @@ public class MongoRestoreExecutableTest extends TestCase {
       MongoRestoreProcess mongoRestoreProcess = null;
       MongoRestoreProcess mongoRestoreArchiveProcess = null;
 
-      Boolean dataRestored = false;
+      boolean dataRestored = false;
       try {
          mongoRestoreProcess = mongoRestoreExecutable.start();
          mongoRestoreArchiveProcess = mongoRestoreExecutableArchive.start();

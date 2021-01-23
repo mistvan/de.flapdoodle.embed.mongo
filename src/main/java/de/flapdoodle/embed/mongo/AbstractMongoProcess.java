@@ -44,9 +44,9 @@ import de.flapdoodle.embed.process.runtime.ProcessControl;
 
 public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extends Executable<T, P>, P extends IStopable> extends AbstractProcess<T, E, P> {
 
-	private static Logger logger = LoggerFactory.getLogger(AbstractMongoProcess.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMongoProcess.class);
 	
-	private boolean stopped=false;
+	private boolean stopped;
 	
 	public AbstractMongoProcess(Distribution distribution, T config, RuntimeConfig runtimeConfig, E executable)
 			throws IOException {
@@ -103,13 +103,13 @@ public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extend
 
 				stopped = true;
 
-				logger.debug("try to stop mongod");
+				LOGGER.debug("try to stop mongod");
 				if (!sendStopToMongoInstance()) {
-					logger.warn("could not stop mongod with db command, try next");
+					LOGGER.warn("could not stop mongod with db command, try next");
 					if (!sendKillToProcess()) {
-						logger.warn("could not stop mongod, try next");
+						LOGGER.warn("could not stop mongod, try next");
 						if (!tryKillToProcess()) {
-							logger.warn("could not stop mongod the second time, try one last thing");
+							LOGGER.warn("could not stop mongod the second time, try one last thing");
 						}
 					}
 				}
@@ -132,7 +132,7 @@ public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extend
 		try {
 			return Mongod.sendShutdown(getConfig().net().getServerAddress(), getConfig().net().getPort());
 		} catch (UnknownHostException e) {
-			logger.error("sendStop", e);
+			LOGGER.error("sendStop", e);
 		}
 		return false;
 	}

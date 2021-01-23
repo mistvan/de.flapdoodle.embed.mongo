@@ -27,7 +27,7 @@ import de.flapdoodle.embed.process.config.ExecutableProcessConfig;
 
 public interface MongoCommonConfig extends ExecutableProcessConfig {
 	@Override
-	public IFeatureAwareVersion version();
+    IFeatureAwareVersion version();
 
 	@Default
 	default Timeout timeout() {

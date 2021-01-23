@@ -100,7 +100,7 @@ public class ExtractMarkdownFromCode {
 	
 	private static Collection<String> compactEmptyLines(Collection<String> lines) {
 		return Collections2.filter(Collections2.transform(lines, StringUtils::trimToEmpty), new Predicate<String>() {
-			boolean lastOneWasEmpty=false;
+			boolean lastOneWasEmpty;
 			@Override
 			public boolean apply(String input) {
 				boolean addThisLine=true;
@@ -127,7 +127,7 @@ public class ExtractMarkdownFromCode {
 	private static Collection<String> stripNonCodeLines(Collection<String> lines) {
 		return Collections2.filter(lines, new Predicate<String>() {
 
-			boolean codeStarted = false;
+			boolean codeStarted;
 
 			@Override
 			public boolean apply(String input) {
@@ -155,7 +155,7 @@ public class ExtractMarkdownFromCode {
 	private static Collection<String> startWithFirstHeader(Collection<String> lines) {
 		Collection<String> withFirstHeader = Collections2.filter(lines, new Predicate<String>() {
 
-			boolean hit = false;
+			boolean hit;
 
 			@Override
 			public boolean apply(String input) {

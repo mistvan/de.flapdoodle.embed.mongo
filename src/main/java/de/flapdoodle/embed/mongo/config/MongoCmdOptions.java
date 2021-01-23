@@ -75,11 +75,11 @@ public interface MongoCmdOptions {
 		return false;
 	}
 
-	public static ImmutableMongoCmdOptions.Builder builder() {
+	static ImmutableMongoCmdOptions.Builder builder() {
 		return ImmutableMongoCmdOptions.builder();
 	}
 
-	public static MongoCmdOptions defaults() {
+	static MongoCmdOptions defaults() {
 		return ImmutableMongoCmdOptions.builder().build();
 	}
 }
