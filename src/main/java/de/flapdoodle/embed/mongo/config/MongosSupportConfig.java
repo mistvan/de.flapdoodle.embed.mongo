@@ -22,7 +22,7 @@ package de.flapdoodle.embed.mongo.config;
 
 public class MongosSupportConfig extends AbstractSupportConfig {
 
-	private static MongosSupportConfig _instance=new MongosSupportConfig();
+	private static final MongosSupportConfig INSTANCE =new MongosSupportConfig();
 	
 	@Override
 	public String name() {
@@ -35,7 +35,7 @@ public class MongosSupportConfig extends AbstractSupportConfig {
 	}
 	
 	public static de.flapdoodle.embed.process.config.SupportConfig getInstance() {
-		return _instance;
+		return INSTANCE;
 	}
 
 }

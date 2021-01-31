@@ -103,7 +103,7 @@ public interface MongoRestoreConfig extends MongoCommonConfig {
 		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.MongoRestore);
 	}
 	
-	public static ImmutableMongoRestoreConfig.Builder builder() {
+	static ImmutableMongoRestoreConfig.Builder builder() {
 		return ImmutableMongoRestoreConfig.builder();
 	}
 }

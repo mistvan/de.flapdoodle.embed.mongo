@@ -52,7 +52,7 @@ public interface MongosConfig extends MongoCommonConfig {
 		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.MongoS);
 	}
 	
-	public static ImmutableMongosConfig.Builder builder() {
+	static ImmutableMongosConfig.Builder builder() {
 		return ImmutableMongosConfig.builder();
 	}
 }

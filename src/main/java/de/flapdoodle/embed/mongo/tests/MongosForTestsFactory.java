@@ -50,7 +50,7 @@ import de.flapdoodle.embed.process.runtime.Network;
  */
 public class MongosForTestsFactory {
 
-	private static Logger logger = LoggerFactory.getLogger(MongosForTestsFactory.class
+	private static final Logger LOGGER = LoggerFactory.getLogger(MongosForTestsFactory.class
 			.getName());
 
 	public static MongosForTestsFactory with(final IFeatureAwareVersion version)
@@ -83,7 +83,7 @@ public class MongosForTestsFactory {
 	 *            version of MongoDB.
 	 */
 	public MongosForTestsFactory(final IFeatureAwareVersion version) throws IOException {
-		final MongosStarter mongoConfigRuntime = MongosStarter.getInstance(Defaults.runtimeConfigFor(Command.MongoS, logger)
+		final MongosStarter mongoConfigRuntime = MongosStarter.getInstance(Defaults.runtimeConfigFor(Command.MongoS, LOGGER)
 			.build());
 
 		int configServerPort = 27019;
@@ -97,7 +97,7 @@ public class MongosForTestsFactory {
 		mongoConfigExecutable = mongoConfigRuntime.prepare(config);
 		mongoConfigProcess = mongoConfigExecutable.start();
 
-		final MongosStarter runtime = MongosStarter.getInstance(Defaults.runtimeConfigFor(Command.MongoS, logger)
+		final MongosStarter runtime = MongosStarter.getInstance(Defaults.runtimeConfigFor(Command.MongoS, LOGGER)
 			.build());
 		
 		config = MongosConfig.builder()

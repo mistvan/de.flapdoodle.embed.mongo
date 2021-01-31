@@ -227,7 +227,7 @@ public enum Version implements IFeatureAwareVersion {
   ;
 
 	private final String specificVersion;
-	private EnumSet<Feature> features;
+	private final EnumSet<Feature> features;
 
 	Version(String vName,Feature...features) {
 		this.specificVersion = vName;

@@ -94,7 +94,7 @@ public interface MongoDumpConfig extends MongoCommonConfig {
 		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.MongoDump);
 	}
 
-	public static ImmutableMongoDumpConfig.Builder builder() {
+	static ImmutableMongoDumpConfig.Builder builder() {
 		return ImmutableMongoDumpConfig.builder();
 	}
 }

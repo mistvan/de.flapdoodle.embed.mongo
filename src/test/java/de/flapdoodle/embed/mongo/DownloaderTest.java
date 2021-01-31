@@ -55,7 +55,7 @@ import de.flapdoodle.embed.process.store.UrlConnectionDownloader;
 public class DownloaderTest {
 
 	private static final int LISTEN_PORT = 17171;
-	Server server = null;
+	Server server;
 
 	@Rule
 	public TemporaryFolder tempDir = new TemporaryFolder();

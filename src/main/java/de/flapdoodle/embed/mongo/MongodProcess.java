@@ -40,7 +40,7 @@ import de.flapdoodle.embed.process.io.file.Files;
  */
 public class MongodProcess extends AbstractMongoProcess<MongodConfig, MongodExecutable, MongodProcess> {
 
-	private static Logger logger = LoggerFactory.getLogger(MongodProcess.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MongodProcess.class);
 
 	private File dbDir;
 	private boolean dbDirIsTemp;
@@ -94,7 +94,7 @@ public class MongodProcess extends AbstractMongoProcess<MongodConfig, MongodExec
 		super.deleteTempFiles();
 		
 		if ((dbDir != null) && (dbDirIsTemp) && (!Files.forceDelete(dbDir))) {
-			logger.warn("Could not delete temp db dir: {}", dbDir);
+			LOGGER.warn("Could not delete temp db dir: {}", dbDir);
 		}
 		
 	}

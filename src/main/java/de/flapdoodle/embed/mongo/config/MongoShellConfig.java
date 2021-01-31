@@ -49,7 +49,7 @@ public interface MongoShellConfig extends MongoCommonConfig {
 		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.Mongo);
 	}
 	
-	public static ImmutableMongoShellConfig.Builder builder() {
+	static ImmutableMongoShellConfig.Builder builder() {
 		return ImmutableMongoShellConfig.builder();
 	}
 }

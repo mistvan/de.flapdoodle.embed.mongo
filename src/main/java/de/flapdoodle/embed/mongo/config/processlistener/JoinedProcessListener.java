@@ -24,8 +24,8 @@ import java.io.File;
 
 public class JoinedProcessListener implements IMongoProcessListener {
 
-	private IMongoProcessListener first;
-	private IMongoProcessListener second;
+	private final IMongoProcessListener first;
+	private final IMongoProcessListener second;
 
 	public JoinedProcessListener(IMongoProcessListener first, IMongoProcessListener second) {
 		this.first = first;

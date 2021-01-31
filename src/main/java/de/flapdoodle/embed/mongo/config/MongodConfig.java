@@ -69,7 +69,7 @@ public interface MongodConfig extends MongoCommonConfig {
 		return new de.flapdoodle.embed.mongo.config.SupportConfig(Command.MongoD);
 	}
 	
-	public static ImmutableMongodConfig.Builder builder() {
+	static ImmutableMongodConfig.Builder builder() {
 		return ImmutableMongodConfig.builder();
 	}
 }

@@ -55,7 +55,7 @@ import de.flapdoodle.embed.process.runtime.NUMA;
  */
 public class Mongod extends AbstractMongo {
 
-	private static Logger logger = LoggerFactory.getLogger(Mongod.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Mongod.class);
 
 	/**
 	 * Binary sample of shutdown command
@@ -73,7 +73,7 @@ public class Mongod extends AbstractMongo {
 
 	public static boolean sendShutdown(InetAddress hostname, int port) {
 		if (!hostname.isLoopbackAddress()) {
-			logger.warn("---------------------------------------\n"
+			LOGGER.warn("---------------------------------------\n"
 					+ "Your localhost ({}) is not a loopback adress\n"
 					+ "We can NOT send shutdown to mongod, because it is denied from remote.\n"
 					+ "---------------------------------------\n", hostname.getHostAddress());
@@ -93,7 +93,7 @@ public class Mongod extends AbstractMongo {
 			tryToReadErrorResponse = true;
 			InputStream inputStream = s.getInputStream();
 			if (inputStream.read(new byte[BYTE_BUFFER_LENGTH]) != -1) {
-				logger.error("Got some response, should be an error message");
+				LOGGER.error("Got some response, should be an error message");
 				return false;
 			}
 			return true;
@@ -101,13 +101,13 @@ public class Mongod extends AbstractMongo {
 			if (tryToReadErrorResponse) {
 				return true;
 			}
-			logger.warn("sendShutdown {}:{}", hostname, port, iox);
+			LOGGER.warn("sendShutdown {}:{}", hostname, port, iox);
 		} finally {
 			try {
 				s.close();
 				Thread.sleep(WAITING_TIME_SHUTDOWN_IN_MS);
 			} catch (InterruptedException | IOException ix) {
-				logger.warn("sendShutdown closing {}:{}", hostname, port, ix);
+				LOGGER.warn("sendShutdown closing {}:{}", hostname, port, ix);
 			}
 		}
 		return false;
@@ -225,7 +225,7 @@ public class Mongod extends AbstractMongo {
 				ret.addAll(commands);
 				return ret;
 			default:
-				logger.warn("NUMA Plattform detected, but not supported.");
+				LOGGER.warn("NUMA Plattform detected, but not supported.");
 			}
 		}
 		return commands;
