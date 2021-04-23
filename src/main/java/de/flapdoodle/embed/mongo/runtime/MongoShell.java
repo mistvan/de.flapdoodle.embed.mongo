@@ -24,7 +24,6 @@ import static java.util.Arrays.asList;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,8 +38,7 @@ public class MongoShell extends AbstractMongo {
 
 	public static List<String> getCommandLine(MongoShellConfig config, ExtractedFileSet files)
 			throws UnknownHostException {
-		List<String> ret = new ArrayList<>();
-		ret.addAll(Collections.singletonList(files.executable().getAbsolutePath()));
+        List<String> ret = new ArrayList<>(Collections.singletonList(files.executable().getAbsolutePath()));
 
 		String hostname="localhost";
 		Net net = config.net();

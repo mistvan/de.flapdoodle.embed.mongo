@@ -118,20 +118,19 @@ public class Mongod extends AbstractMongo {
 		Matcher matcher = pattern.matcher(output);
 		if (matcher.find()) {
 			String value = matcher.group(1);
-			return Integer.valueOf(value);
+			return Integer.parseInt(value);
 		}
 		return defaultValue;
 	}
 
 	public static List<String> getCommandLine(MongodConfig config, ExtractedFileSet files, File dbDir)
 			throws UnknownHostException {
-		List<String> ret = new ArrayList<>();
-		ret.addAll(asList(Files.fileOf(files.baseDir(), files.executable()).getAbsolutePath(),
-			"--dbpath", "" + dbDir.getAbsolutePath()));
+		List<String> ret = new ArrayList<>(asList(Files.fileOf(files.baseDir(), files.executable()).getAbsolutePath(),
+				"--dbpath", "" + dbDir.getAbsolutePath()));
 
 		if (config.params() != null && !config.params().isEmpty()) {
 			for (Object key : config.params().keySet()) {
-				ret.addAll(asList(format("--setParameter"), format("%s=%s", key, config.params().get(key))));
+				ret.addAll(asList("--setParameter", format("%s=%s", key, config.params().get(key))));
 			}
 		}
 		if (config.args() != null && !config.args().isEmpty()) {
