@@ -95,7 +95,7 @@ public class Paths implements PackageResolver {
 		ArchiveType archiveType = getArchiveType(distribution);
 		String archiveTypeStr = getArchiveString(archiveType);
 
-        String platformStr = getPlattformString(distribution);
+        String platformStr = getPlatformString(distribution);
 
         String bitSizeStr = getBitSize(distribution);
 
@@ -126,7 +126,7 @@ public class Paths implements PackageResolver {
         return sarchiveType;
     }
 
-    private String getPlattformString(Distribution distribution) {
+    private String getPlatformString(Distribution distribution) {
         String splatform;
         switch (distribution.platform()) {
             case Linux:
