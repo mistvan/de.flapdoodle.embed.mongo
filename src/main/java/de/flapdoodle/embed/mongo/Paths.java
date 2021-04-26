@@ -20,6 +20,8 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import java.util.Locale;
+
 import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
@@ -86,27 +88,22 @@ public class Paths implements PackageResolver {
 	}
 
 	public String getPath(Distribution distribution) {
-		String versionStr = getVersionPart(distribution.version());
 
 		if (distribution.platform() == Platform.Solaris && isFeatureEnabled(distribution, Feature.NO_SOLARIS_SUPPORT)) {
-		    throw new IllegalArgumentException("Mongodb for solaris is not available anymore");
-        }
+			throw new IllegalArgumentException("Mongodb for solaris is not available anymore");
+		}
 
 		ArchiveType archiveType = getArchiveType(distribution);
 		String archiveTypeStr = getArchiveString(archiveType);
 
-        String platformStr = getPlatformString(distribution);
+		String platformStr = getPlatformString(distribution);
 
-        String bitSizeStr = getBitSize(distribution);
+		String bitSizeStr = getBitSize(distribution);
+		String versionStr = getVersionPart(distribution);
 
-        if ((distribution.bitsize()==BitSize.B64) && (distribution.platform()==Platform.Windows)) {
-				versionStr = (useWindows2008PlusVersion(distribution) ? "2008plus-": "")
-                        + (withSsl(distribution) ? "ssl-": "")
-                        + versionStr;
-		}
 		if (distribution.platform() == Platform.OS_X && withSsl(distribution) ) {
-            return platformStr + "/mongodb-" + platformStr + "-ssl-" + bitSizeStr + "-" + versionStr + "." + archiveTypeStr;
-        }
+			return platformStr + "/mongodb-" + platformStr + "-ssl-" + bitSizeStr + "-" + versionStr + "." + archiveTypeStr;
+		}
 
 		return platformStr + "/mongodb-" + platformStr + "-" + bitSizeStr + "-" + versionStr + "." + archiveTypeStr;
 	}
@@ -176,7 +173,13 @@ public class Paths implements PackageResolver {
                 }
                 break;
             case B64:
-                sbitSize = "x86_64";
+                switch (distribution.architecture()) {
+                    case AARCH64:
+                        sbitSize = "aarch64";
+                        break;
+                    default:
+                        sbitSize = "x86_64";
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown BitSize " + distribution.bitsize());
@@ -209,8 +212,22 @@ public class Paths implements PackageResolver {
                 &&  ((IFeatureAwareVersion) distribution.version()).enabled(feature));
     }
 
-	protected static String getVersionPart(Version version) {
-		return version.asInDownloadPath();
+	protected String getVersionPart(Distribution distribution) {
+        String versionStr = distribution.version().asInDownloadPath();
+
+        if ((distribution.bitsize()==BitSize.B64) && (distribution.platform()==Platform.Windows)) {
+            versionStr = (useWindows2008PlusVersion(distribution) ? "2008plus-": "")
+                    + (withSsl(distribution) ? "ssl-": "")
+                    + versionStr;
+        } else if (distribution.platform() == Platform.Linux) {
+            versionStr = "ubuntu1804-" + versionStr;
+
+        }
+        return versionStr;
 	}
+
+    protected static String getVersionPart(Version version) {
+        return version.asInDownloadPath();
+    }
 
 }
