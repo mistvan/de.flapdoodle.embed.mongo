@@ -64,8 +64,6 @@ public class DownloaderTest {
 
 	@Before
 	public void setUp() throws Exception {
-		System.setProperty("os.arch", "aarch64");
-
 		// start the jetty container
 		server = new Server(LISTEN_PORT);
 		File myTmpDir = tempDir.newFolder();
