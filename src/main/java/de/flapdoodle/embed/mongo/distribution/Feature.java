@@ -36,7 +36,10 @@ public enum Feature {
 	ONLY_WINDOWS_2008_SERVER,
 	ONLY_WINDOWS_2012_SERVER,
 	NO_SOLARIS_SUPPORT,
-	NO_BIND_IP_TO_LOCALHOST;
+	NO_BIND_IP_TO_LOCALHOST,
+
+	LINUX_AARCH64
+	;
 
 
 	public static EnumSet<Feature> asSet(Feature... features) {

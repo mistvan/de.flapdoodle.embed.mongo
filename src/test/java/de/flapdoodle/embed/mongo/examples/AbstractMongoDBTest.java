@@ -26,6 +26,7 @@ import java.net.UnknownHostException;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 
+import de.flapdoodle.embed.mongo.MongoBaseTestCase;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -34,10 +35,9 @@ import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
-import junit.framework.TestCase;
 
 // ->
-public abstract class AbstractMongoDBTest extends TestCase {
+public abstract class AbstractMongoDBTest extends MongoBaseTestCase {
 
 
 	/**
@@ -72,8 +72,10 @@ public abstract class AbstractMongoDBTest extends TestCase {
 	}
 
 	protected ImmutableMongodConfig.Builder createMongodConfigBuilder() throws UnknownHostException, IOException {
+		final Version.Main version = Version.Main.PRODUCTION;
 		return MongodConfig.builder()
-			.version(Version.Main.PRODUCTION)
+			.version(version)
+			.cmdOptions(getCmdOptions(version))
 			.net(new Net(port, Network.localhostIsIPv6()));
 	}
 

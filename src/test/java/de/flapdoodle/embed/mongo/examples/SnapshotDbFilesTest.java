@@ -42,7 +42,11 @@ public class SnapshotDbFilesTest extends AbstractMongoDBTest {
 		builder.processListener(
 				new CopyDbFilesFromDirBeforeProcessStop(Files.createTempDir(new PlatformTempDir(), "embedmongo-snapshot"))
 				)
-		.cmdOptions(MongoCmdOptions.builder().syncDelay(1).build());
+		.cmdOptions(MongoCmdOptions.builder()
+				.useNoPrealloc(false)
+				.useSmallFiles(false)
+				.syncDelay(1)
+				.build());
 		return builder;
 	}
 	

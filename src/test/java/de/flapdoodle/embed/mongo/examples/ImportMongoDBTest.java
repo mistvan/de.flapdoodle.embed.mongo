@@ -24,6 +24,7 @@ package de.flapdoodle.embed.mongo.examples;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import de.flapdoodle.embed.mongo.MongoBaseTestCase;
 import org.junit.Test;
 
 import com.mongodb.MongoClient;
@@ -44,7 +45,7 @@ import junit.framework.TestCase;
 /**
  * Created by canyaman on 10/04/14.
  */
-public class ImportMongoDBTest extends TestCase {
+public class ImportMongoDBTest extends MongoBaseTestCase {
 
     @Test
     public void testStartAndStopMongoImportAndMongod() throws UnknownHostException, IOException {
@@ -90,8 +91,10 @@ public class ImportMongoDBTest extends TestCase {
     }
 
     private MongodProcess startMongod(int defaultConfigPort) throws UnknownHostException, IOException {
+        final Version.Main version = Version.Main.PRODUCTION;
         MongodConfig mongoConfigConfig = MongodConfig.builder()
-                .version(Version.Main.PRODUCTION)
+                .version(version)
+                .cmdOptions(getCmdOptions(version))
                 .net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
                 .build();
 

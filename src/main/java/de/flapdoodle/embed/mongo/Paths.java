@@ -26,6 +26,7 @@ import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.FileType;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
+import de.flapdoodle.embed.process.distribution.Architecture;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.BitSize;
 import de.flapdoodle.embed.process.distribution.Distribution;
@@ -37,12 +38,17 @@ import de.flapdoodle.embed.process.distribution.Version;
  */
 public class Paths implements PackageResolver {
 
+    /**
+     * A marker indicating that there is no user defined Linux distribution.
+     * In this case the newest Ubuntu version will be selected.
+     */
+    private static final String UNKNOWN_LINUX_DISTRO = "unknown-linux-distro";
 	/**
-	 * A system property that could be used to set the preffered Linux distribution
+	 * A system property that could be used to set the preferred Linux distribution
 	 * See <a href="https://www.mongodb.com/download-center/community/releases">Mongodb download</a> for their list.
 	 */
 	// Later this could be made smarter by using lsb_release or similar to auto-detect the distro and its version
-	private static final String LINUX_DISTRO = System.getProperty("de.flapdoodle.embed.mongo.linux.distro", "ubuntu1804-");
+	private static final String LINUX_DISTRO = System.getProperty("de.flapdoodle.embed.mongo.linux.distro", UNKNOWN_LINUX_DISTRO);
 
 	private final Command command;
 
@@ -104,13 +110,13 @@ public class Paths implements PackageResolver {
 		String platformStr = getPlatformString(distribution);
 
 		String bitSizeStr = getBitSize(distribution);
-		String versionStr = getVersionPart(distribution);
+		String versionStr = getVersionPart(distribution, bitSizeStr);
 
 		if (distribution.platform() == Platform.OS_X && withSsl(distribution) ) {
-			return platformStr + "/mongodb-" + platformStr + "-ssl-" + bitSizeStr + "-" + versionStr + "." + archiveTypeStr;
+			return platformStr + "/mongodb-" + platformStr + "-ssl-" + /*bitSizeStr + "-" +*/ versionStr + "." + archiveTypeStr;
 		}
 
-		return platformStr + "/mongodb-" + platformStr + "-" + bitSizeStr + "-" + versionStr + "." + archiveTypeStr;
+		return platformStr + "/mongodb-" + platformStr + "-" + /*bitSizeStr + "-" +*/ versionStr + "." + archiveTypeStr;
 	}
 
     private String getArchiveString(ArchiveType archiveType) {
@@ -154,10 +160,11 @@ public class Paths implements PackageResolver {
 
     private String getBitSize(Distribution distribution) {
         String sbitSize;
+        final Version version = distribution.version();
         switch (distribution.bitsize()) {
             case B32:
-                if (distribution.version() instanceof IFeatureAwareVersion) {
-                    IFeatureAwareVersion featuredVersion = (IFeatureAwareVersion) distribution.version();
+                if (version instanceof IFeatureAwareVersion) {
+                    IFeatureAwareVersion featuredVersion = (IFeatureAwareVersion) version;
                     if (featuredVersion.enabled(Feature.ONLY_64BIT)) {
                         throw new IllegalArgumentException("this version does not support 32Bit: "+distribution);
                     }
@@ -168,8 +175,6 @@ public class Paths implements PackageResolver {
                         sbitSize = "i686";
                         break;
                     case Windows:
-                        sbitSize = "i386";
-                        break;
                     case OS_X:
                         sbitSize = "i386";
                         break;
@@ -178,12 +183,10 @@ public class Paths implements PackageResolver {
                 }
                 break;
             case B64:
-                switch (distribution.architecture()) {
-                    case AARCH64:
-                        sbitSize = "aarch64";
-                        break;
-                    default:
-                        sbitSize = "x86_64";
+                if (distribution.architecture() == Architecture.AARCH64) {
+                    sbitSize = "aarch64";
+                } else {
+                    sbitSize = "x86_64";
                 }
                 break;
             default:
@@ -220,21 +223,61 @@ public class Paths implements PackageResolver {
                 &&  ((IFeatureAwareVersion) distribution.version()).enabled(feature));
     }
 
-	protected String getVersionPart(Distribution distribution) {
+	protected String getVersionPart(Distribution distribution, String arch) {
         final Version version = distribution.version();
         String versionStr = version.asInDownloadPath();
 
-        if ((distribution.bitsize()==BitSize.B64) && (distribution.platform()==Platform.Windows)) {
-            versionStr = (useWindows2008PlusVersion(distribution) ? "2008plus-": "")
-                    + (useWindows2012PlusVersion(distribution) ? "2012plus-": "")
-                    + (withSsl(distribution) ? "ssl-": "")
-                    + versionStr;
-        } else if (distribution.platform() == Platform.Linux && version.isNewerOrEqual(4, 2, 0)) {
-            versionStr = LINUX_DISTRO + versionStr;
-
+        if (distribution.platform()==Platform.Windows) {
+            if (distribution.bitsize()==BitSize.B64) {
+                versionStr = (useWindows2008PlusVersion(distribution) ? "2008plus-" : "")
+                        + (useWindows2012PlusVersion(distribution) ? "2012plus-" : "")
+                        + (withSsl(distribution) ? "ssl-" : "")
+                        + versionStr;
+            } else {
+                versionStr = arch + "-" + versionStr;
+            }
+        } else if (distribution.platform() == Platform.Linux) {
+            versionStr = getVersionPathLinux(distribution, version) + versionStr;
         }
         return versionStr;
-	}
+    }
+
+    private String getVersionPathLinux(Distribution distribution, Version version) {
+        String result;
+        final String distro = getLinuxDistro(version);
+        if (distribution.architecture() == Architecture.AARCH64) {
+            if (version.isNewerOrEqual(4, 2, 0)) {
+                result = "aarch64-" + distro;
+            } else if (version.isNewerOrEqual(3, 4, 0)) {
+                result = "arm64-ubuntu1604";
+            } else {
+                throw new IllegalArgumentException("Mongodb does not support ARM64 in version " + version);
+            }
+        } else if (version.isNewerOrEqual(3, 6, 0)) {
+            result = "x86_64-" + distro;
+        } else {
+            result = "x86_64-";
+        }
+
+        return result;
+    }
+
+    private String getLinuxDistro(Version version) {
+        String result = "";
+	    if (!UNKNOWN_LINUX_DISTRO.equals(LINUX_DISTRO)) {
+            // use the user defined linux distro
+            result = LINUX_DISTRO;
+        } else if (version.isNewerOrEqual(4, 4, 0)) {
+            result = "ubuntu2004-";
+	    } else if (version.isNewerOrEqual(3, 6, 20)) {
+            result = "ubuntu1804-";
+        } else if (version.isNewerOrEqual(3, 2, 7)) {
+            result = "ubuntu1604-";
+        } else if (version.isNewerOrEqual(3, 0, 0)) {
+            result = "ubuntu1404-";
+        }
+        return result;
+    }
 
     protected static String getVersionPart(Version version) {
         return version.asInDownloadPath();

@@ -51,9 +51,14 @@ public class ShardServerMongoDBTest {
     public void setUp() throws Exception {
 
         MongodStarter runtime = MongodStarter.getDefaultInstance();
+        final Version.Main version = Version.Main.PRODUCTION;
         MongodConfig config = MongodConfig.builder()
-                .version(Version.Main.PRODUCTION)
-                .cmdOptions(MongoCmdOptions.builder().useNoJournal(false).build())
+                .version(version)
+                .cmdOptions(MongoCmdOptions.builder()
+                        .useNoPrealloc(false)
+                        .useSmallFiles(false)
+                        .useNoJournal(false)
+                        .build())
                 .isShardServer(true)
                 .build();
 

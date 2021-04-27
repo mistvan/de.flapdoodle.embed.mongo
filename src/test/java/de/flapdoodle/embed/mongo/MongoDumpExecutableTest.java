@@ -21,7 +21,6 @@
 package de.flapdoodle.embed.mongo;
 
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -83,8 +82,10 @@ public class MongoDumpExecutableTest extends MongoBaseTestCase {
 
     @Test
     public void testStartMongoDump() throws IOException {
+        final Version.Main version = Version.Main.PRODUCTION;
         MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
-                .version(Version.Main.PRODUCTION)
+                .version(version)
+                .cmdOptions(getCmdOptions(version))
                 .net(net)
                 .out(temp.getRoot().getAbsolutePath())
                 .build();
@@ -95,8 +96,10 @@ public class MongoDumpExecutableTest extends MongoBaseTestCase {
 
     @Test
     public void testStartMongoDumpToArchive() throws IOException {
+        final Version.Main version = Version.Main.PRODUCTION;
         MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
-                .version(Version.Main.PRODUCTION)
+                .version(version)
+                .cmdOptions(getCmdOptions(version))
                 .net(net)
                 .archive(temp.getRoot().getAbsolutePath())
                 .build();

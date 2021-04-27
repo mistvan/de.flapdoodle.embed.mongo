@@ -23,6 +23,7 @@ package de.flapdoodle.embed.mongo;
 import de.flapdoodle.embed.mongo.config.ImmutableMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import junit.framework.TestCase;
 
 /**
  * A base class for all tests which create Mongod.
@@ -30,7 +31,8 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
  * <p>It provides logic for deciding what command line options to use for
  * the different Mongo server versions.</p>
  */
-public abstract class MongoBaseTestCase {
+public abstract class MongoBaseTestCase extends TestCase {
+
     private final ImmutableMongoCmdOptions.Builder cmdOptions = MongoCmdOptions.builder();
 
     protected MongoCmdOptions getCmdOptions(IFeatureAwareVersion version) {
