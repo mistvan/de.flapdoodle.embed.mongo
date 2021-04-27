@@ -1,21 +1,23 @@
 ---
-language: java
+distro: bionic
+language: generic
 install: true
-# To solve BufferOverflow on OpenJDK7 we setup short hostname (<64characters)
-# See:
-#   - ISSUE-5227: https://github.com/travis-ci/travis-ci/issues/5227
-#   - https://docs.travis-ci.com/user/hostname
-addons:
-  hosts:
-    - mongo-test-host
-  hostname: mongo-test-host
-script: $TARGET
-jdk:
-- openjdk8
 
-env:
-  matrix:
-    - TARGET='./mvnw test -Ptravis'
+jobs:
+  include:
+    - name: Linux AMD64 OpenJDK8
+      env: JDK_VERSION=8
+    - name: Linux AMD64 OpenJDK11
+      env: JDK_VERSION=11
+    - name: Linux ARM64 OpenJDK11
+      arch: arm64
+      env: JDK_VERSION=11
+
+before_install:
+  - sudo apt update -y
+  - sudo apt install openjdk-${JDK_VERSION}-jdk maven
+
+script: ./mvnw test -Ptravis
 
 notifications:
   email:
