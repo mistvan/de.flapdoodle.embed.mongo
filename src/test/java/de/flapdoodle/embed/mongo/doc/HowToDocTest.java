@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import de.flapdoodle.embed.mongo.MongoBaseTestCase;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -83,20 +84,22 @@ import de.flapdoodle.testdoc.Recorder;
 import de.flapdoodle.testdoc.Recording;
 import de.flapdoodle.testdoc.TabSize;
 
-public class HowToDocTest {
+public class HowToDocTest extends MongoBaseTestCase {
 
 	@ClassRule
 	public static final Recording recording=Recorder.with("Howto.md",TabSize.spaces(2));
 	
 	@Test
-	public void testStandard() throws UnknownHostException, IOException {
+	public void testStandard() throws IOException {
 		recording.begin();
 		MongodStarter starter = MongodStarter.getDefaultInstance();
 
 		int port = Network.getFreeServerPort();
+		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
+				.version(version)
 				.net(new Net(port, Network.localhostIsIPv6()))
+				.cmdOptions(getCmdOptions(version))
 				.build();
 
 		MongodExecutable mongodExecutable = null;
@@ -118,7 +121,7 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomMongodFilename() throws UnknownHostException, IOException {
+	public void testCustomMongodFilename() throws IOException {
 		recording.begin();		
 		int port = Network.getFreeServerPort();
 
@@ -130,9 +133,11 @@ public class HowToDocTest {
 				.executableNaming(new UserTempNaming()))
 		.build();
 
+		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
+				.version(version)
 				.net(new Net(port, Network.localhostIsIPv6()))
+				.cmdOptions(getCmdOptions(version))
 				.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
@@ -210,9 +215,11 @@ public class HowToDocTest {
 	
 	@Test
 	public void testCustomizeArtifactStorage() throws IOException {
+		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
+				.version(version)
 				.net(new Net(Network.getFreeServerPort(), Network.localhostIsIPv6()))
+				.cmdOptions(getCmdOptions(version))
 				.build();
 
 		// ->
@@ -337,9 +344,11 @@ public class HowToDocTest {
 	@Test
 	public void testDefaultOutputToNone() throws IOException {
 		int port = 12345;
+		final IFeatureAwareVersion version = Versions.withFeatures(genericVersion("2.7.1"), Feature.SYNC_DELAY);
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Versions.withFeatures(genericVersion("2.7.1"), Feature.SYNC_DELAY))
+				.version(version)
 				.net(new Net(port, Network.localhostIsIPv6()))
+				.cmdOptions(getCmdOptions(version))
 				.build();
 		// ->
 		// ...
@@ -387,9 +396,11 @@ public class HowToDocTest {
 		// ...
 		recording.begin();
 		int port = 12345;
+		final IFeatureAwareVersion version = Versions.withFeatures(de.flapdoodle.embed.process.distribution.Version.of("2.7.1"), Feature.SYNC_DELAY);
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Versions.withFeatures(de.flapdoodle.embed.process.distribution.Version.of("2.7.1"), Feature.SYNC_DELAY))
+				.version(version)
 				.net(new Net(port, Network.localhostIsIPv6()))
+				.cmdOptions(getCmdOptions(version))
 				.build();
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
@@ -464,7 +475,11 @@ public class HowToDocTest {
 		// ->
 		// ...
 		recording.begin();
-		MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).build();
+		final Version.Main version = Version.Main.PRODUCTION;
+		MongodConfig mongodConfig = MongodConfig.builder()
+				.version(version)
+				.cmdOptions(getCmdOptions(version))
+				.build();
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
 
@@ -504,9 +519,11 @@ public class HowToDocTest {
 		// ->
 		// ...
 		recording.begin();
+		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
+				.version(version)
 				.timeout(new Timeout(30000))
+				.cmdOptions(getCmdOptions(version))
 				.build();
 		recording.end();
 		// ...
@@ -548,7 +565,7 @@ public class HowToDocTest {
 	// <-
 	 */
 	@Test
-	public void testCommandLineOptions() throws UnknownHostException, IOException {
+	public void testCommandLineOptions() {
 		// ->
 		recording.begin();
 		MongodConfig mongodConfig = MongodConfig.builder()
@@ -574,7 +591,7 @@ public class HowToDocTest {
 	// <-
 	 */
 	@Test
-	public void testSnapshotDbFiles() throws UnknownHostException, IOException {
+	public void testSnapshotDbFiles() {
 		File destination = null;
 		// ->
 		recording.begin();
@@ -583,6 +600,8 @@ public class HowToDocTest {
 				.processListener(new CopyDbFilesFromDirBeforeProcessStop(destination))
 				.cmdOptions(MongoCmdOptions.builder()
 						.useDefaultSyncDelay(true)
+						.useNoPrealloc(false)
+						.useSmallFiles(false)
 						.build())
 				.build();
 		recording.end();
@@ -601,9 +620,11 @@ public class HowToDocTest {
 		// ->
 		recording.begin();
 		Storage replication = new Storage("/custom/databaseDir",null,0);
-		
+
+		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
+				.version(version)
+				.cmdOptions(getCmdOptions(version))
 				.replication(replication)
 				.build();
 		recording.end();
@@ -636,8 +657,10 @@ public class HowToDocTest {
 		String database = "importTestDB";
 		String collection = "importedCollection";
 
-		MongodConfig mongoConfigConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
+	  final Version.Main version = Version.Main.PRODUCTION;
+	  MongodConfig mongoConfigConfig = MongodConfig.builder()
+				.version(version)
+			  	.cmdOptions(getCmdOptions(version))
 				.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
 				.build();
 
@@ -646,7 +669,7 @@ public class HowToDocTest {
 
 		try {
 			MongoImportConfig mongoImportConfig = MongoImportConfig.builder()
-					.version(Version.Main.PRODUCTION)
+					.version(version)
 					.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
 					.databaseName(database)
 					.collectionName(collection)

@@ -34,9 +34,8 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
-import junit.framework.TestCase;
 
-public class MongoRestoreExecutableTest extends TestCase {
+public class MongoRestoreExecutableTest extends MongoBaseTestCase {
 
    private static final Logger _logger = LoggerFactory.getLogger(MongoRestoreExecutableTest.class.getName());
    private static final String _archiveFileCompressed = "foo.archive.gz";
@@ -47,7 +46,13 @@ public class MongoRestoreExecutableTest extends TestCase {
       final int serverPort = Network.getFreeServerPort();
       final String dumpLocation = Thread.currentThread().getContextClassLoader().getResource("dump").getFile();
 
-      final MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(new Net(serverPort, Network.localhostIsIPv6())).build();
+      final Version.Main version = Version.Main.PRODUCTION;
+      final MongodConfig mongodConfig = MongodConfig.builder()
+              .version(version)
+              .net(new Net(serverPort, Network.localhostIsIPv6()))
+              .cmdOptions(getCmdOptions(version))
+              .build();
+
       final RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 
       final MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);

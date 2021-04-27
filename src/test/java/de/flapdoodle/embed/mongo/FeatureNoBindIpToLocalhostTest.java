@@ -40,11 +40,11 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 
 
-public class FeatureNoBindIpToLocalhostTest {
+public class FeatureNoBindIpToLocalhostTest extends MongoBaseTestCase {
 
     private static MongodStarter mongodStarter = MongodStarter.getDefaultInstance();
     private static Net net = getNet();
-    private static MongodConfig mongodConfig = createMongoConfig(net);
+    private MongodConfig mongodConfig = createMongoConfig(net);
 
     private MongodExecutable mongodExecutable;
     private MongodProcess mongodProcess;
@@ -78,11 +78,13 @@ public class FeatureNoBindIpToLocalhostTest {
         col.save(new BasicDBObject("testDoc", new Date()));
     }
 
-    private static MongodConfig createMongoConfig(Net net) {
+    private MongodConfig createMongoConfig(Net net) {
+        Version version = Version.V3_6_0;
         return MongodConfig.builder()
-		        .version(Version.V3_6_0)
-		        .net(net)
-		        .build();
+                .version(version)
+                .cmdOptions(getCmdOptions(version))
+                .net(net)
+                .build();
     }
 
     private static Net getNet() {

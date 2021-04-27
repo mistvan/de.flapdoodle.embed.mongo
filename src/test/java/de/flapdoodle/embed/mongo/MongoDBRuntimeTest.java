@@ -49,7 +49,7 @@ import de.flapdoodle.embed.process.distribution.Platform;
 import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Network;
 
-public class MongoDBRuntimeTest {
+public class MongoDBRuntimeTest extends MongoBaseTestCase {
 
 	@Test
 	public void testSingleVersion() throws IOException {
@@ -82,20 +82,16 @@ public class MongoDBRuntimeTest {
 								.packageResolver(new Paths(Command.MongoD) {
 										@Override
 										protected boolean useWindows2008PlusVersion(Distribution distribution) {
-											return true;
+											final de.flapdoodle.embed.process.distribution.Version version = distribution.version();
+											return version.isNewerOrEqual(1, 8, 5) && version.isOlderOrEqual(4, 0, 24);
 										}
 									}).build())).build();
 		
 		Platform platform = Platform.Windows;
 		BitSize bitsize = BitSize.B64;
 		for (IFeatureAwareVersion version : Versions.testableVersions(Version.Main.class)) {
-			// there is no windows 2008 version for 1.8.5 
-			boolean skip = ((version.asInDownloadPath().equals(Version.V1_8_5.asInDownloadPath()))
-					&& (platform == Platform.Windows) && (bitsize == BitSize.B64));
-			if (!skip)
-				check(config, Distribution.of(version, platform, bitsize));
+			check(config, Distribution.of(version, platform, bitsize));
 		}
-
 	}
 
 	private boolean skipThisVersion(Platform platform, IFeatureAwareVersion version, BitSize bitsize) {
@@ -139,7 +135,12 @@ public class MongoDBRuntimeTest {
 		timer.check("After Runtime");
 
 		try {
-			mongod = runtime.prepare(MongodConfig.builder().version(Version.Main.PRODUCTION).net(new Net(port, Network.localhostIsIPv6())).build());
+			final Version.Main version = Version.Main.PRODUCTION;
+			mongod = runtime.prepare(MongodConfig.builder()
+					.version(version)
+					.net(new Net(port, Network.localhostIsIPv6()))
+					.cmdOptions(getCmdOptions(version))
+					.build());
 			timer.check("After mongod");
 			assertNotNull("Mongod", mongod);
 			mongodProcess = mongod.start();

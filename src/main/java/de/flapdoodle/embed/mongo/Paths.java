@@ -20,8 +20,6 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import java.util.Locale;
-
 import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
@@ -38,6 +36,13 @@ import de.flapdoodle.embed.process.distribution.Version;
  *
  */
 public class Paths implements PackageResolver {
+
+	/**
+	 * A system property that could be used to set the preffered Linux distribution
+	 * See <a href="https://www.mongodb.com/download-center/community/releases">Mongodb download</a> for their list.
+	 */
+	// Later this could be made smarter by using lsb_release or similar to auto-detect the distro and its version
+	private static final String LINUX_DISTRO = System.getProperty("de.flapdoodle.embed.mongo.linux.distro", "ubuntu1804-");
 
 	private final Command command;
 
@@ -188,17 +193,20 @@ public class Paths implements PackageResolver {
     }
 
     protected boolean useWindows2008PlusVersion(Distribution distribution) {
-	    String osName = System.getProperty("os.name");
-        if (osName.contains("Windows Server 2008 R2")
-                || (distribution.version() instanceof IFeatureAwareVersion)
-                && ((IFeatureAwareVersion) distribution.version()).enabled(Feature.ONLY_WINDOWS_2008_SERVER))  {
-            return true;
-        } else {
-            return osName.contains("Windows 7");
-        }
-	}
+        final Version version = distribution.version();
+        return distribution.platform() == Platform.Windows
+                && version instanceof IFeatureAwareVersion
+                && ((IFeatureAwareVersion) version).enabled(Feature.ONLY_WINDOWS_2008_SERVER);
+    }
 
-	protected boolean withSsl(Distribution distribution) {
+    protected boolean useWindows2012PlusVersion(Distribution distribution) {
+        final Version version = distribution.version();
+        return distribution.platform() == Platform.Windows
+                && version instanceof IFeatureAwareVersion
+                && ((IFeatureAwareVersion) version).enabled(Feature.ONLY_WINDOWS_2012_SERVER);
+    }
+
+    protected boolean withSsl(Distribution distribution) {
         if ((distribution.platform() == Platform.Windows || distribution.platform() == Platform.OS_X)
                 && distribution.version() instanceof IFeatureAwareVersion) {
             return ((IFeatureAwareVersion) distribution.version()).enabled(Feature.ONLY_WITH_SSL);
@@ -213,14 +221,16 @@ public class Paths implements PackageResolver {
     }
 
 	protected String getVersionPart(Distribution distribution) {
-        String versionStr = distribution.version().asInDownloadPath();
+        final Version version = distribution.version();
+        String versionStr = version.asInDownloadPath();
 
         if ((distribution.bitsize()==BitSize.B64) && (distribution.platform()==Platform.Windows)) {
             versionStr = (useWindows2008PlusVersion(distribution) ? "2008plus-": "")
+                    + (useWindows2012PlusVersion(distribution) ? "2012plus-": "")
                     + (withSsl(distribution) ? "ssl-": "")
                     + versionStr;
-        } else if (distribution.platform() == Platform.Linux) {
-            versionStr = "ubuntu1804-" + versionStr;
+        } else if (distribution.platform() == Platform.Linux && version.isNewerOrEqual(4, 2, 0)) {
+            versionStr = LINUX_DISTRO + versionStr;
 
         }
         return versionStr;

@@ -220,27 +220,62 @@ public enum Version implements IFeatureAwareVersion {
   V4_0_2("4.0.2", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
   V4_0_12("4.0.12", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
 
-  V4_2_13("4.2.13", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
+  V4_2_13("4.2.13", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2012_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
 
   @Deprecated
   V4_4_1("4.4.1", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
-  V4_4_5("4.4.5", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
-  LATEST_NIGHTLY("latest", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
+  V4_4_5("4.4.5", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
+  V4_9_0_rc0("4.9.0-rc0", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
+  LATEST_NIGHTLY("latest", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
 
 
   ;
 
 	private final String specificVersion;
 	private final EnumSet<Feature> features;
+	private final int major;
+	private final int minor;
+	private final int patch;
 
 	Version(String vName,Feature...features) {
 		this.specificVersion = vName;
 		this.features = Feature.asSet(features);
+		if ("latest".equals(vName)) {
+			this.major = Integer.MAX_VALUE;
+			this.minor = Integer.MAX_VALUE;
+			this.patch = Integer.MAX_VALUE;
+		} else {
+			final String[] semverParts = vName.split("\\.", 3);
+			this.major = Integer.parseInt(semverParts[0], 10);
+			this.minor = Integer.parseInt(semverParts[1], 10);
+			String semverPart3 = semverParts[2];
+			final int idxOfDash = semverPart3.indexOf('-');
+			// cut any -RC/-M
+			if (idxOfDash > 0) {
+				semverPart3 = semverPart3.substring(0, idxOfDash);
+			}
+			this.patch = Integer.parseInt(semverPart3, 10);
+		}
 	}
 
 	@Override
 	public String asInDownloadPath() {
 		return specificVersion;
+	}
+
+	@Override
+	public int major() {
+		return major;
+	}
+
+	@Override
+	public int minor() {
+		return minor;
+	}
+
+	@Override
+	public int patch() {
+		return patch;
 	}
 
 	@Override
@@ -293,12 +328,13 @@ public enum Version implements IFeatureAwareVersion {
 		V3_6(V3_6_5),
 		V4_0(V4_0_12),
 		V4_2(V4_2_13),
-		V4_4(V4_4_5),
+//		V4_4(V4_4_5),
 
 		@Deprecated
 		LEGACY(V3_6),
-		PRODUCTION(V4_0),
-		DEVELOPMENT(V4_0);
+		PRODUCTION(V4_2),
+//		DEVELOPMENT(V4_9_0_rc0);
+		DEVELOPMENT(V4_2);
 
 		private final IFeatureAwareVersion _latest;
 
@@ -309,6 +345,21 @@ public enum Version implements IFeatureAwareVersion {
 		@Override
 		public String asInDownloadPath() {
 			return _latest.asInDownloadPath();
+		}
+
+		@Override
+		public int major() {
+			return _latest.major();
+		}
+
+		@Override
+		public int minor() {
+			return _latest.minor();
+		}
+
+		@Override
+		public int patch() {
+			return _latest.patch();
 		}
 
 		@Override

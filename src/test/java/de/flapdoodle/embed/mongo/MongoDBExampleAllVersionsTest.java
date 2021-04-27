@@ -54,7 +54,7 @@ import de.flapdoodle.embed.process.runtime.Network;
  * @author m.joehren
  */
 @RunWith(value = Parameterized.class)
-public class MongoDBExampleAllVersionsTest {
+public class MongoDBExampleAllVersionsTest extends MongoBaseTestCase {
 
 	@Parameters(name = "{0}")
 	public static java.util.Collection<Object[]> data() {
@@ -88,8 +88,11 @@ public class MongoDBExampleAllVersionsTest {
 	public void setUp() throws Exception {
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
-		mongodExe = runtime.prepare(MongodConfig.builder().version(this.mongoVersion).net(new Net(PORT,
-				Network.localhostIsIPv6())).build());
+		mongodExe = runtime.prepare(MongodConfig.builder()
+				.version(this.mongoVersion)
+				.net(new Net(PORT, Network.localhostIsIPv6()))
+				.cmdOptions(getCmdOptions(mongoVersion))
+				.build());
 		mongod = mongodExe.start();
 
 		mongo = new MongoClient(new ServerAddress(Network.getLocalHost(), PORT));

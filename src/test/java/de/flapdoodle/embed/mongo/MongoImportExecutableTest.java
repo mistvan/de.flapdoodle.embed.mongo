@@ -21,6 +21,8 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -36,18 +38,21 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
-import junit.framework.TestCase;
 
 /**
  * Created by canyaman on 10/04/14.
  */
-public class MongoImportExecutableTest extends TestCase {
+public class MongoImportExecutableTest extends MongoBaseTestCase {
 
     @Test
-    public void testStartMongoImport() throws IOException, InterruptedException {
+    public void testStartMongoImport() throws IOException {
 
         Net net = new Net(Network.getFreeServerPort(), Network.localhostIsIPv6());
-        MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(net).build();
+        final Version.Main version = Version.Main.PRODUCTION;
+        MongodConfig mongodConfig = MongodConfig.builder()
+                .version(version).net(net)
+                .cmdOptions(getCmdOptions(version))
+                .build();
 
         RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 
@@ -72,7 +77,12 @@ public class MongoImportExecutableTest extends TestCase {
     @Test
     public void testMongoImportDoesNotStopMainMongodProcess() throws IOException, InterruptedException {
 
-        MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(new Net(12346, Network.localhostIsIPv6())).build();
+        final Version.Main version = Version.Main.PRODUCTION;
+        MongodConfig mongodConfig = MongodConfig.builder()
+                .version(version)
+                .net(new Net(12346, Network.localhostIsIPv6()))
+                .cmdOptions(getCmdOptions(version))
+                .build();
 
         RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
 

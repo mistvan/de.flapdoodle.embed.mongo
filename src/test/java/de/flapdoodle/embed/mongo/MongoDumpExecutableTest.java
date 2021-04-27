@@ -44,7 +44,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
 
-public class MongoDumpExecutableTest {
+public class MongoDumpExecutableTest extends MongoBaseTestCase {
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
@@ -58,7 +58,12 @@ public class MongoDumpExecutableTest {
         net = new Net(Network.getLocalHost().getHostAddress(),
                 Network.getFreeServerPort(),
                 Network.localhostIsIPv6());
-        MongodConfig mongodConfig = MongodConfig.builder().version(Version.Main.PRODUCTION).net(net).build();
+        final Version.Main version = Version.Main.PRODUCTION;
+        MongodConfig mongodConfig = MongodConfig.builder()
+                .version(version)
+                .cmdOptions(getCmdOptions(version))
+                .net(net)
+                .build();
 
         RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
         mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
