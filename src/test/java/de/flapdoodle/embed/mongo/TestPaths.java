@@ -67,7 +67,7 @@ public class TestPaths extends TestCase {
 
 	public void testPaths() {
 		for (Version v : Version.values()) {
-			assertNotNull("" + v, Paths.getArchAndVersionPart(v));
+			assertNotNull("" + v, Paths.getVersionPart(v));
 		}
 	}
 
