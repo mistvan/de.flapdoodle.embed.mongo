@@ -26,7 +26,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import de.flapdoodle.embed.process.distribution.Architecture;
+import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.distribution.Platform;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,6 +92,11 @@ public class MongoDBExampleAllVersionsTest {
 
 	@Before
 	public void setUp() throws Exception {
+
+		final Distribution distribution = Distribution.detectFor(mongoVersion);
+		if (distribution.platform() == Platform.Linux && distribution.architecture() == Architecture.AARCH64) {
+			Assume.assumeTrue("Mongodb supports Linux ARM64 since 3.4.0", mongoVersion.isNewerOrEqual(3, 4, 0));
+		}
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
 		mongodExe = runtime.prepare(MongodConfig.builder()
