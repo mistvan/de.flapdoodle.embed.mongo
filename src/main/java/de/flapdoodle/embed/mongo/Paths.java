@@ -256,7 +256,7 @@ public class Paths implements PackageResolver {
             if (version.isNewerOrEqual(4, 2, 0)) {
                 result = "aarch64-" + distro;
             } else if (version.isNewerOrEqual(3, 4, 0)) {
-                result = "arm64-ubuntu1604";
+                result = "arm64-ubuntu1604-";
             } else {
                 throw new IllegalArgumentException("Mongodb does not support ARM64 in version " + version);
             }
