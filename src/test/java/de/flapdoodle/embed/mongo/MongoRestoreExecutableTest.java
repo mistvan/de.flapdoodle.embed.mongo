@@ -20,6 +20,8 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+
 import java.io.IOException;
 
 import org.junit.Assert;
@@ -35,7 +37,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
 
-public class MongoRestoreExecutableTest extends MongoBaseTestCase {
+public class MongoRestoreExecutableTest {
 
    private static final Logger _logger = LoggerFactory.getLogger(MongoRestoreExecutableTest.class.getName());
    private static final String _archiveFileCompressed = "foo.archive.gz";

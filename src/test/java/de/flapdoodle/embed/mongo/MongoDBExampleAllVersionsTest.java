@@ -20,6 +20,8 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -54,7 +56,7 @@ import de.flapdoodle.embed.process.runtime.Network;
  * @author m.joehren
  */
 @RunWith(value = Parameterized.class)
-public class MongoDBExampleAllVersionsTest extends MongoBaseTestCase {
+public class MongoDBExampleAllVersionsTest {
 
 	@Parameters(name = "{0}")
 	public static java.util.Collection<Object[]> data() {

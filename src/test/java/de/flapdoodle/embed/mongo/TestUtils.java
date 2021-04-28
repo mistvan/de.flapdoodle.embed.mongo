@@ -31,11 +31,12 @@ import junit.framework.TestCase;
  * <p>It provides logic for deciding what command line options to use for
  * the different Mongo server versions.</p>
  */
-public abstract class MongoBaseTestCase extends TestCase {
+public abstract class TestUtils {
 
-    private final ImmutableMongoCmdOptions.Builder cmdOptions = MongoCmdOptions.builder();
+    private TestUtils() {}
 
-    protected MongoCmdOptions getCmdOptions(IFeatureAwareVersion version) {
+    public static MongoCmdOptions getCmdOptions(IFeatureAwareVersion version) {
+        final ImmutableMongoCmdOptions.Builder cmdOptions = MongoCmdOptions.builder();
         if (version.isNewerOrEqual(4, 2, 0)) {
             cmdOptions
                 .useNoPrealloc(false)

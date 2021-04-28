@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.doc;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
@@ -30,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import de.flapdoodle.embed.mongo.MongoBaseTestCase;
+import de.flapdoodle.embed.mongo.TestUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -84,7 +85,7 @@ import de.flapdoodle.testdoc.Recorder;
 import de.flapdoodle.testdoc.Recording;
 import de.flapdoodle.testdoc.TabSize;
 
-public class HowToDocTest extends MongoBaseTestCase {
+public class HowToDocTest {
 
 	@ClassRule
 	public static final Recording recording=Recorder.with("Howto.md",TabSize.spaces(2));

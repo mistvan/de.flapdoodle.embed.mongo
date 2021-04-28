@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ import de.flapdoodle.embed.process.runtime.Network;
  * @author m.joehren
  */
 //CHECKSTYLE:OFF
-public class MongoExecutableTest extends MongoBaseTestCase {
+public class MongoExecutableTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(MongoExecutableTest.class.getName());
 

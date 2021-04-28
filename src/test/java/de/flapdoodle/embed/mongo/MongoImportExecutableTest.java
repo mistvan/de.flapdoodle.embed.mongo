@@ -21,6 +21,7 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -42,7 +43,7 @@ import de.flapdoodle.embed.process.runtime.Network;
 /**
  * Created by canyaman on 10/04/14.
  */
-public class MongoImportExecutableTest extends MongoBaseTestCase {
+public class MongoImportExecutableTest {
 
     @Test
     public void testStartMongoImport() throws IOException {

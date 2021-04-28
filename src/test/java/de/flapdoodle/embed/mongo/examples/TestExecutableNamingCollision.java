@@ -20,10 +20,13 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import de.flapdoodle.embed.mongo.MongoBaseTestCase;
+import de.flapdoodle.embed.mongo.TestUtils;
+import junit.framework.TestCase;
 import org.junit.Test;
 
 import com.mongodb.Mongo;
@@ -46,7 +49,7 @@ import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ArtifactStore;
 import de.flapdoodle.embed.process.store.UrlConnectionDownloader;
 
-public class TestExecutableNamingCollision extends MongoBaseTestCase {
+public class TestExecutableNamingCollision extends TestCase {
 
 	private MongodExecutable _mongodExe;
 	private MongodProcess _mongod;

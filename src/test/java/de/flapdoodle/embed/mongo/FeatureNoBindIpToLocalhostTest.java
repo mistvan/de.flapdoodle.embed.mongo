@@ -20,10 +20,13 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Date;
 
+import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +43,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 
 
-public class FeatureNoBindIpToLocalhostTest extends MongoBaseTestCase {
+public class FeatureNoBindIpToLocalhostTest {
 
     private static MongodStarter mongodStarter = MongodStarter.getDefaultInstance();
     private static Net net = getNet();

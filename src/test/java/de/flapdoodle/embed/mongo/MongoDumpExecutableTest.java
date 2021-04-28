@@ -20,7 +20,9 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,7 +45,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
 
-public class MongoDumpExecutableTest extends MongoBaseTestCase {
+public class MongoDumpExecutableTest {
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();

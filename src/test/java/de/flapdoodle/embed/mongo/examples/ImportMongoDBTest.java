@@ -21,10 +21,12 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import de.flapdoodle.embed.mongo.MongoBaseTestCase;
+import de.flapdoodle.embed.mongo.TestUtils;
 import org.junit.Test;
 
 import com.mongodb.MongoClient;
@@ -40,12 +42,11 @@ import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
-import junit.framework.TestCase;
 
 /**
  * Created by canyaman on 10/04/14.
  */
-public class ImportMongoDBTest extends MongoBaseTestCase {
+public class ImportMongoDBTest {
 
     @Test
     public void testStartAndStopMongoImportAndMongod() throws UnknownHostException, IOException {

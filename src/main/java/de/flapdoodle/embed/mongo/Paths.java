@@ -110,13 +110,13 @@ public class Paths implements PackageResolver {
 		String platformStr = getPlatformString(distribution);
 
 		String bitSizeStr = getBitSize(distribution);
-		String versionStr = getVersionPart(distribution, bitSizeStr);
+		String versionStr = getArchAndVersionPart(distribution, bitSizeStr);
 
 		if (distribution.platform() == Platform.OS_X && withSsl(distribution) ) {
-			return platformStr + "/mongodb-" + platformStr + "-ssl-" + /*bitSizeStr + "-" +*/ versionStr + "." + archiveTypeStr;
+			return platformStr + "/mongodb-" + platformStr + "-ssl-" + versionStr + "." + archiveTypeStr;
 		}
 
-		return platformStr + "/mongodb-" + platformStr + "-" + /*bitSizeStr + "-" +*/ versionStr + "." + archiveTypeStr;
+		return platformStr + "/mongodb-" + platformStr + "-" + versionStr + "." + archiveTypeStr;
 	}
 
     private String getArchiveString(ArchiveType archiveType) {
@@ -141,7 +141,11 @@ public class Paths implements PackageResolver {
                 splatform = "linux";
                 break;
             case Windows:
-                splatform = "win32";
+                if (distribution.version().isNewerOrEqual(4, 4, 0)) {
+                    splatform = "windows";
+                } else {
+                    splatform = "win32";
+                }
                 break;
             case OS_X:
                 splatform = "osx";
@@ -223,13 +227,14 @@ public class Paths implements PackageResolver {
                 &&  ((IFeatureAwareVersion) distribution.version()).enabled(feature));
     }
 
-	protected String getVersionPart(Distribution distribution, String arch) {
+	protected String getArchAndVersionPart(Distribution distribution, String arch) {
         final Version version = distribution.version();
         String versionStr = version.asInDownloadPath();
 
         if (distribution.platform()==Platform.Windows) {
             if (distribution.bitsize()==BitSize.B64) {
-                versionStr = (useWindows2008PlusVersion(distribution) ? "2008plus-" : "")
+                versionStr = arch + "-"
+                        + (useWindows2008PlusVersion(distribution) ? "2008plus-" : "")
                         + (useWindows2012PlusVersion(distribution) ? "2012plus-" : "")
                         + (withSsl(distribution) ? "ssl-" : "")
                         + versionStr;
@@ -237,12 +242,14 @@ public class Paths implements PackageResolver {
                 versionStr = arch + "-" + versionStr;
             }
         } else if (distribution.platform() == Platform.Linux) {
-            versionStr = getVersionPathLinux(distribution, version) + versionStr;
+            versionStr = getVersionPathLinux(distribution, version, arch) + versionStr;
+        } else {
+            versionStr = arch + "-" + versionStr;
         }
         return versionStr;
     }
 
-    private String getVersionPathLinux(Distribution distribution, Version version) {
+    private String getVersionPathLinux(Distribution distribution, Version version, String arch) {
         String result;
         final String distro = getLinuxDistro(version);
         if (distribution.architecture() == Architecture.AARCH64) {
@@ -254,9 +261,9 @@ public class Paths implements PackageResolver {
                 throw new IllegalArgumentException("Mongodb does not support ARM64 in version " + version);
             }
         } else if (version.isNewerOrEqual(3, 6, 0)) {
-            result = "x86_64-" + distro;
+            result = arch + "-" + distro;
         } else {
-            result = "x86_64-";
+            result = arch + "-";
         }
 
         return result;
@@ -279,7 +286,7 @@ public class Paths implements PackageResolver {
         return result;
     }
 
-    protected static String getVersionPart(Version version) {
+    protected static String getArchAndVersionPart(Version version) {
         return version.asInDownloadPath();
     }
 

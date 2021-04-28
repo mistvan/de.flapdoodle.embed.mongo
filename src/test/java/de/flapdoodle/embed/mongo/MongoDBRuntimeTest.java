@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -49,7 +50,7 @@ import de.flapdoodle.embed.process.distribution.Platform;
 import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Network;
 
-public class MongoDBRuntimeTest extends MongoBaseTestCase {
+public class MongoDBRuntimeTest {
 
 	@Test
 	public void testSingleVersion() throws IOException {
