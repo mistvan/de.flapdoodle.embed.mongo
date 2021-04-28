@@ -33,7 +33,7 @@ public class Versions {
 	}
 
 	public static <T extends Enum<T> & IFeatureAwareVersion> Collection<T> testableVersions(Class<T> type) {
-		return Enums.unique(Enums.filter(Enums.values(type), new Enums.NotDeprecated<T>(type)), new IVersionComparator<>());
+		return Enums.unique(Enums.filter(Enums.values(type), new Enums.NotDeprecated<>(type)), new IVersionComparator<>());
 	}
 
 	static class IVersionComparator<T extends Enum<T> & Version> implements Comparator<T> {
