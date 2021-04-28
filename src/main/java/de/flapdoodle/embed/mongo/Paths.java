@@ -118,21 +118,33 @@ public class Paths implements PackageResolver {
 
     protected String enrichBitSizeWithOsDetails(Distribution distribution, String bitSizeStr) {
 	    String result = bitSizeStr;
-        if (distribution.platform()==Platform.Windows) {
-            if (distribution.bitsize()==BitSize.B64) {
-                result += (useWindows2008PlusVersion(distribution) ? "-2008plus" : "")
-                        + (useWindows2012PlusVersion(distribution) ? "-2012plus" : "")
-                        + (withSsl(distribution) ? "-ssl" : "");
-            }
+        if (distribution.platform()==Platform.Windows && distribution.bitsize()==BitSize.B64) {
+            result += getWindowsDetails(distribution);
         } else if (distribution.platform() == Platform.Linux) {
-            result += getBitSizeAndOsLinux(distribution);
+            result += getLinuxDetails(distribution);
         } else if (distribution.platform() == Platform.OS_X && withSsl(distribution)) {
             result = (withSsl(distribution) ? "ssl-" : "") + result;
         }
 	    return result;
     }
 
-    private String getArchiveString(ArchiveType archiveType) {
+    protected String getWindowsDetails(Distribution distribution) {
+        String result = "";
+        if (useWindows2008PlusVersion(distribution)) {
+            result += "-2008plus";
+        }
+
+        if (useWindows2012PlusVersion(distribution)) {
+            result += "-2012plus";
+        }
+
+        if (withSsl(distribution)) {
+            result += "-ssl";
+        }
+        return result;
+    }
+
+    protected String getArchiveString(ArchiveType archiveType) {
         String sarchiveType;
         switch (archiveType) {
             case TGZ:
@@ -147,7 +159,7 @@ public class Paths implements PackageResolver {
         return sarchiveType;
     }
 
-    private String getPlatformString(Distribution distribution) {
+    protected String getPlatformString(Distribution distribution) {
         String splatform;
         switch (distribution.platform()) {
             case Linux:
@@ -175,7 +187,7 @@ public class Paths implements PackageResolver {
         return splatform;
     }
 
-    private String getBitSize(Distribution distribution) {
+    protected String getBitSize(Distribution distribution) {
         String sbitSize;
         final Version version = distribution.version();
         switch (distribution.bitsize()) {
@@ -244,7 +256,7 @@ public class Paths implements PackageResolver {
                 &&  ((IFeatureAwareVersion) distribution.version()).enabled(feature));
     }
 
-    private String getBitSizeAndOsLinux(Distribution distribution) {
+    protected String getLinuxDetails(Distribution distribution) {
         String result;
         final Version version = distribution.version();
         final String distro = getLinuxDistro(version);
@@ -265,7 +277,7 @@ public class Paths implements PackageResolver {
         return result;
     }
 
-    private String getLinuxDistro(Version version) {
+    protected String getLinuxDistro(Version version) {
         String result = "";
 	    if (!UNKNOWN_LINUX_DISTRO.equals(LINUX_DISTRO)) {
             // use the user defined linux distro
