@@ -22,20 +22,23 @@ package de.flapdoodle.embed.mongo;
 
 import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.distribution.NumericVersion;
+import de.flapdoodle.embed.mongo.packageresolver.CrazyNamingMongoDBPackageResolver;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.FileType;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
-import de.flapdoodle.embed.process.distribution.Architecture;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
-import de.flapdoodle.embed.process.distribution.BitSize;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.distribution.Platform;
 import de.flapdoodle.embed.process.distribution.Version;
+import de.flapdoodle.os.BitSize;
+import de.flapdoodle.os.CPUType;
+import de.flapdoodle.os.OS;
 
 /**
- *
+ * @see CrazyNamingMongoDBPackageResolver
  */
+@Deprecated
 public class Paths implements PackageResolver {
 
     /**
@@ -63,7 +66,7 @@ public class Paths implements PackageResolver {
 
 	public FileSet getFileSet(Distribution distribution) {
 		String executableFileName;
-		switch (distribution.platform()) {
+		switch (distribution.platform().operatingSystem()) {
 			case Linux:
 			case OS_X:
 			case Solaris:
@@ -82,7 +85,7 @@ public class Paths implements PackageResolver {
 	//CHECKSTYLE:OFF
 	public ArchiveType getArchiveType(Distribution distribution) {
 		ArchiveType archiveType;
-		switch (distribution.platform()) {
+		switch (distribution.platform().operatingSystem()) {
 			case Linux:
 			case OS_X:
 			case Solaris:
@@ -100,7 +103,7 @@ public class Paths implements PackageResolver {
 
 	public String getPath(Distribution distribution) {
 
-		if (distribution.platform() == Platform.Solaris && isFeatureEnabled(distribution, Feature.NO_SOLARIS_SUPPORT)) {
+		if (distribution.platform().operatingSystem() == OS.Solaris && isFeatureEnabled(distribution, Feature.NO_SOLARIS_SUPPORT)) {
 			throw new IllegalArgumentException("Mongodb for solaris is not available anymore");
 		}
 
@@ -112,7 +115,7 @@ public class Paths implements PackageResolver {
 		String bitSizeStr = getBitSize(distribution);
 		String versionStr = getArchAndVersionPart(distribution, bitSizeStr);
 
-		if (distribution.platform() == Platform.OS_X && withSsl(distribution) ) {
+		if (distribution.platform().operatingSystem() == OS.OS_X && withSsl(distribution) ) {
 			return platformStr + "/mongodb-" + platformStr + "-ssl-" + versionStr + "." + archiveTypeStr;
 		}
 
@@ -136,12 +139,12 @@ public class Paths implements PackageResolver {
 
     private String getPlatformString(Distribution distribution) {
         String splatform;
-        switch (distribution.platform()) {
+        switch (distribution.platform().operatingSystem()) {
             case Linux:
                 splatform = "linux";
                 break;
             case Windows:
-                if (distribution.version().isNewerOrEqual(4, 4, 0)) {
+                if (numericVersionOf(distribution.version()).isNewerOrEqual(4, 4, 0)) {
                     splatform = "windows";
                 } else {
                     splatform = "win32";
@@ -162,10 +165,14 @@ public class Paths implements PackageResolver {
         return splatform;
     }
 
-    private String getBitSize(Distribution distribution) {
+  public NumericVersion numericVersionOf(Version version) {
+    return ((IFeatureAwareVersion) version).numericVersion();
+  }
+
+  private String getBitSize(Distribution distribution) {
         String sbitSize;
         final Version version = distribution.version();
-        switch (distribution.bitsize()) {
+        switch (distribution.platform().architecture().bitSize()) {
             case B32:
                 if (version instanceof IFeatureAwareVersion) {
                     IFeatureAwareVersion featuredVersion = (IFeatureAwareVersion) version;
@@ -174,7 +181,7 @@ public class Paths implements PackageResolver {
                     }
                 }
 
-                switch (distribution.platform()) {
+                switch (distribution.platform().operatingSystem()) {
                     case Linux:
                         sbitSize = "i686";
                         break;
@@ -187,34 +194,34 @@ public class Paths implements PackageResolver {
                 }
                 break;
             case B64:
-                if (distribution.architecture() == Architecture.AARCH64) {
+                if (distribution.platform().architecture().cpuType() == CPUType.ARM) {
                     sbitSize = "aarch64";
                 } else {
                     sbitSize = "x86_64";
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unknown BitSize " + distribution.bitsize());
+                throw new IllegalArgumentException("Unknown BitSize " + distribution.platform().architecture().bitSize());
         }
         return sbitSize;
     }
 
     protected boolean useWindows2008PlusVersion(Distribution distribution) {
         final Version version = distribution.version();
-        return distribution.platform() == Platform.Windows
+        return distribution.platform().operatingSystem() == OS.Windows
                 && version instanceof IFeatureAwareVersion
                 && ((IFeatureAwareVersion) version).enabled(Feature.ONLY_WINDOWS_2008_SERVER);
     }
 
     protected boolean useWindows2012PlusVersion(Distribution distribution) {
         final Version version = distribution.version();
-        return distribution.platform() == Platform.Windows
+        return distribution.platform().operatingSystem() == OS.Windows
                 && version instanceof IFeatureAwareVersion
                 && ((IFeatureAwareVersion) version).enabled(Feature.ONLY_WINDOWS_2012_SERVER);
     }
 
     protected boolean withSsl(Distribution distribution) {
-        if ((distribution.platform() == Platform.Windows || distribution.platform() == Platform.OS_X)
+        if ((distribution.platform().operatingSystem() == OS.Windows || distribution.platform().operatingSystem() == OS.OS_X)
                 && distribution.version() instanceof IFeatureAwareVersion) {
             return ((IFeatureAwareVersion) distribution.version()).enabled(Feature.ONLY_WITH_SSL);
         } else {
@@ -231,8 +238,8 @@ public class Paths implements PackageResolver {
         final Version version = distribution.version();
         String versionStr = version.asInDownloadPath();
 
-        if (distribution.platform()==Platform.Windows) {
-            if (distribution.bitsize()==BitSize.B64) {
+        if (distribution.platform().operatingSystem() == OS.Windows) {
+            if (distribution.platform().architecture().bitSize()== BitSize.B64) {
                 versionStr = arch + "-"
                         + (useWindows2008PlusVersion(distribution) ? "2008plus-" : "")
                         + (useWindows2012PlusVersion(distribution) ? "2012plus-" : "")
@@ -241,7 +248,7 @@ public class Paths implements PackageResolver {
             } else {
                 versionStr = arch + "-" + versionStr;
             }
-        } else if (distribution.platform() == Platform.Linux) {
+        } else if (distribution.platform().operatingSystem() == OS.Linux) {
             versionStr = getVersionPathLinux(distribution, version, arch) + versionStr;
         } else {
             versionStr = arch + "-" + versionStr;
@@ -252,15 +259,15 @@ public class Paths implements PackageResolver {
     private String getVersionPathLinux(Distribution distribution, Version version, String arch) {
         String result;
         final String distro = getLinuxDistro(version);
-        if (distribution.architecture() == Architecture.AARCH64) {
-            if (version.isNewerOrEqual(4, 2, 0)) {
+        if (distribution.platform().architecture().cpuType() == CPUType.ARM) {
+            if (numericVersionOf(version).isNewerOrEqual(4, 2, 0)) {
                 result = "aarch64-" + distro;
-            } else if (version.isNewerOrEqual(3, 4, 0)) {
+            } else if (numericVersionOf(version).isNewerOrEqual(3, 4, 0)) {
                 result = "arm64-ubuntu1604-";
             } else {
                 throw new IllegalArgumentException("Mongodb does not support ARM64 in version " + version);
             }
-        } else if (version.isNewerOrEqual(3, 6, 0)) {
+        } else if (numericVersionOf(version).isNewerOrEqual(3, 6, 0)) {
             result = arch + "-" + distro;
         } else {
             result = arch + "-";
@@ -274,13 +281,13 @@ public class Paths implements PackageResolver {
 	    if (!UNKNOWN_LINUX_DISTRO.equals(LINUX_DISTRO)) {
             // use the user defined linux distro
             result = LINUX_DISTRO;
-        } else if (version.isNewerOrEqual(4, 4, 0)) {
+        } else if (numericVersionOf(version).isNewerOrEqual(4, 4, 0)) {
             result = "ubuntu2004-";
-	    } else if (version.isNewerOrEqual(3, 6, 20)) {
+	    } else if (numericVersionOf(version).isNewerOrEqual(3, 6, 20)) {
             result = "ubuntu1804-";
-        } else if (version.isNewerOrEqual(3, 2, 7)) {
+        } else if (numericVersionOf(version).isNewerOrEqual(3, 2, 7)) {
             result = "ubuntu1604-";
-        } else if (version.isNewerOrEqual(3, 0, 0)) {
+        } else if (numericVersionOf(version).isNewerOrEqual(3, 0, 0)) {
             result = "ubuntu1404-";
         }
         return result;

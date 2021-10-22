@@ -57,11 +57,6 @@ public class Versions {
 		}
 
 		@Override
-		public boolean enabled(Feature feature) {
-			return _features.contains(feature);
-		}
-
-		@Override
 		public EnumSet<Feature> getFeatures() {
 			return _features;
 		}
@@ -98,7 +93,12 @@ public class Versions {
 			return true;
 		}
 
-        @Override
+		@Override
+		public NumericVersion numericVersion() {
+			throw new IllegalArgumentException("not implemented");
+		}
+
+		@Override
         public String toString() {
            return "GenericFeatureAwareVersion{" + _version.asInDownloadPath() + "}";
 		}

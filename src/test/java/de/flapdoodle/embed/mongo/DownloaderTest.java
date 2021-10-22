@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 
+import de.flapdoodle.os.Platform;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,9 +38,7 @@ import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.handler.ResourceHandler;
 
 import de.flapdoodle.embed.process.config.store.DownloadConfig;
-import de.flapdoodle.embed.process.distribution.BitSize;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.distribution.Platform;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.embed.process.io.progress.ProgressListener;
 import de.flapdoodle.embed.process.store.Downloader;
@@ -98,7 +97,7 @@ public class DownloaderTest {
 	//@Test
 	public void testDownload() throws Exception {
 		initRuntime();
-		Distribution d = Distribution.of(Version.of("3.1.1"), Platform.detect(), BitSize.B64);
+		Distribution d = Distribution.of(Version.of("3.1.1"), Platform.detect());
 		Downloader downloader = new UrlConnectionDownloader();
 		assertNotNull(downloader.download(dc, d));
 	}
@@ -112,7 +111,7 @@ public class DownloaderTest {
 	@Test(expected = Exception.class)
 	public void testDownloadShouldThrowExceptionForUnknownVersion() throws Exception {
 		initRuntime();
-		Distribution d = Distribution.of(Version.of("3013.1.1"), Platform.detect(), BitSize.B64);
+		Distribution d = Distribution.of(Version.of("3013.1.1"), Platform.detect());
 		Downloader downloader = Downloader.platformDefault();
 		assertNotNull(downloader.download(dc, d));
 	}

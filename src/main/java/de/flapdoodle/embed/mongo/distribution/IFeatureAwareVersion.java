@@ -26,7 +26,11 @@ import de.flapdoodle.embed.process.distribution.Version;
 
 
 public interface IFeatureAwareVersion extends Version {
-	boolean enabled(Feature feature);
+	default boolean enabled(Feature feature) {
+		return getFeatures().contains(feature);
+	}
 
 	EnumSet<Feature> getFeatures();
+
+	NumericVersion numericVersion();
 }

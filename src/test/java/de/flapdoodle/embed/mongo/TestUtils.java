@@ -23,6 +23,13 @@ package de.flapdoodle.embed.mongo;
 import de.flapdoodle.embed.mongo.config.ImmutableMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.distribution.NumericVersion;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.os.BitSize;
+import de.flapdoodle.os.CommonArchitecture;
+import de.flapdoodle.os.ImmutablePlatform;
+import de.flapdoodle.os.OS;
 import junit.framework.TestCase;
 
 /**
@@ -35,9 +42,10 @@ public abstract class TestUtils {
 
     private TestUtils() {}
 
+    // TODO there is a feature for that
     public static MongoCmdOptions getCmdOptions(IFeatureAwareVersion version) {
         final ImmutableMongoCmdOptions.Builder cmdOptions = MongoCmdOptions.builder();
-        if (version.isNewerOrEqual(4, 2, 0)) {
+        if (version.numericVersion().isNewerOrEqual(4, 2, 0)) {
             cmdOptions
                 .useNoPrealloc(false)
                 .useSmallFiles(false);
@@ -45,4 +53,16 @@ public abstract class TestUtils {
         return cmdOptions.build();
     }
 
+    public static Distribution distributionOf(de.flapdoodle.embed.process.distribution.Version version, OS os, BitSize bitsize) {
+        return Distribution.of(version, ImmutablePlatform.builder()
+                .operatingSystem(os)
+                .architecture(bitsize==BitSize.B64
+                        ? CommonArchitecture.X86_64
+                        : CommonArchitecture.X86_32)
+                .build());
+    }
+
+    public static NumericVersion numericVersionOf(Version version) {
+        return ((IFeatureAwareVersion) version).numericVersion();
+    }
 }

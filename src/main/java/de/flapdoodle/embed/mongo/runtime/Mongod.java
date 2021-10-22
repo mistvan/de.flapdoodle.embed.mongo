@@ -216,7 +216,7 @@ public class Mongod extends AbstractMongo {
 
 	public static List<String> enhanceCommandLinePlattformSpecific(Distribution distribution, List<String> commands) {
 		if (NUMA.isNUMA(new SupportConfig(Command.MongoD), distribution.platform())) {
-			switch (distribution.platform()) {
+			switch (distribution.platform().operatingSystem()) {
 			case Linux:
 				List<String> ret = new ArrayList<>();
 				ret.add("numactl");

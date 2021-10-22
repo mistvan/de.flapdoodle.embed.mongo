@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import static de.flapdoodle.embed.mongo.TestUtils.distributionOf;
 import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -29,6 +30,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.flapdoodle.os.BitSize;
+import de.flapdoodle.os.CommonArchitecture;
+import de.flapdoodle.os.ImmutablePlatform;
+import de.flapdoodle.os.OS;
 import org.junit.Test;
 
 import com.mongodb.BasicDBObject;
@@ -44,9 +49,7 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.ImmutableRuntimeConfig.Builder;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
-import de.flapdoodle.embed.process.distribution.BitSize;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.distribution.Platform;
 import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import de.flapdoodle.embed.process.runtime.Network;
 
@@ -58,7 +61,11 @@ public class MongoDBRuntimeTest {
 
 		RuntimeConfig config = defaultBuilder.build();
 
-		check(config, Distribution.of(Version.V2_6_0, Platform.Windows, BitSize.B32));
+		check(config, Distribution.of(Version.V2_6_0, ImmutablePlatform.builder()
+						.operatingSystem(OS.Windows)
+						.architecture(CommonArchitecture.X86_32)
+						.build())
+		);
 	}
 
 	@Test
@@ -67,13 +74,13 @@ public class MongoDBRuntimeTest {
 		
 		RuntimeConfig config = defaultBuilder.build();
 
-		for (Platform platform : Platform.values()) {
+		for (OS platform : OS.values()) {
 			for (IFeatureAwareVersion version : Versions.testableVersions(Version.Main.class)) {
 				for (BitSize bitsize : BitSize.values()) {
 					// there is no osx 32bit version for v2.2.1
 					// there is no solaris 32bit version
 					if (!skipThisVersion(platform, version, bitsize)) {
-						check(config, Distribution.of(version, platform, bitsize));
+						check(config, distributionOf(version, platform, bitsize));
 					}
 				}
 			}
@@ -84,30 +91,30 @@ public class MongoDBRuntimeTest {
 										@Override
 										protected boolean useWindows2008PlusVersion(Distribution distribution) {
 											final de.flapdoodle.embed.process.distribution.Version version = distribution.version();
-											return version.isNewerOrEqual(1, 8, 5) && version.isOlderOrEqual(4, 0, 24);
+											return numericVersionOf(version).isNewerOrEqual(1, 8, 5) && numericVersionOf(version).isOlderOrEqual(4, 0, 24);
 										}
 									}).build())).build();
 		
-		Platform platform = Platform.Windows;
+		OS platform = OS.Windows;
 		BitSize bitsize = BitSize.B64;
 		for (IFeatureAwareVersion version : Versions.testableVersions(Version.Main.class)) {
-			check(config, Distribution.of(version, platform, bitsize));
+			check(config, distributionOf(version, platform, bitsize));
 		}
 	}
 
-	private boolean skipThisVersion(Platform platform, IFeatureAwareVersion version, BitSize bitsize) {
+	private boolean skipThisVersion(OS platform, IFeatureAwareVersion version, BitSize bitsize) {
 		if (version.enabled(Feature.ONLY_64BIT) && bitsize==BitSize.B32) {
 			return true;
 		}
 		
-		if ((platform == Platform.OS_X) && (bitsize == BitSize.B32)) {
+		if ((platform == OS.OS_X) && (bitsize == BitSize.B32)) {
 			// there is no osx 32bit version for v2.2.1 and above, so we dont check
 			return true;
 		}
-		if ((platform == Platform.Solaris)  && (bitsize == BitSize.B32) || version.enabled(Feature.NO_SOLARIS_SUPPORT)) {
+		if ((platform == OS.Solaris)  && (bitsize == BitSize.B32) || version.enabled(Feature.NO_SOLARIS_SUPPORT)) {
 			return true;
 		}
-		if (platform == Platform.FreeBSD) {
+		if (platform == OS.FreeBSD) {
 			return true;
 		}
 		return false;

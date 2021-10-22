@@ -23,6 +23,7 @@ package de.flapdoodle.embed.mongo.config;
 import java.util.Map;
 import java.util.Optional;
 
+import de.flapdoodle.os.OS;
 import org.slf4j.Logger;
 
 import de.flapdoodle.embed.mongo.Command;
@@ -34,7 +35,6 @@ import de.flapdoodle.embed.process.config.store.DownloadConfig;
 import de.flapdoodle.embed.process.config.store.ImmutableDownloadConfig;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.distribution.Platform;
 import de.flapdoodle.embed.process.extract.DirectoryAndExecutableNaming;
 import de.flapdoodle.embed.process.extract.NoopTempNaming;
 import de.flapdoodle.embed.process.extract.UUIDTempNaming;
@@ -111,7 +111,7 @@ public abstract class Defaults {
 
 			@Override
 			public String getPath(Distribution distribution) {
-				if (distribution.platform()==Platform.Windows) {
+				if (distribution.platform().operatingSystem()== OS.Windows) {
 					return "https://downloads.mongodb.org/";
 				}
 				return "https://fastdl.mongodb.org/";

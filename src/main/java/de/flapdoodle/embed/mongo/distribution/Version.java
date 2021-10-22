@@ -220,7 +220,7 @@ public enum Version implements IFeatureAwareVersion {
   V4_0_2("4.0.2", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
   V4_0_12("4.0.12", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
 
-  V4_2_13("4.2.13", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2012_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
+  V4_2_13("4.2.13", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2012_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST, Feature.DISABLE_USE_PREALLOC, Feature.DISABLE_USE_SMALL_FILES),
 
   @Deprecated
   V4_4_1("4.4.1", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
@@ -233,29 +233,12 @@ public enum Version implements IFeatureAwareVersion {
 
 	private final String specificVersion;
 	private final EnumSet<Feature> features;
-	private final int major;
-	private final int minor;
-	private final int patch;
+	private final NumericVersion numericVersion;
 
 	Version(String vName,Feature...features) {
 		this.specificVersion = vName;
 		this.features = Feature.asSet(features);
-		if ("latest".equals(vName)) {
-			this.major = Integer.MAX_VALUE;
-			this.minor = Integer.MAX_VALUE;
-			this.patch = Integer.MAX_VALUE;
-		} else {
-			final String[] semverParts = vName.split("\\.", 3);
-			this.major = Integer.parseInt(semverParts[0], 10);
-			this.minor = Integer.parseInt(semverParts[1], 10);
-			String semverPart3 = semverParts[2];
-			final int idxOfDash = semverPart3.indexOf('-');
-			// cut any -RC/-M
-			if (idxOfDash > 0) {
-				semverPart3 = semverPart3.substring(0, idxOfDash);
-			}
-			this.patch = Integer.parseInt(semverPart3, 10);
-		}
+		this.numericVersion = NumericVersion.of(vName);
 	}
 
 	@Override
@@ -264,23 +247,8 @@ public enum Version implements IFeatureAwareVersion {
 	}
 
 	@Override
-	public int major() {
-		return major;
-	}
-
-	@Override
-	public int minor() {
-		return minor;
-	}
-
-	@Override
-	public int patch() {
-		return patch;
-	}
-
-	@Override
-	public boolean enabled(Feature feature) {
-		return features.contains(feature);
+	public NumericVersion numericVersion() {
+		return numericVersion;
 	}
 
 	@Override
@@ -348,28 +316,17 @@ public enum Version implements IFeatureAwareVersion {
 		}
 
 		@Override
-		public int major() {
-			return _latest.major();
-		}
-
-		@Override
-		public int minor() {
-			return _latest.minor();
-		}
-
-		@Override
-		public int patch() {
-			return _latest.patch();
-		}
-
-		@Override
-		public boolean enabled(Feature feature) {
-			return _latest.enabled(feature);
+		public NumericVersion numericVersion() {
+			return _latest.numericVersion();
 		}
 
 		@Override
 		public EnumSet<Feature> getFeatures() {
 			return _latest.getFeatures();
+		}
+
+		public IFeatureAwareVersion latest() {
+			return _latest;
 		}
 	}
 }

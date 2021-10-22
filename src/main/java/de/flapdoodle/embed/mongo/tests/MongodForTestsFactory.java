@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import de.flapdoodle.embed.mongo.config.ImmutableMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
+import de.flapdoodle.embed.mongo.distribution.Feature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,10 +88,11 @@ public class MongodForTestsFactory {
 
 	protected MongodConfig newMongodConfig(final IFeatureAwareVersion version) throws IOException {
 		final ImmutableMongoCmdOptions.Builder cmdOptions = MongoCmdOptions.builder();
-		if (version.isNewerOrEqual(4, 2, 0)) {
-			cmdOptions
-				.useNoPrealloc(false)
-				.useSmallFiles(false);
+		if (version.enabled(Feature.DISABLE_USE_PREALLOC)) {
+			cmdOptions.useNoPrealloc(false);
+		}
+		if (version.enabled(Feature.DISABLE_USE_SMALL_FILES)) {
+			cmdOptions.useSmallFiles(false);
 		}
 
 		return MongodConfig.builder()

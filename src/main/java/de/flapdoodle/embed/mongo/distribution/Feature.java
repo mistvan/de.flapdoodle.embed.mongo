@@ -38,6 +38,9 @@ public enum Feature {
 	NO_SOLARIS_SUPPORT,
 	NO_BIND_IP_TO_LOCALHOST,
 
+	DISABLE_USE_PREALLOC, /* disable usePreAlloc >= 4.2.0 */
+	DISABLE_USE_SMALL_FILES,  /* disable useSmallFiles >= 4.2.0 */
+
 	LINUX_AARCH64
 	;
 
