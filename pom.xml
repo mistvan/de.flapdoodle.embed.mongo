@@ -111,6 +111,9 @@
 									</ignoreClasses>
 									<findAllDuplicates>true</findAllDuplicates>
 								</banDuplicateClasses>
+								<requireMavenVersion>
+									<version>3.5.0</version>
+								</requireMavenVersion>
 							</rules>
 							<fail>true</fail>
 						</configuration>
@@ -408,31 +411,31 @@
                 <dependency>
                     <groupId>org.junit.jupiter</groupId>
                     <artifactId>junit-jupiter-api</artifactId>
-                    <version>5.7.0</version>
+                    <version>5.8.1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.junit.jupiter</groupId>
                     <artifactId>junit-jupiter-engine</artifactId>
-                    <version>5.7.0</version>
+                    <version>5.8.1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.junit.vintage</groupId>
                     <artifactId>junit-vintage-engine</artifactId>
-                    <version>5.7.0</version>
+                    <version>5.8.1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
 					<groupId>org.junit.jupiter</groupId>
 					<artifactId>junit-jupiter-params</artifactId>
-					<version>5.7.0</version>
+					<version>5.8.1</version>
 					<scope>test</scope>
 				</dependency>
                 <dependency>
                     <groupId>org.assertj</groupId>
                     <artifactId>assertj-core</artifactId>
-                    <version>3.17.2</version>
+                    <version>3.21.0</version>
                     <scope>test</scope>
                 </dependency>
                 <!-- needed by infinitest? -->
@@ -447,7 +450,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.5.13</version>
+			<version>4.0.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -484,7 +487,7 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>3.12.7</version>
+			<version>3.12.10</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -492,7 +495,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>30.0-jre</version>
+			<version>31.0.1-jre</version>
 			<scope>test</scope>
 		</dependency>
 
