@@ -27,9 +27,10 @@ import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.FileType;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
-import de.flapdoodle.embed.process.distribution.BitSize;
+import de.flapdoodle.os.BitSize;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.distribution.Platform;
+import de.flapdoodle.os.OS;
+import de.flapdoodle.os.Platform;
 import de.flapdoodle.embed.process.distribution.Version;
 
 /**
@@ -50,7 +51,7 @@ public class Paths implements PackageResolver {
 
 	public FileSet getFileSet(Distribution distribution) {
 		String executableFileName;
-		switch (distribution.platform()) {
+		switch (distribution.platform().operatingSystem()) {
 			case Linux:
 			case OS_X:
 			case Solaris:
@@ -69,7 +70,7 @@ public class Paths implements PackageResolver {
 	//CHECKSTYLE:OFF
 	public ArchiveType getArchiveType(Distribution distribution) {
 		ArchiveType archiveType;
-		switch (distribution.platform()) {
+		switch (distribution.platform().operatingSystem()) {
 			case Linux:
 			case OS_X:
 			case Solaris:
@@ -88,7 +89,7 @@ public class Paths implements PackageResolver {
 	public String getPath(Distribution distribution) {
 		String versionStr = getVersionPart(distribution.version());
 
-		if (distribution.platform() == Platform.Solaris && isFeatureEnabled(distribution, Feature.NO_SOLARIS_SUPPORT)) {
+		if (distribution.platform().operatingSystem() == OS.Solaris && isFeatureEnabled(distribution, Feature.NO_SOLARIS_SUPPORT)) {
 		    throw new IllegalArgumentException("Mongodb for solaris is not available anymore");
         }
 
@@ -99,12 +100,12 @@ public class Paths implements PackageResolver {
 
         String bitSizeStr = getBitSize(distribution);
 
-        if ((distribution.bitsize()==BitSize.B64) && (distribution.platform()==Platform.Windows)) {
+        if ((distribution.platform().architecture().bitSize()==BitSize.B64) && (distribution.platform().operatingSystem()==OS.Windows)) {
 				versionStr = (useWindows2008PlusVersion(distribution) ? "2008plus-": "")
                         + (withSsl(distribution) ? "ssl-": "")
                         + versionStr;
 		}
-		if (distribution.platform() == Platform.OS_X && withSsl(distribution) ) {
+		if (distribution.platform().operatingSystem() == OS.OS_X && withSsl(distribution) ) {
             return platformStr + "/mongodb-" + platformStr + "-ssl-" + bitSizeStr + "-" + versionStr + "." + archiveTypeStr;
         }
 
@@ -128,7 +129,7 @@ public class Paths implements PackageResolver {
 
     private String getPlattformString(Distribution distribution) {
         String splatform;
-        switch (distribution.platform()) {
+        switch (distribution.platform().operatingSystem()) {
             case Linux:
                 splatform = "linux";
                 break;
@@ -152,7 +153,7 @@ public class Paths implements PackageResolver {
 
     private String getBitSize(Distribution distribution) {
         String sbitSize;
-        switch (distribution.bitsize()) {
+        switch (distribution.platform().architecture().bitSize()) {
             case B32:
                 if (distribution.version() instanceof IFeatureAwareVersion) {
                     IFeatureAwareVersion featuredVersion = (IFeatureAwareVersion) distribution.version();
@@ -161,7 +162,7 @@ public class Paths implements PackageResolver {
                     }
                 }
 
-                switch (distribution.platform()) {
+                switch (distribution.platform().operatingSystem()) {
                     case Linux:
                         sbitSize = "i686";
                         break;
@@ -179,7 +180,7 @@ public class Paths implements PackageResolver {
                 sbitSize = "x86_64";
                 break;
             default:
-                throw new IllegalArgumentException("Unknown BitSize " + distribution.bitsize());
+                throw new IllegalArgumentException("Unknown BitSize " + distribution.platform().architecture().bitSize());
         }
         return sbitSize;
     }
@@ -196,7 +197,7 @@ public class Paths implements PackageResolver {
 	}
 
 	protected boolean withSsl(Distribution distribution) {
-        if ((distribution.platform() == Platform.Windows || distribution.platform() == Platform.OS_X)
+        if ((distribution.platform().operatingSystem() == OS.Windows || distribution.platform().operatingSystem() == OS.OS_X)
                 && distribution.version() instanceof IFeatureAwareVersion) {
             return ((IFeatureAwareVersion) distribution.version()).enabled(Feature.ONLY_WITH_SSL);
         } else {

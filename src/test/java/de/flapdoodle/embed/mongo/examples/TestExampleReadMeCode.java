@@ -253,8 +253,11 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testCustomOutputToConsolePrefix() {
 		// ->
 		// ...
-		ProcessOutput processOutput = new ProcessOutput(Processors.namedConsole("[mongod>]"),
-				Processors.namedConsole("[MONGOD>]"), Processors.namedConsole("[console>]"));
+		ProcessOutput processOutput = ProcessOutput.builder()
+						.output(Processors.namedConsole("[mongod>]"))
+						.error(Processors.namedConsole("[MONGOD>]"))
+						.commands(Processors.namedConsole("[console>]"))
+						.build();
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
 				.processOutput(processOutput)
@@ -275,7 +278,7 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		StreamProcessor commandsOutput = Processors.namedConsole("[console>]");
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
-				.processOutput(new ProcessOutput(mongodOutput, mongodError, commandsOutput))
+				.processOutput(ProcessOutput.builder().output(mongodOutput).error(mongodError).commands(commandsOutput).build())
 				.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
@@ -299,8 +302,11 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		// ...
 		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-		ProcessOutput processOutput = new ProcessOutput(Processors.logTo(logger, Slf4jLevel.INFO), Processors.logTo(logger,
-				Slf4jLevel.ERROR), Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)));
+		ProcessOutput processOutput = ProcessOutput.builder()
+						.output(Processors.logTo(logger, Slf4jLevel.INFO))
+						.error(Processors.logTo(logger, Slf4jLevel.ERROR))
+						.commands(Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)))
+						.build();
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
 				.processOutput(processOutput)
@@ -340,7 +346,7 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
-				.processOutput(ProcessOutput.getDefaultInstanceSilent())
+				.processOutput(ProcessOutput.silent())
 				.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);

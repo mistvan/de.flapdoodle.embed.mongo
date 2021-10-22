@@ -31,10 +31,10 @@ import de.flapdoodle.embed.process.config.io.ProcessOutput;
 public class MongodProcessOutputConfig {
 
 	public static ProcessOutput getDefaultInstance(Command command) {
-		return ProcessOutput.getDefaultInstance(command.commandName());
+		return ProcessOutput.namedConsole(command.commandName());
 	}
 
 	public static ProcessOutput getInstance(Command command, Logger logger) {
-		return ProcessOutput.getInstance(command.commandName(), logger);
+		return ProcessOutput.named(command.commandName(), logger);
 	}
 }

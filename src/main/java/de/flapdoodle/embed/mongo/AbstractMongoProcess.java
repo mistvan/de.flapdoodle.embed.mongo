@@ -57,9 +57,9 @@ public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extend
 	protected final void onAfterProcessStart(ProcessControl process, RuntimeConfig runtimeConfig) {
 		ProcessOutput outputConfig = runtimeConfig.processOutput();
 		LogWatchStreamProcessor logWatch = new LogWatchStreamProcessor(successMessage(), knownFailureMessages(),
-				StreamToLineProcessor.wrap(outputConfig.getOutput()));
+				StreamToLineProcessor.wrap(outputConfig.output()));
 		Processors.connect(process.getReader(), logWatch);
-		Processors.connect(process.getError(), StreamToLineProcessor.wrap(outputConfig.getError()));
+		Processors.connect(process.getError(), StreamToLineProcessor.wrap(outputConfig.error()));
 		logWatch.waitForResult(getConfig().timeout().getStartupTimeout());
 		if (logWatch.isInitWithSuccess()) {
 			setProcessId(Mongod.getMongodProcessId(logWatch.getOutput(), -1));
