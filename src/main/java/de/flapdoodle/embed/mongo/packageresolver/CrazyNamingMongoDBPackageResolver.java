@@ -29,9 +29,9 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
     this.command = command;
     this.fallback = fallback;
 
-//    PlatformMatchRules.empty()
-//            .rules().add(PlatformMatch.any());
-
+    forPlatform(PlatformMatch.withOs(OS.Windows))
+            .resolveWith(new WindowsPackageResolver(OS.Windows, command));
+    
     forPlatform(PlatformMatch.any())
             .resolveWith("https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.5.tgz");
   }
@@ -58,29 +58,23 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
               url
       );
 
-      rules=rules.withRules(PlatformMatchRule.of(match,packageResolver));
+      resolveWith(packageResolver);
+    }
+    
+    private void resolveWith(PackageResolver resolver) {
+      rules = rules.with(PlatformMatchRule.of(match, resolver));
     }
   }
 
   @Override
   public DistributionPackage packageFor(Distribution distribution) {
-    de.flapdoodle.embed.process.distribution.Version version = distribution.version();
-
-    Optional<Version> predefinedVersion = predefinedVersionOf(version);
-    if (predefinedVersion.isPresent()) {
-      switch (distribution.platform().operatingSystem()) {
-        case Linux:
-          return packageForLinux(distribution, predefinedVersion.get());
+    for (PlatformMatchRule rule : rules.rules()) {
+      if (PlatformMatch.match(rule.match(), distribution)) {
+        return rule.resolver().packageFor(distribution);
       }
     }
     return fallback.packageFor(distribution);
   }
-
-  private DistributionPackage packageForLinux(Distribution distribution, Version version) {
-    return null;
-  }
-
-
 
   private FileSet getFileSet(OS os) {
     String executableFileName;

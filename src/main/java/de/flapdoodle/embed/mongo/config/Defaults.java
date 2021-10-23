@@ -23,6 +23,7 @@ package de.flapdoodle.embed.mongo.config;
 import java.util.Map;
 import java.util.Optional;
 
+import de.flapdoodle.embed.mongo.packageresolver.CrazyNamingMongoDBPackageResolver;
 import de.flapdoodle.os.OS;
 import org.slf4j.Logger;
 
@@ -90,7 +91,7 @@ public abstract class Defaults {
 		}
 		
 		public static PackageResolver packageResolver(Command command) {
-			return new Paths(command);
+			return new CrazyNamingMongoDBPackageResolver(command, new Paths(command));
 		}
 
 		private static Directory defaultArtifactStoreLocation() {

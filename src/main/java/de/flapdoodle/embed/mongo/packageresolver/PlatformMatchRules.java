@@ -8,6 +8,10 @@ import java.util.List;
 public abstract class PlatformMatchRules {
   abstract List<PlatformMatchRule> rules();
 
+  public ImmutablePlatformMatchRules with(PlatformMatchRule rule) {
+    return ImmutablePlatformMatchRules.builder().rules(rules()).addRules(rule).build();
+  }
+
   static ImmutablePlatformMatchRules empty() {
     return ImmutablePlatformMatchRules.builder().build();
   }
