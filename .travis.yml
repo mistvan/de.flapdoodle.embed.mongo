@@ -13,7 +13,7 @@ jobs:
       arch: arm64
       env: JDK_VERSION=11
     - name: MacOS OpenJDK8
-      os :osx
+      os: osx
       env: JDK_VERSION=8
 
 before_install:
