@@ -25,8 +25,6 @@ import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import de.flapdoodle.embed.mongo.TestUtils;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import com.mongodb.Mongo;
@@ -48,6 +46,7 @@ import de.flapdoodle.embed.process.io.directories.PropertyOrPlatformTempDir;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ArtifactStore;
 import de.flapdoodle.embed.process.store.UrlConnectionDownloader;
+import junit.framework.TestCase;
 
 public class TestExecutableNamingCollision extends TestCase {
 

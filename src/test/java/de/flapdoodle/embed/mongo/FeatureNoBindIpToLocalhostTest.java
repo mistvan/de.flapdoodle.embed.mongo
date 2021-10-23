@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Date;
 
-import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,10 +83,10 @@ public class FeatureNoBindIpToLocalhostTest {
     private MongodConfig createMongoConfig(Net net) {
         Version version = Version.V3_6_0;
         return MongodConfig.builder()
-                .version(version)
-                .cmdOptions(getCmdOptions(version))
-                .net(net)
-                .build();
+		        .version(version)
+            .cmdOptions(getCmdOptions(version))
+		        .net(net)
+		        .build();
     }
 
     private static Net getNet() {

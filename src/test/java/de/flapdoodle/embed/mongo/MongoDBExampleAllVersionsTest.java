@@ -99,11 +99,8 @@ public class MongoDBExampleAllVersionsTest {
 		}
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
-		mongodExe = runtime.prepare(MongodConfig.builder()
-				.version(this.mongoVersion)
-				.net(new Net(PORT, Network.localhostIsIPv6()))
-				.cmdOptions(getCmdOptions(mongoVersion))
-				.build());
+		mongodExe = runtime.prepare(MongodConfig.builder().version(this.mongoVersion).net(new Net(PORT,
+				Network.localhostIsIPv6())).cmdOptions(getCmdOptions(mongoVersion)).build());
 		mongod = mongodExe.start();
 
 		mongo = new MongoClient(new ServerAddress(Network.getLocalHost(), PORT));

@@ -30,10 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import de.flapdoodle.os.BitSize;
-import de.flapdoodle.os.CommonArchitecture;
-import de.flapdoodle.os.ImmutablePlatform;
-import de.flapdoodle.os.OS;
+import de.flapdoodle.os.*;
 import org.junit.Test;
 
 import com.mongodb.BasicDBObject;
@@ -61,11 +58,21 @@ public class MongoDBRuntimeTest {
 
 		RuntimeConfig config = defaultBuilder.build();
 
-		check(config, Distribution.of(Version.V2_6_0, ImmutablePlatform.builder()
-						.operatingSystem(OS.Windows)
-						.architecture(CommonArchitecture.X86_32)
-						.build())
-		);
+		check(config, distributionOf(Version.V2_6_0, OS.Windows, CommonArchitecture.X86_32));
+	}
+
+	private Distribution distributionOf(IFeatureAwareVersion version, OS os, BitSize bitsize) {
+		return Distribution.of(version, ImmutablePlatform.builder()
+						.operatingSystem(os)
+						.architecture(bitsize == BitSize.B32 ? CommonArchitecture.X86_32 : CommonArchitecture.X86_64)
+						.build());
+	}
+
+	private Distribution distributionOf(IFeatureAwareVersion version, OS os, Architecture architecture) {
+		return Distribution.of(version, ImmutablePlatform.builder()
+						.operatingSystem(os)
+						.architecture(architecture)
+						.build());
 	}
 
 	@Test
@@ -74,13 +81,13 @@ public class MongoDBRuntimeTest {
 		
 		RuntimeConfig config = defaultBuilder.build();
 
-		for (OS platform : OS.values()) {
-			for (IFeatureAwareVersion version : Versions.testableVersions(Version.Main.class)) {
+		for (OS os : OS.values()) {
+			for (Version.Main version : Versions.testableVersions(Version.Main.class)) {
 				for (BitSize bitsize : BitSize.values()) {
 					// there is no osx 32bit version for v2.2.1
 					// there is no solaris 32bit version
-					if (!skipThisVersion(platform, version, bitsize)) {
-						check(config, distributionOf(version, platform, bitsize));
+					if (!skipThisVersion(os, version, bitsize)) {
+						check(config, distributionOf(version, os, bitsize));
 					}
 				}
 			}
@@ -95,26 +102,24 @@ public class MongoDBRuntimeTest {
 										}
 									}).build())).build();
 		
-		OS platform = OS.Windows;
-		BitSize bitsize = BitSize.B64;
 		for (IFeatureAwareVersion version : Versions.testableVersions(Version.Main.class)) {
-			check(config, distributionOf(version, platform, bitsize));
+			check(config, distributionOf(version, OS.Windows, CommonArchitecture.X86_64));
 		}
 	}
 
-	private boolean skipThisVersion(OS platform, IFeatureAwareVersion version, BitSize bitsize) {
+	private boolean skipThisVersion(OS os, IFeatureAwareVersion version, BitSize bitsize) {
 		if (version.enabled(Feature.ONLY_64BIT) && bitsize==BitSize.B32) {
 			return true;
 		}
 		
-		if ((platform == OS.OS_X) && (bitsize == BitSize.B32)) {
+		if ((os == OS.OS_X) && (bitsize == BitSize.B32)) {
 			// there is no osx 32bit version for v2.2.1 and above, so we dont check
 			return true;
 		}
-		if ((platform == OS.Solaris)  && (bitsize == BitSize.B32) || version.enabled(Feature.NO_SOLARIS_SUPPORT)) {
+		if ((os == OS.Solaris)  && (bitsize == BitSize.B32) || version.enabled(Feature.NO_SOLARIS_SUPPORT)) {
 			return true;
 		}
-		if (platform == OS.FreeBSD) {
+		if (os == OS.FreeBSD) {
 			return true;
 		}
 		return false;

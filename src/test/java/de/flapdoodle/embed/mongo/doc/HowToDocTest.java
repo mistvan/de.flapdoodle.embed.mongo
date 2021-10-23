@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import de.flapdoodle.embed.mongo.TestUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -256,10 +255,10 @@ public class HowToDocTest {
 		// ...
 		recording.begin();
 		ProcessOutput processOutput = ProcessOutput.builder()
-				.output(Processors.namedConsole("[mongod>]"))
-				.error(Processors.namedConsole("[MONGOD>]"))
-				.commands(Processors.namedConsole("[console>]"))
-				.build();
+						.output(Processors.namedConsole("[mongod>]"))
+						.error(Processors.namedConsole("[MONGOD>]"))
+						.commands(Processors.namedConsole("[console>]"))
+						.build();
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
 				.processOutput(processOutput)
@@ -283,12 +282,7 @@ public class HowToDocTest {
 		StreamProcessor commandsOutput = Processors.namedConsole("[console>]");
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
-				.processOutput(ProcessOutput.builder()
-					.output(mongodOutput)
-					.error(mongodError)
-					.commands(commandsOutput)
-					.build()
-				)
+				.processOutput(ProcessOutput.builder().output(mongodOutput).error(mongodError).commands(commandsOutput).build())
 				.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
@@ -305,10 +299,10 @@ public class HowToDocTest {
 		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 		ProcessOutput processOutput = ProcessOutput.builder()
-			.output(Processors.logTo(logger, Slf4jLevel.INFO))
-			.error(Processors.logTo(logger, Slf4jLevel.ERROR))
-			.commands(Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)))
-			.build();
+						.output(Processors.logTo(logger, Slf4jLevel.INFO))
+						.error(Processors.logTo(logger,Slf4jLevel.ERROR))
+						.commands(Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)))
+						.build();
 		
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
@@ -477,10 +471,7 @@ public class HowToDocTest {
 		// ...
 		recording.begin();
 		final Version.Main version = Version.Main.PRODUCTION;
-		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.cmdOptions(getCmdOptions(version))
-				.build();
+		MongodConfig mongodConfig = MongodConfig.builder().version(version).cmdOptions(getCmdOptions(version)).build();
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
 
@@ -659,7 +650,7 @@ public class HowToDocTest {
 		String collection = "importedCollection";
 
 	  final Version.Main version = Version.Main.PRODUCTION;
-	  MongodConfig mongoConfigConfig = MongodConfig.builder()
+		MongodConfig mongoConfigConfig = MongodConfig.builder()
 				.version(version)
 			  	.cmdOptions(getCmdOptions(version))
 				.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))

@@ -274,12 +274,7 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		StreamProcessor commandsOutput = Processors.namedConsole("[console>]");
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
-				.processOutput(ProcessOutput.builder()
-						.output(mongodOutput)
-						.error(mongodError)
-						.commands(commandsOutput)
-						.build()
-				)
+				.processOutput(ProcessOutput.builder().output(mongodOutput).error(mongodError).commands(commandsOutput).build())
 				.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
@@ -304,10 +299,10 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 		ProcessOutput processOutput = ProcessOutput.builder()
-			.output(Processors.logTo(logger, Slf4jLevel.INFO))
-			.error(Processors.logTo(logger, Slf4jLevel.ERROR))
-		    .commands(Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)))
-			.build();
+						.output(Processors.logTo(logger, Slf4jLevel.INFO))
+						.error(Processors.logTo(logger, Slf4jLevel.ERROR))
+						.commands(Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)))
+						.build();
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
 				.processOutput(processOutput)

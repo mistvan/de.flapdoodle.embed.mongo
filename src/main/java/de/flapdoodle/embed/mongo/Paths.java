@@ -104,20 +104,20 @@ public class Paths implements PackageResolver {
 	public String getPath(Distribution distribution) {
 
 		if (distribution.platform().operatingSystem() == OS.Solaris && isFeatureEnabled(distribution, Feature.NO_SOLARIS_SUPPORT)) {
-			throw new IllegalArgumentException("Mongodb for solaris is not available anymore");
-		}
+		    throw new IllegalArgumentException("Mongodb for solaris is not available anymore");
+        }
 
 		ArchiveType archiveType = getArchiveType(distribution);
 		String archiveTypeStr = getArchiveString(archiveType);
 
-		String platformStr = getPlatformString(distribution);
+        String platformStr = getPlattformString(distribution);
 
-		String bitSizeStr = getBitSize(distribution);
+        String bitSizeStr = getBitSize(distribution);
 		String versionStr = getArchAndVersionPart(distribution, bitSizeStr);
 
 		if (distribution.platform().operatingSystem() == OS.OS_X && withSsl(distribution) ) {
-			return platformStr + "/mongodb-" + platformStr + "-ssl-" + versionStr + "." + archiveTypeStr;
-		}
+            return platformStr + "/mongodb-" + platformStr + "-ssl-" + versionStr + "." + archiveTypeStr;
+        }
 
 		return platformStr + "/mongodb-" + platformStr + "-" + versionStr + "." + archiveTypeStr;
 	}
@@ -137,7 +137,7 @@ public class Paths implements PackageResolver {
         return sarchiveType;
     }
 
-    private String getPlatformString(Distribution distribution) {
+    private String getPlattformString(Distribution distribution) {
         String splatform;
         switch (distribution.platform().operatingSystem()) {
             case Linux:
@@ -169,7 +169,7 @@ public class Paths implements PackageResolver {
     return ((IFeatureAwareVersion) version).numericVersion();
   }
 
-  private String getBitSize(Distribution distribution) {
+    private String getBitSize(Distribution distribution) {
         String sbitSize;
         final Version version = distribution.version();
         switch (distribution.platform().architecture().bitSize()) {
@@ -186,6 +186,8 @@ public class Paths implements PackageResolver {
                         sbitSize = "i686";
                         break;
                     case Windows:
+                        sbitSize = "i386";
+                        break;
                     case OS_X:
                         sbitSize = "i386";
                         break;
@@ -218,9 +220,9 @@ public class Paths implements PackageResolver {
         return distribution.platform().operatingSystem() == OS.Windows
                 && version instanceof IFeatureAwareVersion
                 && ((IFeatureAwareVersion) version).enabled(Feature.ONLY_WINDOWS_2012_SERVER);
-    }
+	}
 
-    protected boolean withSsl(Distribution distribution) {
+	protected boolean withSsl(Distribution distribution) {
         if ((distribution.platform().operatingSystem() == OS.Windows || distribution.platform().operatingSystem() == OS.OS_X)
                 && distribution.version() instanceof IFeatureAwareVersion) {
             return ((IFeatureAwareVersion) distribution.version()).enabled(Feature.ONLY_WITH_SSL);
