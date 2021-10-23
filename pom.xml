@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+    <!--
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
+    -->
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.flapdoodle.embed</groupId>
 	<artifactId>de.flapdoodle.embed.mongo</artifactId>
 	<name>Flapdoodle Embedded MongoDB</name>
-	<version>3.0.1-SNAPSHOT</version>
+	<version>3.1.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
 	<description>A embedded mongodb ...</description>
@@ -24,13 +26,33 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+    <developers>
+        <developer>
+            <name>Michael Mosmann</name>
+            <email>michael@mosmann.de</email>
+            <organization>Flapdoodle OSS</organization>
+            <organizationUrl>http://github.com/flapdoodle-oss</organizationUrl>
+        </developer>
+    </developers>
 
 
 	<scm>
 		<connection>scm:git:git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</connection>
 		<developerConnection>scm:git:git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</developerConnection>
 		<url>git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</url>
-	</scm>
+	  <tag>HEAD</tag>
+  </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
 	<!-- https://docs.sonatype.org/display/Repository/Central+Sync+Requirements
 		https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
@@ -89,7 +111,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.4.1</version>
+				<version>3.0.0-M3</version>
 				<executions>
 					<execution>
 						<id>enforce-ban-duplicate-classes</id>
@@ -111,6 +133,9 @@
 									</ignoreClasses>
 									<findAllDuplicates>true</findAllDuplicates>
 								</banDuplicateClasses>
+								<requireMavenVersion>
+									<version>3.5.0</version>
+								</requireMavenVersion>
 							</rules>
 							<fail>true</fail>
 						</configuration>
@@ -143,7 +168,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>3.0.0-M5</version>
 				<configuration>
 					<excludes>
 						<exclude>**/live/**</exclude>
@@ -204,7 +229,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.1.2</version>
 				<configuration>
 					<configLocation>config/checkstyle.xml</configLocation>
 					<excludes>
@@ -268,7 +293,7 @@
            	<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>5.1.1</version>
+				<version>5.1.2</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
@@ -408,31 +433,31 @@
                 <dependency>
                     <groupId>org.junit.jupiter</groupId>
                     <artifactId>junit-jupiter-api</artifactId>
-                    <version>5.7.0</version>
+                    <version>5.8.1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.junit.jupiter</groupId>
                     <artifactId>junit-jupiter-engine</artifactId>
-                    <version>5.7.0</version>
+                    <version>5.8.1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.junit.vintage</groupId>
                     <artifactId>junit-vintage-engine</artifactId>
-                    <version>5.7.0</version>
+                    <version>5.8.1</version>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
 					<groupId>org.junit.jupiter</groupId>
 					<artifactId>junit-jupiter-params</artifactId>
-					<version>5.7.0</version>
+					<version>5.8.1</version>
 					<scope>test</scope>
 				</dependency>
                 <dependency>
                     <groupId>org.assertj</groupId>
                     <artifactId>assertj-core</artifactId>
-                    <version>3.17.2</version>
+                    <version>3.21.0</version>
                     <scope>test</scope>
                 </dependency>
                 <!-- needed by infinitest? -->
@@ -447,7 +472,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.5.13</version>
+			<version>4.0.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -472,7 +497,7 @@
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
 			<artifactId>de.flapdoodle.embed.process</artifactId>
-			<version>3.1.1</version>
+			<version>3.1.2</version>
 		</dependency>
         <dependency>
             <groupId>org.immutables</groupId>
@@ -490,7 +515,7 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>3.12.7</version>
+			<version>3.12.10</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -498,7 +523,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>30.0-jre</version>
+			<version>31.0.1-jre</version>
 			<scope>test</scope>
 		</dependency>
 

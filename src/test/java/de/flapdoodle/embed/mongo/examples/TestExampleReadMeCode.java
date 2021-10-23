@@ -253,7 +253,11 @@ public class TestExampleReadMeCode /*extends TestCase*/ {
 	public void testCustomOutputToConsolePrefix() {
 		// ->
 		// ...
-		ProcessOutput processOutput = ProcessOutput.namedConsole("mongod");
+		ProcessOutput processOutput = ProcessOutput.builder()
+						.output(Processors.namedConsole("[mongod>]"))
+						.error(Processors.namedConsole("[MONGOD>]"))
+						.commands(Processors.namedConsole("[console>]"))
+						.build();
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
 				.processOutput(processOutput)

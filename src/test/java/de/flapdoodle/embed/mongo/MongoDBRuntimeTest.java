@@ -101,9 +101,12 @@ public class MongoDBRuntimeTest {
 											return numericVersionOf(version).isNewerOrEqual(1, 8, 5) && numericVersionOf(version).isOlderOrEqual(4, 0, 24);
 										}
 									}).build())).build();
-		
+
 		for (IFeatureAwareVersion version : Versions.testableVersions(Version.Main.class)) {
-			check(config, distributionOf(version, OS.Windows, CommonArchitecture.X86_64));
+			// there is no windows 2008 version for 1.8.5 
+			boolean skip = version.asInDownloadPath().equals(Version.V1_8_5.asInDownloadPath());
+			if (!skip)
+				check(config, distributionOf(version, OS.Windows, CommonArchitecture.X86_64));
 		}
 	}
 
