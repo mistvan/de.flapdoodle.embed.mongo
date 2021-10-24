@@ -533,5 +533,13 @@
 			<version>1.7.30</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<!-- jsoup HTML parser library @ https://jsoup.org/ -->
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.14.3</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
