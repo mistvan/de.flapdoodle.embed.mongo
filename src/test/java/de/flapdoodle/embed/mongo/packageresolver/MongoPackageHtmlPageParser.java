@@ -1,6 +1,7 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import com.google.common.io.Resources;
+import de.flapdoodle.embed.mongo.distribution.NumericVersion;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,10 +10,8 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -27,19 +26,29 @@ public class MongoPackageHtmlPageParser {
 //    dump(versions);
     List<String> names = namesOf(versions)
             .stream()
-            .filter(name -> supported(name))
+//            .filter(name -> supported(name))
             .sorted(Comparator.naturalOrder())
             .collect(Collectors.toList());
 //    List<ParsedVersion> filtered = filter(versions, it -> it.name.contains("indows"));
-//    dump(filtered);
-    if (true) {
-      names.forEach(name -> {
-        System.out.println("-----------------------------------");
-        System.out.println(name);
-        List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
-        versionAndUrl(filtered);
-      });
-    }
+    names.forEach(name -> {
+      System.out.println("-----------------------------------");
+      System.out.println(name);
+      List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
+      versionAndUrl(filtered);
+    });
+
+    System.out.println();
+    System.out.println("-----------------------------------");
+    System.out.println("- ");
+    System.out.println("-----------------------------------");
+    System.out.println();
+
+    names.forEach(name -> {
+      System.out.println("-----------------------------------");
+      System.out.println(name);
+      List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
+      compressedVersionAndUrl(filtered);
+    });
   }
 
   private static boolean supported(String name) {
@@ -76,6 +85,53 @@ public class MongoPackageHtmlPageParser {
         });
       }
     });
+  }
+
+  private static void compressedVersionAndUrl(List<ParsedVersion> versions) {
+    Map<String, List<ParsedVersion>> groupedByVersionLessUrl = versions.stream().collect(Collectors.groupingBy(version -> {
+      List<String> urls = version.dists.stream()
+              .flatMap(dist -> dist.urls.stream())
+              .map(packageUrl -> packageUrl.url)
+              .collect(Collectors.toList());
+
+      String versionLessUrl = urls.stream().map(it -> it.replace(version.version, "{}"))
+              .collect(Collectors.joining("|"));
+
+      return versionLessUrl;
+    }));
+
+    groupedByVersionLessUrl.forEach((url, versionList) -> {
+      System.out.println(url.isEmpty() ? "--" : url);
+      //String versionNumbers = versionList.stream().map(it -> it.version).collect(Collectors.joining(", "));
+      List<String> versionNumbers = versionList.stream().map(it -> it.version).collect(Collectors.toList());
+      System.out.println(compressedVersions(versionNumbers));
+    });
+  }
+
+  private static String compressedVersions(List<String> numericVersions) {
+    List<NumericVersion> versions = numericVersions.stream().map(it -> NumericVersion.of(it)).collect(Collectors.toList());
+    StringBuilder sb=new StringBuilder();
+    for (int i = 0, versionsSize = versions.size(); i < versionsSize; i++) {
+      NumericVersion version = versions.get(i);
+      if (i>0) {
+        NumericVersion prev=versions.get(i-1);
+        boolean isLast = (i + 1) == versionsSize;
+        if (version.isNextOrPrevPatch(prev)) {
+          if (isLast) {
+            sb.append(" - ").append(asString(version));
+          }
+        } else {
+          sb.append(" - ").append(asString(prev)).append(", ").append(asString(version));
+        }
+      } else {
+        sb.append(asString(version));
+      }
+    }
+    return sb.toString();
+  }
+
+  private static String asString(NumericVersion version) {
+    return version.major()+"."+version.minor()+"."+ version.patch();
   }
 
   private static void dump(List<ParsedVersion> versions) {

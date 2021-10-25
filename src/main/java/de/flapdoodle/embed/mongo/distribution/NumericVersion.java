@@ -2,6 +2,8 @@ package de.flapdoodle.embed.mongo.distribution;
 
 import org.immutables.value.Value;
 
+import static java.lang.Math.abs;
+
 @Value.Immutable
 public interface NumericVersion {
   @Value.Parameter
@@ -58,8 +60,12 @@ public interface NumericVersion {
   default boolean isOlderOrEqual(NumericVersion other) {
     if (major()>other.major()) return false;
     if (minor()>other.minor()) return false;
-    if (patch()>other.patch()) return false;
-    return true;
+    return patch() <= other.patch();
   }
 
+  default boolean isNextOrPrevPatch(NumericVersion other) {
+    if (major()!=other.major()) return false;
+    if (minor()!=other.minor()) return false;
+    return abs(patch() - other.patch()) == 1;
+  }
 }

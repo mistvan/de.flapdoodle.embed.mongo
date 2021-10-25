@@ -15,6 +15,7 @@ import de.flapdoodle.os.Platform;
 
 import java.util.Optional;
 
+
 public class WindowsPackageResolver implements PackageResolver {
   private final OS os;
   private final Command command;
@@ -50,6 +51,42 @@ public class WindowsPackageResolver implements PackageResolver {
     return FileSet.builder()
             .addEntry(FileType.Executable, command.commandName() + ".exe")
             .build();
+  }
+
+  /*
+-----------------------------------
+Windows Server 2008 R2+, without SSL x64
+https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-{}.zip
+3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+--
+5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.8
+-----------------------------------
+Windows x64
+https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{}.zip
+5.0.2 - 5.0.0, 4.4.9 - 4.4.0
+https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-{}.zip
+4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-{}.zip
+4.2.16 - 4.2.5, 4.2.3 - 4.2.0
+--
+4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
+-----------------------------------
+windows_i686 undefined
+https://fastdl.mongodb.org/win32/mongodb-win32-i386-{}.zip
+3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+--
+5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0
+-----------------------------------
+windows_x86_64 x64
+https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{}.zip
+3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+--
+5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.8
+
+   */
+
+  static {
+
   }
 
 }
