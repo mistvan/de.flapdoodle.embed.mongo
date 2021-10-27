@@ -22,7 +22,7 @@ class CrazyNamingMongoDBPackageResolverTest {
             .matchesPath("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.13.zip");
 
     assertThatDistributionPackageFor(Version.V4_0_12, OS.Windows, CommonArchitecture.X86_64)
-            .matchesPath("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.13.zip");
+            .matchesPath("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.12.zip");
   }
 
   private WithDistributionPackage assertThatDistributionPackageFor(Version version, OS os, CommonArchitecture architecture) {

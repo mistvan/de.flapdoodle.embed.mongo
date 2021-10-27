@@ -32,5 +32,6 @@ public interface IFeatureAwareVersion extends Version {
 
 	EnumSet<Feature> getFeatures();
 
+	@Deprecated
 	NumericVersion numericVersion();
 }

@@ -69,7 +69,7 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
   @Override
   public DistributionPackage packageFor(Distribution distribution) {
     for (PlatformMatchRule rule : rules.rules()) {
-      if (PlatformMatch.match(rule.match(), distribution)) {
+      if (rule.match().match(distribution)) {
         return rule.resolver().packageFor(distribution);
       }
     }

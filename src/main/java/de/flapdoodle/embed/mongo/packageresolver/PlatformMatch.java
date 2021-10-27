@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 import java.util.Optional;
 
 @Value.Immutable
-public interface PlatformMatch {
+public interface PlatformMatch extends DistributionMatch {
   Optional<Version> version();
   Optional<CPUType> cpuType();
   Optional<BitSize> bitSize();
@@ -22,6 +22,12 @@ public interface PlatformMatch {
 
   static ImmutablePlatformMatch withOs(OS os) {
     return any().withOs(os);
+  }
+
+  @Override
+  @Value.Auxiliary
+  default boolean match(de.flapdoodle.embed.process.distribution.Distribution distribution) {
+    return match(this, distribution);
   }
 
   static boolean match(PlatformMatch match, de.flapdoodle.embed.process.distribution.Distribution distribution) {
