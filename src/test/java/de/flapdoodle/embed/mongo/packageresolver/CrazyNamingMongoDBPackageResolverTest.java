@@ -39,10 +39,16 @@ class CrazyNamingMongoDBPackageResolverTest {
   @Test
   public void matchKnownVersions() {
     assertThatDistributionPackageFor(Version.V4_2_13, OS.Windows, CommonArchitecture.X86_64)
-            .matchesPath("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.13.zip");
+            .matchesPath("/win32/mongodb-win32-x86_64-2012plus-4.2.13.zip");
 
     assertThatDistributionPackageFor(Version.V4_0_12, OS.Windows, CommonArchitecture.X86_64)
-            .matchesPath("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.12.zip");
+            .matchesPath("/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.12.zip");
+
+    assertThatDistributionPackageFor(Version.V4_0_12, OS.Linux, CommonArchitecture.X86_64)
+            .matchesPath("/linux/mongodb-linux-x86_64-4.0.12.tgz");
+
+    assertThatDistributionPackageFor(Version.V4_0_12, OS.OS_X, CommonArchitecture.X86_64)
+            .matchesPath("/osx/mongodb-osx-ssl-x86_64-4.0.12.tgz");
   }
 
   private WithDistributionPackage assertThatDistributionPackageFor(Version version, OS os, CommonArchitecture architecture) {

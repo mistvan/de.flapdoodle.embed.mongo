@@ -47,7 +47,7 @@ class WindowsPackageResolverTest {
   @ValueSource(strings = {"3.4.23 - 3.4.9", "3.4.7 - 3.4.0", "3.2.21 - 3.2.0", "3.0.14 - 3.0.0", "2.6.12 - 2.6.0"})
   public void windowsServer_2008_R2plus_without_SSL_x64(String version) {
     assertThat(windowsWith(CommonArchitecture.X86_64), version)
-            .resolvesTo("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-{}.zip");
+            .resolvesTo("/win32/mongodb-win32-x86_64-2008plus-{}.zip");
   }
 
   /*
@@ -65,21 +65,21 @@ class WindowsPackageResolverTest {
   @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0"})
   public void windows_x64(String version) {
     assertThat(windowsWith(CommonArchitecture.X86_64), version)
-            .resolvesTo("https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{}.zip");
+            .resolvesTo("/windows/mongodb-windows-x86_64-{}.zip");
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"4.0.26 - 4.0.0", "3.6.22 - 3.6.0", /*"3.4.23 - 3.4.9", "3.4.7 - 3.4.0", "3.2.21 - 3.2.0", "3.0.14 - 3.0.0"*/})
   public void windows_x64_2008plus_ssl(String version) {
     assertThat(windowsWith(CommonArchitecture.X86_64), version)
-            .resolvesTo("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-{}.zip");
+            .resolvesTo("/win32/mongodb-win32-x86_64-2008plus-ssl-{}.zip");
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"4.2.16 - 4.2.5", "4.2.3 - 4.2.0"})
   public void windows_x64_2012plus(String version) {
     assertThat(windowsWith(CommonArchitecture.X86_64), version)
-            .resolvesTo("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-{}.zip");
+            .resolvesTo("/win32/mongodb-win32-x86_64-2012plus-{}.zip");
   }
 
   /*
@@ -95,7 +95,7 @@ class WindowsPackageResolverTest {
   @ValueSource(strings = {"3.2.21 - 3.2.0", "3.0.14 - 3.0.0", "2.6.12 - 2.6.0"})
   public void windows_i686(String version) {
     assertThat(windowsWith(CommonArchitecture.X86_32), version)
-            .resolvesTo("https://fastdl.mongodb.org/win32/mongodb-win32-i386-{}.zip");
+            .resolvesTo("/win32/mongodb-win32-i386-{}.zip");
   }
 
   /*
@@ -109,7 +109,7 @@ class WindowsPackageResolverTest {
   @ValueSource(strings = {"3.4.23 - 3.4.9", "3.4.7 - 3.4.0", "3.2.21 - 3.2.0", "3.0.14 - 3.0.0", "2.6.12 - 2.6.0"})
   public void windows_x86_64(String version) {
     assertThat(windowsWith(CommonArchitecture.X86_64), version)
-            .resolvesTo("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{}.zip");
+            .resolvesTo("/win32/mongodb-win32-x86_64-{}.zip");
   }
 
   private static Platform windowsWith(CommonArchitecture architecture) {

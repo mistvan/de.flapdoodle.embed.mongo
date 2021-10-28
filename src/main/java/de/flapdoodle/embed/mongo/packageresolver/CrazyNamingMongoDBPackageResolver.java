@@ -50,9 +50,15 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
             .resolveWith(new WindowsPackageResolver(command));
     forPlatform(PlatformMatch.withOs(OS.OS_X))
             .resolveWith(new OSXPackageResolver(command));
-    
+    forPlatform(PlatformMatch.withOs(OS.Linux))
+            .resolveWith(new LinuxPackageResolver(command));
+
     forPlatform(PlatformMatch.any())
-            .resolveWith("https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.5.tgz");
+            .resolveWith(distribution -> {
+              throw new IllegalArgumentException("could not resolve package for "+distribution);
+            });
+//    forPlatform(PlatformMatch.any())
+//            .resolveWith("https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.5.tgz");
   }
 
   private WithMatch forPlatform(PlatformMatch match) {

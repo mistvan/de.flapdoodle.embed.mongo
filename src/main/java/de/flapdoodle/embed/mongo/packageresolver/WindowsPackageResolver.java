@@ -72,7 +72,7 @@ public class WindowsPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-{version}.zip")
+                    .urlTemplate("/win32/mongodb-win32-x86_64-2008plus-{version}.zip")
                     .build())
             .build();
 
@@ -94,7 +94,7 @@ public class WindowsPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{version}.zip")
+                    .urlTemplate("/windows/mongodb-windows-x86_64-{version}.zip")
                     .build())
             .build();
 
@@ -111,7 +111,7 @@ public class WindowsPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-{version}.zip")
+                    .urlTemplate("/win32/mongodb-win32-x86_64-2008plus-ssl-{version}.zip")
                     .build())
             .build();
 
@@ -124,7 +124,7 @@ public class WindowsPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-{version}.zip")
+                    .urlTemplate("/win32/mongodb-win32-x86_64-2012plus-{version}.zip")
                     .build())
             .build();
     /*
@@ -143,7 +143,7 @@ public class WindowsPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/win32/mongodb-win32-i386-{version}.zip")
+                    .urlTemplate("/win32/mongodb-win32-i386-{version}.zip")
                     .build())
             .build();
 
@@ -165,7 +165,7 @@ public class WindowsPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{version}.zip")
+                    .urlTemplate("/win32/mongodb-win32-x86_64-{version}.zip")
                     .build())
             .build();
 

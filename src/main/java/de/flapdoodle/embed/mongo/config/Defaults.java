@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import de.flapdoodle.embed.mongo.packageresolver.CrazyNamingMongoDBPackageResolver;
-import de.flapdoodle.os.OS;
 import org.slf4j.Logger;
 
 import de.flapdoodle.embed.mongo.Command;
@@ -83,7 +82,7 @@ public abstract class Defaults {
 		protected static ImmutableDownloadConfig.Builder withDefaults() {
 			return DownloadConfig.builder()
 					.fileNaming(new UUIDTempNaming())
-					.downloadPath(new PlatformDependentDownloadPath())
+					.downloadPath(new StaticDownloadPath())
 					.progressListener(new StandardConsoleProgressListener())
 					.artifactStorePath(defaultArtifactStoreLocation())
 					.downloadPrefix("embedmongo-download")
@@ -108,13 +107,10 @@ public abstract class Defaults {
 			}
 		}
 
-		private static class PlatformDependentDownloadPath implements DistributionDownloadPath {
+		private static class StaticDownloadPath implements DistributionDownloadPath {
 
 			@Override
 			public String getPath(Distribution distribution) {
-				if (distribution.platform().operatingSystem()== OS.Windows) {
-					return "https://downloads.mongodb.org/";
-				}
 				return "https://fastdl.mongodb.org/";
 			}
 			

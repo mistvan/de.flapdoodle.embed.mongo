@@ -42,7 +42,7 @@ class OSXPackageResolverTest {
   @ValueSource(strings = {"4.0.26 - 4.0.0", "3.6.22 - 3.6.0"})
   public void firstSet(String version) {
     assertThat(version)
-            .resolvesTo("https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{}.tgz");
+            .resolvesTo("/osx/mongodb-osx-ssl-x86_64-{}.tgz");
   }
 
   /*
@@ -53,7 +53,7 @@ class OSXPackageResolverTest {
   @ValueSource(strings = {"3.4.23 - 3.4.9", "3.4.7 - 3.4.0", "3.2.21 - 3.2.0", "3.0.14 - 3.0.4"})
   public void secondSet(String version) {
     assertThat(version)
-            .resolvesTo("https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{}.tgz");
+            .resolvesTo("/osx/mongodb-osx-ssl-x86_64-{}.tgz");
   }
 
   /*
@@ -64,7 +64,7 @@ class OSXPackageResolverTest {
   @ValueSource(strings = {"3.0.3 - 3.0.0", "2.6.12 - 2.6.0"})
   public void thirdSet(String version) {
     assertThat(version)
-            .resolvesTo("https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-{}.tgz");
+            .resolvesTo("/osx/mongodb-osx-x86_64-{}.tgz");
   }
 
   /*
@@ -75,7 +75,7 @@ class OSXPackageResolverTest {
   @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.0"})
   public void fourthSet(String version) {
     assertThat(version)
-            .resolvesTo("https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-{}.tgz");
+            .resolvesTo("/osx/mongodb-macos-x86_64-{}.tgz");
   }
 
 

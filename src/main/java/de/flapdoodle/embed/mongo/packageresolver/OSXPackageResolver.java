@@ -68,7 +68,7 @@ public class OSXPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{version}.tgz")
+                    .urlTemplate("/osx/mongodb-osx-ssl-x86_64-{version}.tgz")
                     .build())
             .build();
 
@@ -87,7 +87,7 @@ public class OSXPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{version}.tgz")
+                    .urlTemplate("/osx/mongodb-osx-ssl-x86_64-{version}.tgz")
                     .build())
             .build();
 
@@ -104,7 +104,7 @@ public class OSXPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-{version}.tgz")
+                    .urlTemplate("/osx/mongodb-osx-x86_64-{version}.tgz")
                     .build())
             .build();
 
@@ -123,12 +123,20 @@ public class OSXPackageResolver implements PackageResolver {
             .resolver(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
-                    .urlTemplate("https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-{version}.tgz")
+                    .urlTemplate("/osx/mongodb-macos-x86_64-{version}.tgz")
                     .build())
             .build();
 
+    PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
+            .match(PlatformMatch.withOs(OS.OS_X))
+            .resolver(distribution -> {
+              throw new IllegalArgumentException("osx distribution not supported: " + distribution);
+            })
+            .build();
+
+
     return PlatformMatchRules.empty()
-            .withRules(firstRule, secondRule, thirdRule, fourthRule);
+            .withRules(firstRule, secondRule, thirdRule, fourthRule, failIfNothingMatches);
   }
 
 }

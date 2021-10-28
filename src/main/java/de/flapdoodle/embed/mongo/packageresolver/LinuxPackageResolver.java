@@ -20,15 +20,96 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver;
 
-import de.flapdoodle.embed.process.config.store.DistributionPackage;
-import de.flapdoodle.embed.process.config.store.PackageResolver;
+import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.Paths;
+import de.flapdoodle.embed.process.config.store.*;
+import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.os.BitSize;
+import de.flapdoodle.os.OS;
 
 public class LinuxPackageResolver implements PackageResolver {
 
+  private final Command command;
+  private final ImmutablePlatformMatchRules rules;
+
+  public LinuxPackageResolver(Command command) {
+    this.command = command;
+    this.rules = rules(command);
+  }
 
   @Override
   public DistributionPackage packageFor(Distribution distribution) {
-    return null;
+    return rules.packageFor(distribution).orElse(null);
   }
+
+  private static ImmutablePlatformMatchRules rules(Command command) {
+    ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
+    /*
+      Linux (legacy) undefined
+      https://fastdl.mongodb.org/linux/mongodb-linux-i686-{}.tgz
+      3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+    */
+    PlatformMatchRule legacy32 = PlatformMatchRule.builder()
+            .match(DistributionMatch.any(
+                            VersionRange.of("3.2.0", "3.2.21"),
+                            VersionRange.of("3.0.0", "3.0.14"),
+                            VersionRange.of("2.6.0", "2.6.12")
+                    )
+                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
+            .resolver(UrlTemplatePackageResolver.builder()
+                    .fileSet(fileSet)
+                    .archiveType(ArchiveType.TGZ)
+                    .urlTemplate("/linux/mongodb-linux-i686-{version}.tgz")
+                    .build())
+            .build();
+
+  /*
+    Linux (legacy) x64
+    https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-{}.tgz
+    4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+   */
+    PlatformMatchRule legacy64 = PlatformMatchRule.builder()
+            .match(DistributionMatch.any(
+                            VersionRange.of("4.0.0", "4.0.26"),
+                            VersionRange.of("3.6.0", "3.6.22"),
+                            VersionRange.of("3.4.9", "3.4.23"),
+                            VersionRange.of("3.4.0", "3.4.7"),
+                            VersionRange.of("3.2.0", "3.2.21"),
+                            VersionRange.of("3.0.0", "3.0.14"),
+                            VersionRange.of("2.6.0", "2.6.12")
+                    )
+                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
+            .resolver(UrlTemplatePackageResolver.builder()
+                    .fileSet(fileSet)
+                    .archiveType(ArchiveType.TGZ)
+                    .urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
+                    .build())
+            .build();
+
+    PlatformMatchRule hiddenLegacy64 = PlatformMatchRule.builder()
+            .match(DistributionMatch.any(
+                            VersionRange.of("3.3.1", "3.3.1"),
+                            VersionRange.of("3.5.5", "3.5.5")
+                    )
+                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
+            .resolver(UrlTemplatePackageResolver.builder()
+                    .fileSet(fileSet)
+                    .archiveType(ArchiveType.TGZ)
+                    .urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
+                    .build())
+            .build();
+
+    PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
+            .match(PlatformMatch.withOs(OS.Linux))
+            .resolver(distribution -> {
+              DistributionPackage old = new Paths(command).packageFor(distribution);
+              throw new IllegalArgumentException("linux distribution not supported: " + distribution+ ", old="+old);
+            })
+            .build();
+
+    return PlatformMatchRules.empty()
+            .withRules(legacy32, legacy64, hiddenLegacy64, failIfNothingMatches);
+  }
+
 }
