@@ -111,7 +111,7 @@ public abstract class Defaults {
 
 			@Override
 			public String getPath(Distribution distribution) {
-				return "https://fastdl.mongodb.org/";
+				return "https://fastdl.mongodb.org";
 			}
 			
 		}

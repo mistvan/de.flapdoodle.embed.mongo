@@ -339,7 +339,7 @@ public class HowToDocTest {
 	@Test
 	public void testDefaultOutputToNone() throws IOException {
 		int port = 12345;
-		final IFeatureAwareVersion version = Versions.withFeatures(genericVersion("2.7.1"), Feature.SYNC_DELAY);
+		final IFeatureAwareVersion version = Versions.withFeatures(genericVersion("3.3.1"), Feature.SYNC_DELAY);
 		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(version)
 				.net(new Net(port, Network.localhostIsIPv6()))
@@ -391,7 +391,7 @@ public class HowToDocTest {
 		// ...
 		recording.begin();
 		int port = 12345;
-		final IFeatureAwareVersion version = Versions.withFeatures(de.flapdoodle.embed.process.distribution.Version.of("2.7.1"), Feature.SYNC_DELAY);
+		final IFeatureAwareVersion version = Versions.withFeatures(de.flapdoodle.embed.process.distribution.Version.of("3.3.1"), Feature.SYNC_DELAY);
 		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(version)
 				.net(new Net(port, Network.localhostIsIPv6()))

@@ -1,17 +1,17 @@
 /**
  * Copyright (C) 2011
- *   Michael Mosmann <michael@mosmann.de>
- *   Martin Jöhren <m.joehren@googlemail.com>
- *
+ * Michael Mosmann <michael@mosmann.de>
+ * Martin Jöhren <m.joehren@googlemail.com>
+ * <p>
  * with contributions from
- * 	konstantin-ba@github,Archimedes Trajano	(trajano@github)
- *
+ * konstantin-ba@github,Archimedes Trajano	(trajano@github)
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import org.immutables.value.Value;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Value.Immutable
@@ -39,7 +40,10 @@ public abstract class PlatformMatchRules {
   public Optional<DistributionPackage> packageFor(Distribution distribution) {
     for (PlatformMatchRule rule : rules()) {
       if (rule.match().match(distribution)) {
-        return Optional.of(rule.resolver().packageFor(distribution));
+        Optional<DistributionPackage> result = rule.finder().packageFor(distribution);
+        if (result.isPresent()) {
+          return result;
+        }
       }
     }
     return Optional.empty();

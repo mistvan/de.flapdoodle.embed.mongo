@@ -10,7 +10,9 @@ import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.linux.UbuntuVersion;
 
-public class UbuntuPackageResolver implements PackageResolver {
+import java.util.Optional;
+
+public class UbuntuPackageResolver implements PackageFinder {
 
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
@@ -21,14 +23,14 @@ public class UbuntuPackageResolver implements PackageResolver {
   }
 
   @Override
-  public DistributionPackage packageFor(Distribution distribution) {
-    return rules.packageFor(distribution).orElse(null);
+  public Optional<DistributionPackage> packageFor(Distribution distribution) {
+    return rules.packageFor(distribution);
   }
 
   /*
------------------------------------
+  -----------------------------------
 
-   */
+     */
   private static ImmutablePlatformMatchRules rules(Command command) {
     ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
@@ -49,10 +51,13 @@ public class UbuntuPackageResolver implements PackageResolver {
                                     .withOs(OS.Linux)
                                     .withBitSize(BitSize.B64)
                                     .withCpuType(CPUType.ARM)
-                                    .withVersion(UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10)
+                                    .withVersion(
+                                            UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10,
+                                            UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10
+                                    )
                             )
             )
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(ArchiveType.TGZ)
                     .urlTemplate("/linux/mongodb-linux-aarch64-ubuntu1804-{version}.tgz")
@@ -77,10 +82,13 @@ public class UbuntuPackageResolver implements PackageResolver {
                                     .withOs(OS.Linux)
                                     .withBitSize(BitSize.B64)
                                     .withCpuType(CPUType.X86)
-                                    .withVersion(UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10)
+                                    .withVersion(
+                                            UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10,
+                                            UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10
+                                    )
                             )
             )
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(ArchiveType.TGZ)
                     .urlTemplate("/linux/mongodb-linux-x86_64-ubuntu1804-{version}.tgz")
@@ -104,7 +112,7 @@ public class UbuntuPackageResolver implements PackageResolver {
                                     .withVersion(UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10)
                             )
             )
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(ArchiveType.TGZ)
                     .urlTemplate("/linux/mongodb-linux-aarch64-ubuntu2004-{version}.tgz")
@@ -128,7 +136,7 @@ public class UbuntuPackageResolver implements PackageResolver {
                                     .withVersion(UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10)
                             )
             )
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(ArchiveType.TGZ)
                     .urlTemplate("/linux/mongodb-linux-x86_64-ubuntu2004-{version}.tgz")
@@ -138,8 +146,8 @@ public class UbuntuPackageResolver implements PackageResolver {
 
     return PlatformMatchRules.empty()
             .withRules(
-                    ubuntu1804arm, ubuntu1804x64,
-                    ubuntu2004arm, ubuntu2004x64
+                    ubuntu2004arm, ubuntu2004x64,
+                    ubuntu1804arm, ubuntu1804x64
             );
   }
 }

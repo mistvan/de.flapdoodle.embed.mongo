@@ -22,6 +22,7 @@ package de.flapdoodle.embed.mongo;
 
 import de.flapdoodle.embed.mongo.config.ImmutableMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
+import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.NumericVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -39,14 +40,11 @@ public abstract class TestUtils {
 
     private TestUtils() {}
 
-    // TODO there is a feature for that
     public static MongoCmdOptions getCmdOptions(IFeatureAwareVersion version) {
         final ImmutableMongoCmdOptions.Builder cmdOptions = MongoCmdOptions.builder();
-        if (version.numericVersion().isNewerOrEqual(4, 2, 0)) {
-            cmdOptions
-                .useNoPrealloc(false)
-                .useSmallFiles(false);
-        }
+        cmdOptions
+            .useNoPrealloc(!version.enabled(Feature.DISABLE_USE_PREALLOC))
+            .useSmallFiles(!version.enabled(Feature.DISABLE_USE_SMALL_FILES));
         return cmdOptions.build();
     }
 

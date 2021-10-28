@@ -27,12 +27,12 @@ import org.immutables.value.Value;
 @Value.Style(stagedBuilder = true)
 public interface PlatformMatchRule {
   DistributionMatch match();
-  PackageResolver resolver();
+  PackageFinder finder();
 
-  static PlatformMatchRule of(PlatformMatch match, PackageResolver resolver) {
+  static PlatformMatchRule of(PlatformMatch match, PackageFinder finder) {
     return builder()
             .match(match)
-            .resolver(resolver)
+            .finder(finder)
             .build();
   }
 

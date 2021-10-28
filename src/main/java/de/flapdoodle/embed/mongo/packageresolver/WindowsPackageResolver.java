@@ -21,17 +21,19 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.FileType;
-import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.OS;
 
+import java.util.Optional;
 
-public class WindowsPackageResolver implements PackageResolver {
+
+public class WindowsPackageResolver implements PackageFinder {
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
 
@@ -41,8 +43,8 @@ public class WindowsPackageResolver implements PackageResolver {
   }
 
   @Override
-  public DistributionPackage packageFor(Distribution distribution) {
-    return rules.packageFor(distribution).orElse(null);
+  public Optional<DistributionPackage> packageFor(Distribution distribution) {
+    return rules.packageFor(distribution);
   }
 
   private static FileSet fileSetOf(Command command) {
@@ -69,7 +71,7 @@ public class WindowsPackageResolver implements PackageResolver {
                     VersionRange.of("2.6.0", "2.6.12")
             ).andThen(PlatformMatch.withOs(OS.Windows)
                     .withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/win32/mongodb-win32-x86_64-2008plus-{version}.zip")
@@ -91,7 +93,7 @@ public class WindowsPackageResolver implements PackageResolver {
                     VersionRange.of("4.4.0","4.4.9")
             ).andThen(PlatformMatch.withOs(OS.Windows)
                     .withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/windows/mongodb-windows-x86_64-{version}.zip")
@@ -108,7 +110,7 @@ public class WindowsPackageResolver implements PackageResolver {
                     VersionRange.of("3.0.0", "3.0.14")
             ).andThen(PlatformMatch.withOs(OS.Windows)
                     .withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/win32/mongodb-win32-x86_64-2008plus-ssl-{version}.zip")
@@ -121,7 +123,7 @@ public class WindowsPackageResolver implements PackageResolver {
                     VersionRange.of("4.2.0", "4.2.3")
             ).andThen(PlatformMatch.withOs(OS.Windows)
                     .withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/win32/mongodb-win32-x86_64-2012plus-{version}.zip")
@@ -140,7 +142,21 @@ public class WindowsPackageResolver implements PackageResolver {
                     )
                     .andThen(PlatformMatch.withOs(OS.Windows)
                             .withBitSize(BitSize.B32)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
+                    .fileSet(fileSet)
+                    .archiveType(archiveType)
+                    .urlTemplate("/win32/mongodb-win32-i386-{version}.zip")
+                    .build())
+            .build();
+
+    ImmutablePlatformMatchRule hiddenLegacyWin32rule = PlatformMatchRule.builder()
+            .match(DistributionMatch.any(
+                            VersionRange.of("3.3.1", "3.3.1"),
+                            VersionRange.of("3.5.5", "3.5.5")
+                    )
+                    .andThen(PlatformMatch.withOs(OS.Windows)
+                            .withBitSize(BitSize.B32)))
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/win32/mongodb-win32-i386-{version}.zip")
@@ -162,7 +178,20 @@ public class WindowsPackageResolver implements PackageResolver {
                     VersionRange.of("2.6.0", "2.6.12")
             ).andThen(PlatformMatch.withOs(OS.Windows)
                     .withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
+                    .fileSet(fileSet)
+                    .archiveType(archiveType)
+                    .urlTemplate("/win32/mongodb-win32-x86_64-{version}.zip")
+                    .build())
+            .build();
+
+    ImmutablePlatformMatchRule hiddenLegacyWin_x86_64 = PlatformMatchRule.builder()
+            .match(DistributionMatch.any(
+                    VersionRange.of("3.3.1", "3.3.1"),
+                    VersionRange.of("3.5.5", "3.5.5")
+            ).andThen(PlatformMatch.withOs(OS.Windows)
+                    .withBitSize(BitSize.B64)))
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/win32/mongodb-win32-x86_64-{version}.zip")
@@ -171,7 +200,7 @@ public class WindowsPackageResolver implements PackageResolver {
 
     ImmutablePlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.Windows))
-            .resolver(distribution -> {
+            .finder(distribution -> {
               throw new IllegalArgumentException("windows distribution not supported: " + distribution);
             })
             .build();
@@ -183,7 +212,9 @@ public class WindowsPackageResolver implements PackageResolver {
                     windows_x64_2012ssl_rule,
                     windows_x64_2008ssl_rule,
                     windowsServer_2008_rule,
+                    hiddenLegacyWin_x86_64,
                     win32rule,
+                    hiddenLegacyWin32rule,
                     failIfNothingMatches
             );
   }

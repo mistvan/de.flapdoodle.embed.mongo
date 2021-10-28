@@ -21,17 +21,19 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.FileType;
-import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.OS;
 
+import java.util.Optional;
 
-public class OSXPackageResolver implements PackageResolver {
+
+public class OSXPackageResolver implements PackageFinder {
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
 
@@ -41,13 +43,13 @@ public class OSXPackageResolver implements PackageResolver {
   }
 
   @Override
-  public DistributionPackage packageFor(Distribution distribution) {
-    return rules.packageFor(distribution).orElse(null);
+  public Optional<DistributionPackage> packageFor(Distribution distribution) {
+    return rules.packageFor(distribution);
   }
 
   private static FileSet fileSetOf(Command command) {
     return FileSet.builder()
-            .addEntry(FileType.Executable, command.commandName() + ".exe")
+            .addEntry(FileType.Executable, command.commandName())
             .build();
   }
 
@@ -65,7 +67,7 @@ public class OSXPackageResolver implements PackageResolver {
                             VersionRange.of("3.6.0", "3.6.22")
                     )
                     .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/osx/mongodb-osx-ssl-x86_64-{version}.tgz")
@@ -84,7 +86,7 @@ public class OSXPackageResolver implements PackageResolver {
                             VersionRange.of("3.0.4", "3.0.14")
                     )
                     .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/osx/mongodb-osx-ssl-x86_64-{version}.tgz")
@@ -101,13 +103,25 @@ public class OSXPackageResolver implements PackageResolver {
                             VersionRange.of("2.6.0", "2.6.12")
                     )
                     .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/osx/mongodb-osx-x86_64-{version}.tgz")
                     .build())
             .build();
 
+    ImmutablePlatformMatchRule hiddenLegacyRule = PlatformMatchRule.builder()
+            .match(DistributionMatch.any(
+                            VersionRange.of("3.3.1", "3.3.1"),
+                            VersionRange.of("3.5.5", "3.5.5")
+                    )
+                    .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+            .finder(UrlTemplatePackageResolver.builder()
+                    .fileSet(fileSet)
+                    .archiveType(archiveType)
+                    .urlTemplate("/osx/mongodb-osx-x86_64-{version}.tgz")
+                    .build())
+            .build();
     /*
       https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-{}.tgz
       5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
@@ -120,7 +134,7 @@ public class OSXPackageResolver implements PackageResolver {
                             VersionRange.of("4.2.0", "4.2.3")
                     )
                     .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/osx/mongodb-macos-x86_64-{version}.tgz")
@@ -129,14 +143,21 @@ public class OSXPackageResolver implements PackageResolver {
 
     PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.OS_X))
-            .resolver(distribution -> {
+            .finder(distribution -> {
               throw new IllegalArgumentException("osx distribution not supported: " + distribution);
             })
             .build();
 
 
     return PlatformMatchRules.empty()
-            .withRules(firstRule, secondRule, thirdRule, fourthRule, failIfNothingMatches);
+            .withRules(
+                    firstRule,
+                    secondRule,
+                    thirdRule,
+                    fourthRule,
+                    hiddenLegacyRule,
+                    failIfNothingMatches
+            );
   }
 
 }

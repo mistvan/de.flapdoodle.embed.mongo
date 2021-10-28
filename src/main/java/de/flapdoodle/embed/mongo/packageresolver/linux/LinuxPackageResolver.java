@@ -30,7 +30,9 @@ import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.linux.UbuntuVersion;
 
-public class LinuxPackageResolver implements PackageResolver {
+import java.util.Optional;
+
+public class LinuxPackageResolver implements PackageFinder {
 
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
@@ -41,8 +43,8 @@ public class LinuxPackageResolver implements PackageResolver {
   }
 
   @Override
-  public DistributionPackage packageFor(Distribution distribution) {
-    return rules.packageFor(distribution).orElse(null);
+  public Optional<DistributionPackage> packageFor(Distribution distribution) {
+    return rules.packageFor(distribution);
   }
 
   private static ImmutablePlatformMatchRules rules(Command command) {
@@ -51,7 +53,7 @@ public class LinuxPackageResolver implements PackageResolver {
     ImmutablePlatformMatchRule ubuntuRule = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.Linux)
                     .withVersion(UbuntuVersion.values()))
-            .resolver(new UbuntuPackageResolver(command))
+            .finder(new UbuntuPackageResolver(command))
             .build();
     /*
       Linux (legacy) undefined
@@ -65,7 +67,7 @@ public class LinuxPackageResolver implements PackageResolver {
                             VersionRange.of("2.6.0", "2.6.12")
                     )
                     .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(ArchiveType.TGZ)
                     .urlTemplate("/linux/mongodb-linux-i686-{version}.tgz")
@@ -88,7 +90,7 @@ public class LinuxPackageResolver implements PackageResolver {
                             VersionRange.of("2.6.0", "2.6.12")
                     )
                     .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(ArchiveType.TGZ)
                     .urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
@@ -101,18 +103,31 @@ public class LinuxPackageResolver implements PackageResolver {
                             VersionRange.of("3.5.5", "3.5.5")
                     )
                     .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
-            .resolver(UrlTemplatePackageResolver.builder()
+            .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(ArchiveType.TGZ)
                     .urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
                     .build())
             .build();
 
+    PlatformMatchRule hiddenLegacy32 = PlatformMatchRule.builder()
+            .match(DistributionMatch.any(
+                            VersionRange.of("3.3.1", "3.3.1"),
+                            VersionRange.of("3.5.5", "3.5.5")
+                    )
+                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
+            .finder(UrlTemplatePackageResolver.builder()
+                    .fileSet(fileSet)
+                    .archiveType(ArchiveType.TGZ)
+                    .urlTemplate("/linux/mongodb-linux-i686-{version}.tgz")
+                    .build())
+            .build();
+
+
     PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.Linux))
-            .resolver(distribution -> {
-              DistributionPackage old = new Paths(command).packageFor(distribution);
-              throw new IllegalArgumentException("linux distribution not supported: " + distribution + ", old=" + old);
+            .finder(distribution -> {
+              throw new IllegalArgumentException("linux distribution not supported: " + distribution);
             })
             .build();
 
@@ -122,6 +137,7 @@ public class LinuxPackageResolver implements PackageResolver {
                     legacy32,
                     legacy64,
                     hiddenLegacy64,
+                    hiddenLegacy32,
                     failIfNothingMatches
             );
   }

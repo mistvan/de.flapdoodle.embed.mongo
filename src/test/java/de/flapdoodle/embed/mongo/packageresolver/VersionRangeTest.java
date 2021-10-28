@@ -37,4 +37,11 @@ class VersionRangeTest {
     boolean result = range.match(Distribution.of(Version.of("4.0.12"), Platform.detect()));
     assertThat(result).isTrue();
   }
+
+  @Test
+  public void mustMatchVersionIfSingleValue() {
+    VersionRange range = VersionRange.of("3.3.1", "3.3.1");
+    boolean result = range.match(Distribution.of(Version.of("3.3.1"), Platform.detect()));
+    assertThat(result).isTrue();
+  }
 }

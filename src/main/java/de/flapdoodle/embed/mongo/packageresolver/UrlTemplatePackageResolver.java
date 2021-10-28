@@ -27,19 +27,20 @@ import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import org.immutables.value.Value;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Value.Immutable
-public abstract class UrlTemplatePackageResolver implements PackageResolver {
+public abstract class UrlTemplatePackageResolver implements PackageFinder {
 
   protected abstract ArchiveType archiveType();
   protected abstract FileSet fileSet();
   protected abstract String urlTemplate();
 
   @Override
-  public DistributionPackage packageFor(Distribution distribution) {
+  public Optional<DistributionPackage> packageFor(Distribution distribution) {
     String path=render(urlTemplate(), distribution);
-    return DistributionPackage.of(archiveType(), fileSet(), path);
+    return Optional.of(DistributionPackage.of(archiveType(), fileSet(), path));
   }
 
   private static String render(String urlTemplate, Distribution distribution) {

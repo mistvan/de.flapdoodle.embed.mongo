@@ -21,6 +21,7 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxPackageResolver;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
@@ -53,10 +54,12 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
             .resolveWith(new OSXPackageResolver(command));
     forPlatform(PlatformMatch.withOs(OS.Linux))
             .resolveWith(new LinuxPackageResolver(command));
+    forPlatform(PlatformMatch.withOs(OS.Solaris))
+            .resolveWith(new SolarisPackageFinder(command));
 
     forPlatform(PlatformMatch.any())
             .resolveWith(distribution -> {
-              throw new IllegalArgumentException("could not resolve package for "+distribution);
+              throw new IllegalArgumentException("could not resolve package for " + distribution);
             });
 //    forPlatform(PlatformMatch.any())
 //            .resolveWith("https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.5.tgz");
@@ -79,16 +82,16 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
     }
 
     private void resolveWith(ArchiveType archiveType, String url) {
-      PackageResolver packageResolver = distribution -> DistributionPackage.of(archiveType,
+      PackageFinder packageResolver = distribution -> Optional.of(DistributionPackage.of(archiveType,
               getFileSet(distribution.platform().operatingSystem()),
               url
-      );
+      ));
 
       resolveWith(packageResolver);
     }
     
-    private void resolveWith(PackageResolver resolver) {
-      rules = rules.with(PlatformMatchRule.of(match, resolver));
+    private void resolveWith(PackageFinder finder) {
+      rules = rules.with(PlatformMatchRule.of(match, finder));
     }
   }
 
@@ -96,7 +99,10 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
   public DistributionPackage packageFor(Distribution distribution) {
     for (PlatformMatchRule rule : rules.rules()) {
       if (rule.match().match(distribution)) {
-        return rule.resolver().packageFor(distribution);
+        Optional<DistributionPackage> result = rule.finder().packageFor(distribution);
+        if (result.isPresent()) {
+          return result.get();
+        }
       }
     }
     return fallback.packageFor(distribution);
