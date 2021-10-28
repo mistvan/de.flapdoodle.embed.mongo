@@ -21,7 +21,6 @@
 package de.flapdoodle.embed.mongo.config;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.io.directories.PropertyOrPlatformTempDir;
 import de.flapdoodle.embed.process.store.ArtifactStore;
@@ -47,7 +46,7 @@ public class ArtifactStores {
 	}
 
 	public static Builder builder(Command command) {
-		return defaultBuilder().downloadConfig(Defaults.downloadConfigDefaults().packageResolver(new Paths(command)).build());
+		return defaultBuilder().downloadConfig(Defaults.downloadConfigFor(command).build());
 	}
 
 	public static Builder defaultBuilder() {

@@ -93,14 +93,15 @@ public class MongoDBRuntimeTest {
 			}
 		}
 		config = defaultBuilder.artifactStore(Defaults.extractedArtifactStoreFor(Command.MongoD)
-						.withDownloadConfig(Defaults.downloadConfigDefaults()
-								.packageResolver(new Paths(Command.MongoD) {
-										@Override
-										protected boolean useWindows2008PlusVersion(Distribution distribution) {
-											final de.flapdoodle.embed.process.distribution.Version version = distribution.version();
-											return numericVersionOf(version).isNewerOrEqual(1, 8, 5) && numericVersionOf(version).isOlderOrEqual(4, 0, 24);
-										}
-									}).build())).build();
+						.withDownloadConfig(Defaults.downloadConfigFor(Command.MongoD)
+//								.packageResolver(new Paths(Command.MongoD) {
+//										@Override
+//										protected boolean useWindows2008PlusVersion(Distribution distribution) {
+//											final de.flapdoodle.embed.process.distribution.Version version = distribution.version();
+//											return numericVersionOf(version).isNewerOrEqual(1, 8, 5) && numericVersionOf(version).isOlderOrEqual(4, 0, 24);
+//										}
+//									})
+										.build())).build();
 
 		for (IFeatureAwareVersion version : Versions.testableVersions(Version.Main.class)) {
 			// there is no windows 2008 version for 1.8.5 

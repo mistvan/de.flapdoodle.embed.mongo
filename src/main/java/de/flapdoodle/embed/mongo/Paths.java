@@ -61,6 +61,7 @@ public class Paths implements PackageResolver {
 	
 	@Override
 	public DistributionPackage packageFor(Distribution distribution) {
+    if (true) throw new IllegalArgumentException("must not be called");
 		return DistributionPackage.of(getArchiveType(distribution), getFileSet(distribution), getPath(distribution));
 	}
 

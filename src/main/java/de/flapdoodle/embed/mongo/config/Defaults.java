@@ -27,7 +27,6 @@ import de.flapdoodle.embed.mongo.packageresolver.CrazyNamingMongoDBPackageResolv
 import org.slf4j.Logger;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.process.config.ImmutableRuntimeConfig;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.config.store.DistributionDownloadPath;
@@ -90,7 +89,7 @@ public abstract class Defaults {
 		}
 		
 		public static PackageResolver packageResolver(Command command) {
-			return new CrazyNamingMongoDBPackageResolver(command, new Paths(command));
+			return new CrazyNamingMongoDBPackageResolver(command);
 		}
 
 		private static Directory defaultArtifactStoreLocation() {

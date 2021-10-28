@@ -21,7 +21,6 @@
 package de.flapdoodle.embed.mongo.packageresolver.linux;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.mongo.packageresolver.*;
 import de.flapdoodle.embed.process.config.store.*;
 import de.flapdoodle.embed.process.distribution.ArchiveType;

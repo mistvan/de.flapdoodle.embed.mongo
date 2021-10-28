@@ -32,9 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CrazyNamingMongoDBPackageResolverTest {
 
-  private final CrazyNamingMongoDBPackageResolver testee = new CrazyNamingMongoDBPackageResolver(Command.Mongo, distribution -> {
-    throw new IllegalArgumentException("should not be called");
-  });
+  private final CrazyNamingMongoDBPackageResolver testee = new CrazyNamingMongoDBPackageResolver(Command.Mongo);
 
   @Test
   public void matchKnownVersions() {

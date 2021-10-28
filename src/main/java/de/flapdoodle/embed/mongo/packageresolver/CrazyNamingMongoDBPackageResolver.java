@@ -21,7 +21,6 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.Paths;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxPackageResolver;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
@@ -32,6 +31,7 @@ import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.*;
 
+import java.io.ObjectStreamException;
 import java.util.Optional;
 
 /**
@@ -41,12 +41,10 @@ import java.util.Optional;
 public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
 
   private final Command command;
-  private final PackageResolver fallback;
   private ImmutablePlatformMatchRules rules=PlatformMatchRules.empty();
 
-  public CrazyNamingMongoDBPackageResolver(Command command, PackageResolver fallback) {
+  public CrazyNamingMongoDBPackageResolver(Command command) {
     this.command = command;
-    this.fallback = fallback;
 
     forPlatform(PlatformMatch.withOs(OS.Windows))
             .resolveWith(new WindowsPackageResolver(command));
@@ -105,7 +103,7 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
         }
       }
     }
-    return fallback.packageFor(distribution);
+    throw new IllegalArgumentException("could not resolve package for "+distribution);
   }
 
   private FileSet getFileSet(OS os) {
