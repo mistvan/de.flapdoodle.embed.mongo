@@ -1,6 +1,7 @@
-package de.flapdoodle.embed.mongo.packageresolver;
+package de.flapdoodle.embed.mongo.packageresolver.linux;
 
 import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.HtmlParserResultTester;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.os.CommonArchitecture;
@@ -9,8 +10,6 @@ import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class LinuxPackageResolverTest {
 

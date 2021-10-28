@@ -1,32 +1,34 @@
 /**
  * Copyright (C) 2011
- *   Michael Mosmann <michael@mosmann.de>
- *   Martin Jöhren <m.joehren@googlemail.com>
- *
+ * Michael Mosmann <michael@mosmann.de>
+ * Martin Jöhren <m.joehren@googlemail.com>
+ * <p>
  * with contributions from
- * 	konstantin-ba@github,Archimedes Trajano	(trajano@github)
- *
+ * konstantin-ba@github,Archimedes Trajano	(trajano@github)
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.embed.mongo.packageresolver;
+package de.flapdoodle.embed.mongo.packageresolver.linux;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.Paths;
+import de.flapdoodle.embed.mongo.packageresolver.*;
 import de.flapdoodle.embed.process.config.store.*;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.linux.UbuntuVersion;
 
 public class LinuxPackageResolver implements PackageResolver {
 
@@ -45,6 +47,12 @@ public class LinuxPackageResolver implements PackageResolver {
 
   private static ImmutablePlatformMatchRules rules(Command command) {
     ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
+
+    ImmutablePlatformMatchRule ubuntuRule = PlatformMatchRule.builder()
+            .match(PlatformMatch.withOs(OS.Linux)
+                    .withVersion(UbuntuVersion.values()))
+            .resolver(new UbuntuPackageResolver(command))
+            .build();
     /*
       Linux (legacy) undefined
       https://fastdl.mongodb.org/linux/mongodb-linux-i686-{}.tgz
@@ -104,12 +112,18 @@ public class LinuxPackageResolver implements PackageResolver {
             .match(PlatformMatch.withOs(OS.Linux))
             .resolver(distribution -> {
               DistributionPackage old = new Paths(command).packageFor(distribution);
-              throw new IllegalArgumentException("linux distribution not supported: " + distribution+ ", old="+old);
+              throw new IllegalArgumentException("linux distribution not supported: " + distribution + ", old=" + old);
             })
             .build();
 
     return PlatformMatchRules.empty()
-            .withRules(legacy32, legacy64, hiddenLegacy64, failIfNothingMatches);
+            .withRules(
+                    ubuntuRule,
+                    legacy32,
+                    legacy64,
+                    hiddenLegacy64,
+                    failIfNothingMatches
+            );
   }
 
 }

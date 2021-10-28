@@ -46,7 +46,7 @@ public abstract class PlatformMatchRules {
   }
 
 
-  static ImmutablePlatformMatchRules empty() {
+  public static ImmutablePlatformMatchRules empty() {
     return ImmutablePlatformMatchRules.builder().build();
   }
 }

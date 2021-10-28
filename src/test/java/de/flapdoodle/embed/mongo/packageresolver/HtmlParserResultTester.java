@@ -50,7 +50,7 @@ public class HtmlParserResultTester {
   /*
     4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
     */
-  static HtmlParserResultTester with(PackageResolver testee, Function<String, Distribution> distributionWithVersion, String versionList) {
+  public static HtmlParserResultTester with(PackageResolver testee, Function<String, Distribution> distributionWithVersion, String versionList) {
     String[] ranges = versionList.split(",");
     List<VersionGenerator> versions = Stream.of(ranges)
             .map(VersionGenerator::of)
@@ -62,6 +62,7 @@ public class HtmlParserResultTester {
     versions.forEach(versionGenerator -> {
       versionGenerator.forEach(version -> {
         DistributionPackage result = testee.packageFor(distributionWithVersion.apply(asString(version)));
+        assertThat(result).describedAs("package for "+version).isNotNull();
         String expectedUrl = url.replace("{}", asString(version));
         assertThat(result.archivePath()).isEqualTo(expectedUrl);
       });

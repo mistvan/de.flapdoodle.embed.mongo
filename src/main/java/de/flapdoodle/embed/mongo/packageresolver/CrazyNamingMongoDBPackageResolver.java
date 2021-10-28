@@ -22,6 +22,7 @@ package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxPackageResolver;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.FileType;

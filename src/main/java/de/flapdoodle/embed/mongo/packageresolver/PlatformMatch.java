@@ -24,10 +24,11 @@ import de.flapdoodle.os.*;
 import org.immutables.value.Value;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Value.Immutable
 public interface PlatformMatch extends DistributionMatch {
-  Optional<Version> version();
+  Set<Version> version();
   Optional<CPUType> cpuType();
   Optional<BitSize> bitSize();
   Optional<OS> os();
@@ -64,5 +65,9 @@ public interface PlatformMatch extends DistributionMatch {
 
   static <T> boolean dontMatch(Optional<T> match, Optional<T> value) {
     return match.isPresent() && value.isPresent() && !match.get().equals(value.get());
+  }
+
+  static <T> boolean dontMatch(Set<T> match, Optional<T> value) {
+    return !match.isEmpty() && (!value.isPresent() || !match.contains(value.get()));
   }
 }

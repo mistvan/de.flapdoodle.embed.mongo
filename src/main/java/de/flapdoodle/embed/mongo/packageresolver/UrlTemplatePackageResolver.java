@@ -30,7 +30,7 @@ import org.immutables.value.Value;
 import java.util.function.Function;
 
 @Value.Immutable
-abstract class UrlTemplatePackageResolver implements PackageResolver {
+public abstract class UrlTemplatePackageResolver implements PackageResolver {
 
   protected abstract ArchiveType archiveType();
   protected abstract FileSet fileSet();
