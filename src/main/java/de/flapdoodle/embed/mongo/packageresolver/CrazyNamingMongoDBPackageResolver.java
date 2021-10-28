@@ -28,6 +28,8 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
 
     forPlatform(PlatformMatch.withOs(OS.Windows))
             .resolveWith(new WindowsPackageResolver(command));
+    forPlatform(PlatformMatch.withOs(OS.OS_X))
+            .resolveWith(new OSXPackageResolver(command));
     
     forPlatform(PlatformMatch.any())
             .resolveWith("https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.5.tgz");
