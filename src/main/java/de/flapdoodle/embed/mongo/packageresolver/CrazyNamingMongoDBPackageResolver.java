@@ -1,7 +1,6 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
@@ -10,8 +9,6 @@ import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.*;
-import de.flapdoodle.os.linux.LinuxDistribution;
-import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.Optional;
 
@@ -30,7 +27,7 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
     this.fallback = fallback;
 
     forPlatform(PlatformMatch.withOs(OS.Windows))
-            .resolveWith(new WindowsPackageResolver(OS.Windows, command));
+            .resolveWith(new WindowsPackageResolver(command));
     
     forPlatform(PlatformMatch.any())
             .resolveWith("https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.5.tgz");
