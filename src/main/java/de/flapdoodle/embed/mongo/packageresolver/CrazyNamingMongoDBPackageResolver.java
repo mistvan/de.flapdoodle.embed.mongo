@@ -21,7 +21,6 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxPackageResolver;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
@@ -29,9 +28,8 @@ import de.flapdoodle.embed.process.config.store.FileType;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.os.*;
+import de.flapdoodle.os.OS;
 
-import java.io.ObjectStreamException;
 import java.util.Optional;
 
 /**
@@ -45,6 +43,7 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
 
   public CrazyNamingMongoDBPackageResolver(Command command) {
     this.command = command;
+
 
     forPlatform(PlatformMatch.withOs(OS.Windows))
             .resolveWith(new WindowsPackageResolver(command));
@@ -95,15 +94,8 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
 
   @Override
   public DistributionPackage packageFor(Distribution distribution) {
-    for (PlatformMatchRule rule : rules.rules()) {
-      if (rule.match().match(distribution)) {
-        Optional<DistributionPackage> result = rule.finder().packageFor(distribution);
-        if (result.isPresent()) {
-          return result.get();
-        }
-      }
-    }
-    throw new IllegalArgumentException("could not resolve package for "+distribution);
+    Optional<DistributionPackage> result = rules.packageFor(distribution);
+    return result.orElseThrow(() -> new IllegalArgumentException("could not resolve package for "+distribution));
   }
 
   private FileSet getFileSet(OS os) {
@@ -123,15 +115,4 @@ public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
     }
     return FileSet.builder().addEntry(FileType.Executable, executableFileName).build();
   }
-
-  private static Optional<de.flapdoodle.embed.mongo.distribution.Version> predefinedVersionOf(de.flapdoodle.embed.process.distribution.Version version) {
-    if (version instanceof Version) {
-      return Optional.of((Version) version);
-    }
-    if (version instanceof Version.Main) {
-      return predefinedVersionOf(((Version.Main) version).latest());
-    }
-    return Optional.empty();
-  }
-
 }
