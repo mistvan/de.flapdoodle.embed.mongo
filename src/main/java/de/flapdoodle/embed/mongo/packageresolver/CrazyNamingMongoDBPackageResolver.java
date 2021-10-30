@@ -26,7 +26,6 @@ import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.FileType;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
-import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.OS;
 
@@ -39,80 +38,26 @@ import java.util.Optional;
 public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
 
   private final Command command;
-  private ImmutablePlatformMatchRules rules=PlatformMatchRules.empty();
+  private final PlatformMatchRules rules;
 
   public CrazyNamingMongoDBPackageResolver(Command command) {
+    // TODO system property finder
+    // TODO put features into this?
+
     this.command = command;
-
-
-    forPlatform(PlatformMatch.withOs(OS.Windows))
-            .resolveWith(new WindowsPackageResolver(command));
-    forPlatform(PlatformMatch.withOs(OS.OS_X))
-            .resolveWith(new OSXPackageResolver(command));
-    forPlatform(PlatformMatch.withOs(OS.Linux))
-            .resolveWith(new LinuxPackageResolver(command));
-    forPlatform(PlatformMatch.withOs(OS.Solaris))
-            .resolveWith(new SolarisPackageFinder(command));
-
-    forPlatform(PlatformMatch.any())
-            .resolveWith(distribution -> {
-              throw new IllegalArgumentException("could not resolve package for " + distribution);
-            });
-//    forPlatform(PlatformMatch.any())
-//            .resolveWith("https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.5.tgz");
-  }
-
-  private WithMatch forPlatform(PlatformMatch match) {
-    return new WithMatch(match);
-  }
-
-  private class WithMatch {
-
-    private final PlatformMatch match;
-
-    public WithMatch(PlatformMatch match) {
-      this.match = match;
-    }
-
-    private void resolveWith(String url) {
-      resolveWith(ArchiveType.TGZ, url);
-    }
-
-    private void resolveWith(ArchiveType archiveType, String url) {
-      PackageFinder packageResolver = distribution -> Optional.of(DistributionPackage.of(archiveType,
-              getFileSet(distribution.platform().operatingSystem()),
-              url
-      ));
-
-      resolveWith(packageResolver);
-    }
-    
-    private void resolveWith(PackageFinder finder) {
-      rules = rules.with(PlatformMatchRule.of(match, finder));
-    }
+    this.rules = PlatformMatchRules.empty()
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Windows), new WindowsPackageResolver(command)))
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.OS_X), new OSXPackageResolver(command)))
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Linux), new LinuxPackageResolver(command)))
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Solaris), new SolarisPackageFinder(command)))
+        .with(PlatformMatchRule.of(PlatformMatch.any(), distribution -> {
+          throw new IllegalArgumentException("could not resolve package for " + distribution);
+        }));
   }
 
   @Override
   public DistributionPackage packageFor(Distribution distribution) {
     Optional<DistributionPackage> result = rules.packageFor(distribution);
     return result.orElseThrow(() -> new IllegalArgumentException("could not resolve package for "+distribution));
-  }
-
-  private FileSet getFileSet(OS os) {
-    String executableFileName;
-    switch (os) {
-      case Linux:
-      case OS_X:
-      case Solaris:
-      case FreeBSD:
-        executableFileName = command.commandName();
-        break;
-      case Windows:
-        executableFileName = command.commandName()+".exe";
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown OS " + os);
-    }
-    return FileSet.builder().addEntry(FileType.Executable, executableFileName).build();
   }
 }

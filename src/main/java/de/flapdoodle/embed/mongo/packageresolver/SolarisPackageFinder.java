@@ -34,7 +34,7 @@ import java.util.Optional;
 
 public class SolarisPackageFinder implements PackageFinder {
   private final Command command;
-  private final ImmutablePlatformMatchRules rules;
+  private final PlatformMatchRules rules;
 
   public SolarisPackageFinder(Command command) {
     this.command = command;
@@ -52,7 +52,7 @@ public class SolarisPackageFinder implements PackageFinder {
             .build();
   }
 
-  private static ImmutablePlatformMatchRules rules(Command command) {
+  private static PlatformMatchRules rules(Command command) {
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.TGZ;
 

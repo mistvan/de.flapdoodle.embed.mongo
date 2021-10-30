@@ -40,13 +40,16 @@ class CrazyNamingMongoDBPackageResolverTest {
             .matchesPath("/win32/mongodb-win32-x86_64-2012plus-4.2.13.zip");
 
     assertThatDistributionPackageFor(Version.V4_0_12, OS.Windows, CommonArchitecture.X86_64)
-            .matchesPath("/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.12.zip");
+        .matchesPath("/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.12.zip");
 
     assertThatDistributionPackageFor(Version.V4_0_12, OS.Linux, CommonArchitecture.X86_64)
             .matchesPath("/linux/mongodb-linux-x86_64-4.0.12.tgz");
 
     assertThatDistributionPackageFor(Version.V4_0_12, OS.OS_X, CommonArchitecture.X86_64)
             .matchesPath("/osx/mongodb-osx-ssl-x86_64-4.0.12.tgz");
+
+    assertThatDistributionPackageFor(Version.V3_4_5, OS.Solaris, CommonArchitecture.X86_64)
+        .matchesPath("/sunos5/mongodb-sunos5-x86_64-3.4.5.tgz");
   }
 
   private WithDistributionPackage assertThatDistributionPackageFor(Version version, OS os, CommonArchitecture architecture) {
