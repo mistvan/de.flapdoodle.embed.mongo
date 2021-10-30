@@ -31,12 +31,12 @@ import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.Optional;
 
-public class LinuxPackageResolver implements PackageFinder {
+public class LinuxPackageFinder implements PackageFinder {
 
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
 
-  public LinuxPackageResolver(Command command) {
+  public LinuxPackageFinder(Command command) {
     this.command = command;
     this.rules = rules(command);
   }

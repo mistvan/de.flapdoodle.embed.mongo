@@ -21,10 +21,8 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxPackageResolver;
+import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxPackageFinder;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
-import de.flapdoodle.embed.process.config.store.FileSet;
-import de.flapdoodle.embed.process.config.store.FileType;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.OS;
@@ -35,20 +33,20 @@ import java.util.Optional;
  * bc mongodb decided to reinvent their artifact naming which is some kind of complex
  * we have to deal with that somehow
  */
-public class CrazyNamingMongoDBPackageResolver implements PackageResolver {
+public class PlatformPackageResolver implements PackageResolver {
 
   private final Command command;
   private final PlatformMatchRules rules;
 
-  public CrazyNamingMongoDBPackageResolver(Command command) {
+  public PlatformPackageResolver(Command command) {
     // TODO system property finder
     // TODO put features into this?
 
     this.command = command;
     this.rules = PlatformMatchRules.empty()
-        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Windows), new WindowsPackageResolver(command)))
-        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.OS_X), new OSXPackageResolver(command)))
-        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Linux), new LinuxPackageResolver(command)))
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Windows), new WindowsPackageFinder(command)))
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.OS_X), new OSXPackageFinder(command)))
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Linux), new LinuxPackageFinder(command)))
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Solaris), new SolarisPackageFinder(command)))
         .with(PlatformMatchRule.of(PlatformMatch.any(), distribution -> {
           throw new IllegalArgumentException("could not resolve package for " + distribution);

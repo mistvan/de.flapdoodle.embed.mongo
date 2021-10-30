@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CrazyNamingMongoDBPackageResolverTest {
+class PlatformPackageResolverTest {
 
-  private final CrazyNamingMongoDBPackageResolver testee = new CrazyNamingMongoDBPackageResolver(Command.Mongo);
+  private final PlatformPackageResolver testee = new PlatformPackageResolver(Command.Mongo);
 
   @Test
   public void matchKnownVersions() {

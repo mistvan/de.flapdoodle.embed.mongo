@@ -31,7 +31,7 @@ import de.flapdoodle.os.Platform;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class LinuxPackageResolverTest {
+class LinuxPackageFinderTest {
 
   /*
     Linux (legacy) undefined
@@ -67,7 +67,7 @@ class LinuxPackageResolverTest {
 
   private static HtmlParserResultTester assertThat(Platform platform, String versionList) {
     return HtmlParserResultTester.with(
-            new LinuxPackageResolver(Command.Mongo),
+            new LinuxPackageFinder(Command.Mongo),
             version -> Distribution.of(Version.of(version), platform),
             versionList);
   }

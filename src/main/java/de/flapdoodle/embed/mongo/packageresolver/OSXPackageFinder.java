@@ -32,11 +32,11 @@ import de.flapdoodle.os.OS;
 import java.util.Optional;
 
 
-public class OSXPackageResolver implements PackageFinder {
+public class OSXPackageFinder implements PackageFinder {
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
 
-  public OSXPackageResolver(Command command) {
+  public OSXPackageFinder(Command command) {
     this.command = command;
     this.rules = rules(command);
   }

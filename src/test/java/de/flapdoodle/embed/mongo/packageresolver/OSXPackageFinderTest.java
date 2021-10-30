@@ -30,9 +30,7 @@ import de.flapdoodle.os.Platform;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class OSXPackageResolverTest {
+class OSXPackageFinderTest {
 
   /*
     https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{}.tgz
@@ -88,7 +86,7 @@ class OSXPackageResolverTest {
 
   private static HtmlParserResultTester assertThat(String versionList) {
     return HtmlParserResultTester.with(
-            new OSXPackageResolver(Command.Mongo),
+            new OSXPackageFinder(Command.Mongo),
             version -> Distribution.of(Version.of(version), osx()),
             versionList);
   }

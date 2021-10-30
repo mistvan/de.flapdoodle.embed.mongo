@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class WindowsPackageResolverTest {
+class WindowsPackageFinderTest {
 
   /*
   -----------------------------------
@@ -121,7 +121,7 @@ class WindowsPackageResolverTest {
 
   private static HtmlParserResultTester assertThat(Platform platform, String versionList) {
     return HtmlParserResultTester.with(
-            new WindowsPackageResolver(Command.Mongo),
+            new WindowsPackageFinder(Command.Mongo),
             version -> Distribution.of(Version.of(version), platform),
             versionList);
   }
