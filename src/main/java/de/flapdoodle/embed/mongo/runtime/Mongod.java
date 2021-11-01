@@ -147,12 +147,16 @@ public class Mongod extends AbstractMongo {
 		} else {
 			ret.add("--noauth");
 		}
-		if (config.cmdOptions().useNoPrealloc()) {
-			ret.add("--noprealloc");
+		if (!config.version().enabled(Feature.DISABLE_USE_PREALLOC)) {
+				if (config.cmdOptions().useNoPrealloc()) {
+						ret.add("--noprealloc");
+				}
 		}
-		if (config.cmdOptions().useSmallFiles()) {
-			ret.add("--smallfiles");
-		}
+	if (!config.version().enabled(Feature.DISABLE_USE_SMALL_FILES)) {
+			if (config.cmdOptions().useSmallFiles()) {
+					ret.add("--smallfiles");
+			}
+	}
 		if (config.cmdOptions().useNoJournal() && !config.isConfigServer()) {
 			ret.add("--nojournal");
 		}

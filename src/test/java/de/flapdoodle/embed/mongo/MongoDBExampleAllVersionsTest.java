@@ -23,12 +23,16 @@ package de.flapdoodle.embed.mongo;
 import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
+import org.bson.Document;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -87,7 +91,7 @@ public class MongoDBExampleAllVersionsTest {
 	private MongodExecutable mongodExe;
 	private MongodProcess mongod;
 
-	private Mongo mongo;
+	private MongoClient mongo;
 	private static final String DATABASENAME = "mongo_test";
 
 	@Before
@@ -113,7 +117,7 @@ public class MongoDBExampleAllVersionsTest {
 		mongodExe.stop();
 	}
 
-	public Mongo getMongo() {
+	public MongoClient getMongo() {
 		return mongo;
 	}
 
@@ -124,18 +128,20 @@ public class MongoDBExampleAllVersionsTest {
 	@Test
 	public void testInsert1() {
 		System.out.println("-1-8<---------------");
-		DB db = mongo.getDB("test");
-		DBCollection col = db.createCollection("testCol", new BasicDBObject());
-		col.save(new BasicDBObject("testDoc", new Date()));
+		MongoDatabase db = mongo.getDatabase("test");
+		db.createCollection("testCol");
+		MongoCollection<Document> col = db.getCollection("testCol");
+		col.insertOne(new Document("testDoc", new Date()));
 		System.out.println("-1->8---------------");
 	}
 
 	@Test
 	public void testInsert2() {
 		System.out.println("-2-8<---------------");
-		DB db = mongo.getDB("test");
-		DBCollection col = db.createCollection("testCol", new BasicDBObject());
-		col.save(new BasicDBObject("testDoc", new Date()));
+		MongoDatabase db = mongo.getDatabase("test");
+		db.createCollection("testCol");
+		MongoCollection<Document> col = db.getCollection("testCol");
+		col.insertOne(new Document("testDoc", new Date()));
 		System.out.println("-2->8---------------");
 	}
 

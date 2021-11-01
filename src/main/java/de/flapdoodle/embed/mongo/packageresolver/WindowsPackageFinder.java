@@ -99,7 +99,20 @@ public class WindowsPackageFinder implements PackageFinder {
                     .build())
             .build();
 
-    ImmutablePlatformMatchRule windows_x64_2008ssl_rule = PlatformMatchRule.builder()
+      ImmutablePlatformMatchRule tools_windows_x64_rule = PlatformMatchRule.builder()
+          .match(DistributionMatch.any(
+              VersionRange.of("5.0.0", "5.0.2"),
+              VersionRange.of("4.4.0","4.4.9")
+          ).andThen(PlatformMatch.withOs(OS.Windows)
+              .withBitSize(BitSize.B64)))
+          .finder(UrlTemplatePackageResolver.builder()
+              .fileSet(fileSet)
+              .archiveType(archiveType)
+              .urlTemplate("/tools/db/mongodb-database-tools-windows-x86_64-{tools.version}.zip")
+              .build())
+          .build();
+
+      ImmutablePlatformMatchRule windows_x64_2008ssl_rule = PlatformMatchRule.builder()
             .match(DistributionMatch.any(
                     VersionRange.of("4.0.0", "4.0.26"),
                     VersionRange.of("3.6.0", "3.6.22"),
@@ -204,7 +217,27 @@ public class WindowsPackageFinder implements PackageFinder {
             })
             .build();
 
-    return PlatformMatchRules.empty()
+      switch (command) {
+          case MongoDump:
+          case MongoImport:
+          case MongoRestore:
+              return PlatformMatchRules.empty()
+                  .withRules(
+                      tools_windows_x64_rule,
+                      win_x86_64,
+                      windows_x64_rule,
+                      windows_x64_2012ssl_rule,
+                      windows_x64_2008ssl_rule,
+                      windowsServer_2008_rule,
+                      hiddenLegacyWin_x86_64,
+                      win32rule,
+                      hiddenLegacyWin32rule,
+                      failIfNothingMatches
+                  );
+      }
+
+
+      return PlatformMatchRules.empty()
             .withRules(
                     win_x86_64,
                     windows_x64_rule,

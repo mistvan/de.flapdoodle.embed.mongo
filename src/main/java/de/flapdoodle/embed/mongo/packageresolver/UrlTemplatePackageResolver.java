@@ -20,11 +20,14 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver;
 
+import de.flapdoodle.embed.mongo.distribution.HasMongotoolsPackage;
+import de.flapdoodle.embed.mongo.distribution.MongotoolsVersion;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.distribution.Version;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -45,7 +48,18 @@ public abstract class UrlTemplatePackageResolver implements PackageFinder {
 
   private static String render(String urlTemplate, Distribution distribution) {
     String version=distribution.version().asInDownloadPath();
-    return urlTemplate.replace("{version}",version);
+    String withVersion = urlTemplate.replace("{version}", version);
+
+    Optional<String> toolsVersion = Optional.of(distribution.version())
+        .flatMap(it -> it instanceof HasMongotoolsPackage ? Optional.of((HasMongotoolsPackage) it) : Optional.empty())
+        .flatMap(HasMongotoolsPackage::mongotoolsVersion)
+        .map(Version::asInDownloadPath);
+
+    String withOrWithoutToolsVersion=toolsVersion.isPresent()
+        ? withVersion.replace("{tools.version}", toolsVersion.get())
+        : withVersion;
+
+    return withOrWithoutToolsVersion;
   }
 
   public static ImmutableUrlTemplatePackageResolver.Builder builder() {

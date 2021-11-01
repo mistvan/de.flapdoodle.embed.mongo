@@ -85,7 +85,9 @@ public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extend
 	}
 
 	protected String successMessage() {
-		return "waiting for connections on port";
+	  // old: waiting for connections on port
+		// since 4.4.5: Waiting for connections
+		return "aiting for connections";
 	}
 	
 	private Set<String> knownFailureMessages() {

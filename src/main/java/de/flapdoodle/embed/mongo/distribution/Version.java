@@ -21,11 +21,12 @@
 package de.flapdoodle.embed.mongo.distribution;
 
 import java.util.EnumSet;
+import java.util.Optional;
 
 /**
  * MongoDB Version enum
  */
-public enum Version implements IFeatureAwareVersion {
+public enum Version implements IFeatureAwareVersion, HasMongotoolsPackage {
 
 	@Deprecated
 	V1_6_5("1.6.5"),
@@ -223,25 +224,39 @@ public enum Version implements IFeatureAwareVersion {
   V4_2_13("4.2.13", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2012_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST, Feature.DISABLE_USE_PREALLOC, Feature.DISABLE_USE_SMALL_FILES),
 
   @Deprecated
-  V4_4_1("4.4.1", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
-  V4_4_5("4.4.5", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
-  V4_9_0_rc0("4.9.0-rc0", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
+  V4_4_1("4.4.1", MongotoolsVersion.Main.V100_5, Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WITH_SSL, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
+  V4_4_5("4.4.5", MongotoolsVersion.Main.V100_5, Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST, Feature.DISABLE_USE_PREALLOC, Feature.DISABLE_USE_SMALL_FILES),
+	V4_4_9("4.4.9", MongotoolsVersion.Main.V100_5, Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST, Feature.DISABLE_USE_PREALLOC, Feature.DISABLE_USE_SMALL_FILES),
+	V5_0_2("5.0.2", MongotoolsVersion.Main.V100_5, Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST, Feature.DISABLE_USE_PREALLOC, Feature.DISABLE_USE_SMALL_FILES),
+
+	@Deprecated
   LATEST_NIGHTLY("latest", Feature.SYNC_DELAY, Feature.STORAGE_ENGINE, Feature.ONLY_64BIT, Feature.NO_CHUNKSIZE_ARG, Feature.MONGOS_CONFIGDB_SET_STYLE, Feature.NO_HTTP_INTERFACE_ARG, Feature.ONLY_WINDOWS_2008_SERVER, Feature.NO_SOLARIS_SUPPORT, Feature.NO_BIND_IP_TO_LOCALHOST),
-
-
   ;
 
 	private final String specificVersion;
 	private final EnumSet<Feature> features;
 	private final NumericVersion numericVersion;
+	private final MongotoolsVersion.Main mongodumpVersion;
 
-	Version(String vName,Feature...features) {
-		this.specificVersion = vName;
-		this.features = Feature.asSet(features);
-		this.numericVersion = NumericVersion.of(vName);
-	}
+		Version(String vName, Feature...features) {
+				this.specificVersion = vName;
+				this.features = Feature.asSet(features);
+				this.numericVersion = NumericVersion.of(vName);
+				this.mongodumpVersion = null;
+		}
 
-	@Override
+		Version(String vName, MongotoolsVersion.Main mongodumpVersion, Feature...features) {
+				this.specificVersion = vName;
+				this.features = Feature.asSet(features);
+				this.numericVersion = NumericVersion.of(vName);
+				this.mongodumpVersion = mongodumpVersion;
+		}
+
+		@Override
+		public Optional<MongotoolsVersion.Main> mongotoolsVersion() {
+				return Optional.ofNullable(mongodumpVersion);
+		}
+		@Override
 	public String asInDownloadPath() {
 		return specificVersion;
 	}
@@ -261,7 +276,7 @@ public enum Version implements IFeatureAwareVersion {
 		return "Version{" + specificVersion + '}';
 	}
 
-	public enum Main implements IFeatureAwareVersion {
+	public enum Main implements IFeatureAwareVersion, HasMongotoolsPackage {
 		@Deprecated
 		V1_8(V1_8_5),
 
@@ -296,13 +311,13 @@ public enum Version implements IFeatureAwareVersion {
 		V3_6(V3_6_5),
 		V4_0(V4_0_12),
 		V4_2(V4_2_13),
-//		V4_4(V4_4_5),
+		V4_4(V4_4_9),
+		V5_0(V5_0_2),
 
 		@Deprecated
 		LEGACY(V3_6),
-		PRODUCTION(V4_2),
-//		DEVELOPMENT(V4_9_0_rc0);
-		DEVELOPMENT(V4_2);
+		PRODUCTION(V4_4),
+		DEVELOPMENT(V5_0);
 
 		private final IFeatureAwareVersion _latest;
 
@@ -316,6 +331,7 @@ public enum Version implements IFeatureAwareVersion {
 		}
 
 		@Override
+		@Deprecated
 		public NumericVersion numericVersion() {
 			return _latest.numericVersion();
 		}
@@ -325,8 +341,11 @@ public enum Version implements IFeatureAwareVersion {
 			return _latest.getFeatures();
 		}
 
-		public IFeatureAwareVersion latest() {
-			return _latest;
-		}
+			@Override
+			public Optional<MongotoolsVersion.Main> mongotoolsVersion() {
+					return _latest instanceof HasMongotoolsPackage
+							? ((HasMongotoolsPackage) _latest).mongotoolsVersion()
+							: Optional.empty();
+			}
 	}
 }

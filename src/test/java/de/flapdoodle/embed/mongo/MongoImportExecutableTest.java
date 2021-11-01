@@ -82,7 +82,7 @@ public class MongoImportExecutableTest {
         MongodConfig mongodConfig = MongodConfig.builder()
                 .version(version)
                 .net(new Net(12346, Network.localhostIsIPv6()))
-                .cmdOptions(getCmdOptions(version))
+                //.cmdOptions(getCmdOptions(version))
                 .build();
 
         RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();

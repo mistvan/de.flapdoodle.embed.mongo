@@ -64,8 +64,4 @@ public abstract class TestUtils {
                 .architecture(architecture)
                 .build());
     }
-
-    public static NumericVersion numericVersionOf(Version version) {
-        return ((IFeatureAwareVersion) version).numericVersion();
-    }
 }

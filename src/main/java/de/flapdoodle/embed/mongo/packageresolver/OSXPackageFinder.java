@@ -140,13 +140,41 @@ public class OSXPackageFinder implements PackageFinder {
                     .build())
             .build();
 
-    PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
+      ImmutablePlatformMatchRule toolsRule = PlatformMatchRule.builder()
+          .match(DistributionMatch.any(
+                  VersionRange.of("5.0.0", "5.0.2"),
+                  VersionRange.of("4.4.0", "4.4.9")
+              )
+              .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+          .finder(UrlTemplatePackageResolver.builder()
+              .fileSet(fileSet)
+              .archiveType(archiveType)
+              .urlTemplate("/tools/db/mongodb-database-tools-macos-x86_64-{tools.version}.zip")
+              .build())
+          .build();
+
+      PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.OS_X))
             .finder(distribution -> {
               throw new IllegalArgumentException("osx distribution not supported: " + distribution);
             })
             .build();
 
+      switch (command) {
+          case MongoDump:
+          case MongoImport:
+          case MongoRestore:
+              return PlatformMatchRules.empty()
+                  .withRules(
+                      toolsRule,
+                      firstRule,
+                      secondRule,
+                      thirdRule,
+                      fourthRule,
+                      hiddenLegacyRule,
+                      failIfNothingMatches
+                  );
+      }
 
     return PlatformMatchRules.empty()
             .withRules(
