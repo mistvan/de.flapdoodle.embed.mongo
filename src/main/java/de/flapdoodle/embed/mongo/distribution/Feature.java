@@ -32,16 +32,11 @@ public enum Feature {
 	MONGOS_CONFIGDB_SET_STYLE /* mongos since 3.3.? */,
 	NO_HTTP_INTERFACE_ARG /*not supported since 3.6 https://docs.mongodb.com/manual/release-notes/3.6-compatibility/*/,
 
-	ONLY_WITH_SSL,
-	ONLY_WINDOWS_2008_SERVER,
-	ONLY_WINDOWS_2012_SERVER,
 	NO_SOLARIS_SUPPORT,
 	NO_BIND_IP_TO_LOCALHOST,
 
 	DISABLE_USE_PREALLOC, /* disable usePreAlloc >= 4.2.0 */
 	DISABLE_USE_SMALL_FILES,  /* disable useSmallFiles >= 4.2.0 */
-
-	LINUX_AARCH64
 	;
 
 
