@@ -49,7 +49,6 @@ Poll: [Which MongoDB version should stay supported?](https://docs.google.com/for
 ### Comments about Embedded MongoDB in the Wild
 
 - http://stackoverflow.com/questions/6437226/embedded-mongodb-when-running-integration-tests
-- http://www.cubeia.com/index.php/blog/archives/436
 - http://blog.diabol.se/?p=390
 
 ### Other MongoDB Stuff
