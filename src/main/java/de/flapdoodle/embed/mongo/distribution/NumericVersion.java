@@ -68,9 +68,10 @@ public interface NumericVersion {
 
   default boolean isNewerOrEqual(NumericVersion other) {
     if (major()<other.major()) return false;
+    if (major()>other.major()) return true;
     if (minor()<other.minor()) return false;
-    if (patch()<other.patch()) return false;
-    return true;
+    if (minor()>other.minor()) return true;
+    return patch()>=other.patch();
   }
 
   default boolean isOlderOrEqual(int major, int minor, int patch) {
@@ -79,7 +80,9 @@ public interface NumericVersion {
 
   default boolean isOlderOrEqual(NumericVersion other) {
     if (major()>other.major()) return false;
+    if (major()<other.major()) return true;
     if (minor()>other.minor()) return false;
+    if (minor()<other.minor()) return true;
     return patch() <= other.patch();
   }
 
