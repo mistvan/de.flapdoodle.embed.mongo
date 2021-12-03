@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.2.1
+
+- centos support added
+
 ### 3.2.0
 
 - major rework, now supporting mongodb 4.4.x and 5.x
