@@ -29,11 +29,26 @@ import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.os.linux.CentosVersion;
-import de.flapdoodle.os.linux.UbuntuVersion;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class CentosPackageResolverTest {
+	/*
+		RedHat / CentOS 6.2+ x64
+		--
+		5.0.2 - 5.0.0, 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
+		https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-{}.tgz
+		4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+	 */
+	@ParameterizedTest
+	@ValueSource(strings = { "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.0", "4.0.26 - 4.0.0", "3.6.22 - 3.6.0", "3.4.23 - 3.4.9", "3.4.7 - 3.4.0",
+		"3.2.21 - 3.2.0", "3.0.14 - 3.0.0" })
+	public void centos6(String version) {
+		assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_6), version)
+			.resolvesTo("/linux/mongodb-linux-x86_64-rhel62-{}.tgz");
+	}
+
+
   /*
 			RedHat / CentOS 7.0 x64
 			--
@@ -41,13 +56,13 @@ class CentosPackageResolverTest {
 			https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-{}.tgz
 			5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
    */
-
-  @ParameterizedTest
-  @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.0", "4.0.26 - 4.0.0", "3.6.22 - 3.6.0", "3.4.23 - 3.4.9", "3.4.7 - 3.4.0", "3.2.21 - 3.2.0", "3.0.14 - 3.0.0"})
-  public void centos7(String version) {
-    assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_7), version)
-      .resolvesTo("/linux/mongodb-linux-x86_64-rhel70-{}.tgz");
-  }
+	@ParameterizedTest
+	@ValueSource(strings = { "5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.0", "4.0.26 - 4.0.0", "3.6.22 - 3.6.0", "3.4.23 - 3.4.9",
+		"3.4.7 - 3.4.0", "3.2.21 - 3.2.0", "3.0.14 - 3.0.0" })
+	public void centos7(String version) {
+		assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_7), version)
+			.resolvesTo("/linux/mongodb-linux-x86_64-rhel70-{}.tgz");
+	}
 
   /*
  			RedHat / CentOS 8.0 x64
@@ -56,41 +71,40 @@ class CentosPackageResolverTest {
 			https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-{}.tgz
 			5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1, 4.0.26 - 4.0.14, 3.6.22 - 3.6.17
    */
+	@ParameterizedTest
+	@ValueSource(strings = { "5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.1", "4.0.26 - 4.0.14", "3.6.22 - 3.6.17" })
+	public void centos8(String version) {
+		assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_8), version)
+			.resolvesTo("/linux/mongodb-linux-x86_64-rhel80-{}.tgz");
+	}
 
-  @ParameterizedTest
-  @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.1", "4.0.26 - 4.0.14", "3.6.22 - 3.6.17"})
-  public void centos8(String version) {
-    assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_8), version)
-      .resolvesTo("/linux/mongodb-linux-x86_64-rhel80-{}.tgz");
-  }
-
-  /*
+	/*
 			RedHat / CentOS 8.2 ARM 64
 			--
 			4.4.3 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
 			https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-{}.tgz
 			5.0.2 - 5.0.0, 4.4.9 - 4.4.4
-  */
-  @ParameterizedTest
-  @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0"})
-  public void centos8arm(String version) {
-    assertThat(linuxWith(CommonArchitecture.ARM_64, CentosVersion.CentOS_8), version)
-      .resolvesTo("/linux/mongodb-linux-aarch64-rhel82-{}.tgz");
-  }
+	*/
+	@ParameterizedTest
+	@ValueSource(strings = { "5.0.2 - 5.0.0", "4.4.9 - 4.4.0" })
+	public void centos8arm(String version) {
+		assertThat(linuxWith(CommonArchitecture.ARM_64, CentosVersion.CentOS_8), version)
+			.resolvesTo("/linux/mongodb-linux-aarch64-rhel82-{}.tgz");
+	}
 
-  private static Platform linuxWith(CommonArchitecture architecture, de.flapdoodle.os.Version version) {
-    return ImmutablePlatform.builder()
-            .operatingSystem(OS.Linux)
-            .architecture(architecture)
-            .version(version)
-            .build();
-  }
+	private static Platform linuxWith(CommonArchitecture architecture, de.flapdoodle.os.Version version) {
+		return ImmutablePlatform.builder()
+			.operatingSystem(OS.Linux)
+			.architecture(architecture)
+			.version(version)
+			.build();
+	}
 
-  private static HtmlParserResultTester assertThat(Platform platform, String versionList) {
-    return HtmlParserResultTester.with(
-            new CentosPackageResolver(Command.Mongo),
-            version -> Distribution.of(Version.of(version), platform),
-            versionList);
-  }
+	private static HtmlParserResultTester assertThat(Platform platform, String versionList) {
+		return HtmlParserResultTester.with(
+			new CentosPackageResolver(Command.Mongo),
+			version -> Distribution.of(Version.of(version), platform),
+			versionList);
+	}
 
 }

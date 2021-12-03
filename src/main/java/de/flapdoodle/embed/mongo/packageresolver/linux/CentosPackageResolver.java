@@ -58,33 +58,68 @@ public class CentosPackageResolver implements PackageFinder {
   private static ImmutablePlatformMatchRules rules(Command command) {
     ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
-		/*
-		RedHat / CentOS 5.5 x64
---
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 2.6.12 - 2.6.0
-https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-{}.tgz
-3.2.21 - 3.2.0, 3.0.14 - 3.0.0
------------------------------------
-RedHat / CentOS 6.2+ x64
---
-5.0.2 - 5.0.0, 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
-https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-{}.tgz
-4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
------------------------------------
-RedHat / CentOS 6.7 s390x
---
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.0.26 - 4.0.13, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-https://fastdl.mongodb.org/linux/mongodb-linux-s390x-rhel67-{}.tgz
-4.2.9 - 4.2.5, 4.2.3 - 4.2.0, 4.0.12 - 4.0.0
------------------------------------
-RedHat / CentOS 7.0 x64
---
-4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
-https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
------------------------------------
+    /*
+			RedHat / CentOS 6.2+ x64
+			--
+			5.0.2 - 5.0.0, 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
+			https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-{}.tgz
+			4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+    */
+		PlatformMatchRule centos6 = PlatformMatchRule.builder()
+			.match(DistributionMatch.any(
+						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.5", "4.2.16"),
+						VersionRange.of("4.2.0", "4.2.3"),
+						VersionRange.of("4.0.0", "4.0.26"),
+						VersionRange.of("3.6.0", "3.6.22"),
+						VersionRange.of("3.4.9", "3.4.23"),
+						VersionRange.of("3.4.0", "3.4.7"),
+						VersionRange.of("3.2.0", "3.2.21"),
+						VersionRange.of("3.0.0", "3.0.14")
+					)
+					.andThen(PlatformMatch
+						.withOs(OS.Linux)
+						.withBitSize(BitSize.B64)
+						.withCpuType(CPUType.X86)
+						.withVersion(
+							CentosVersion.CentOS_6
+						)
+					)
+			)
+			.finder(UrlTemplatePackageResolver.builder()
+				.fileSet(fileSet)
+				.archiveType(ArchiveType.TGZ)
+				.urlTemplate("/linux/mongodb-linux-x86_64-rhel62-{version}.tgz")
+				.build())
+			.build();
 
-		 */
+		PlatformMatchRule tools_centos6 = PlatformMatchRule.builder()
+			.match(DistributionMatch.any(
+						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.5", "4.2.16"),
+						VersionRange.of("4.2.0", "4.2.3"),
+						VersionRange.of("4.0.0", "4.0.26"),
+						VersionRange.of("3.6.0", "3.6.22"),
+						VersionRange.of("3.4.9", "3.4.23"),
+						VersionRange.of("3.4.0", "3.4.7"),
+						VersionRange.of("3.2.0", "3.2.21"),
+						VersionRange.of("3.0.0", "3.0.14")
+					)
+					.andThen(PlatformMatch
+						.withOs(OS.Linux)
+						.withBitSize(BitSize.B64)
+						.withCpuType(CPUType.X86)
+						.withVersion(
+							CentosVersion.CentOS_6
+						)
+					)
+			)
+			.finder(UrlTemplatePackageResolver.builder()
+				.fileSet(fileSet)
+				.archiveType(ArchiveType.TGZ)
+				.urlTemplate("/tools/db/mongodb-database-tools-rhel62-x86_64-{tools.version}.tgz")
+				.build())
+			.build();
 
 
     /*
@@ -267,13 +302,13 @@ https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-{}.tgz
 					case MongoRestore:
 							return PlatformMatchRules.empty()
 									.withRules(
-											tools_centos7, tools_centos8, tools_centos8arm
+											tools_centos6, tools_centos7, tools_centos8, tools_centos8arm
 									);
 			}
 
     return PlatformMatchRules.empty()
             .withRules(
-                    centos7, centos8, centos8arm
+                    centos6, centos7, centos8, centos8arm
             );
   }
 }
