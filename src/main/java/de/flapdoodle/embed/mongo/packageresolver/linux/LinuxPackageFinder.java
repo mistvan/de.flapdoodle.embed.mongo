@@ -27,6 +27,7 @@ import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.linux.CentosVersion;
 import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.Optional;
@@ -54,6 +55,13 @@ public class LinuxPackageFinder implements PackageFinder {
                     .withVersion(UbuntuVersion.values()))
             .finder(new UbuntuPackageResolver(command))
             .build();
+
+    ImmutablePlatformMatchRule centosRule = PlatformMatchRule.builder()
+      .match(PlatformMatch.withOs(OS.Linux)
+        .withVersion(CentosVersion.values()))
+      .finder(new CentosPackageResolver(command))
+      .build();
+
     /*
       Linux (legacy) undefined
       https://fastdl.mongodb.org/linux/mongodb-linux-i686-{}.tgz

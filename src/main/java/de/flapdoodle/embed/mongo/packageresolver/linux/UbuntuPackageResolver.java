@@ -72,8 +72,8 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
 											.withVersion(
-													UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10,
-													UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10
+													UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
+													UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
 											)
 									)
 					)
@@ -96,8 +96,8 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
 											.withVersion(
-													UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10,
-													UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10
+													UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
+													UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
 											)
 									)
 					)
@@ -127,8 +127,8 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.X86)
 											.withVersion(
-													UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10,
-													UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10
+													UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
+													UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
 											)
 									)
 					)
@@ -153,8 +153,8 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.X86)
 											.withVersion(
-													UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_18_10, UbuntuVersion.UBUNTU_19_04, UbuntuVersion.UBUNTU_19_10,
-													UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10
+													UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
+													UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
 											)
 									)
 					)
@@ -179,7 +179,7 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withOs(OS.Linux)
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
-											.withVersion(UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10)
+											.withVersion(UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 									)
 					)
 					.finder(UrlTemplatePackageResolver.builder()
@@ -198,7 +198,7 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withOs(OS.Linux)
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
-											.withVersion(UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10)
+											.withVersion(UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 									)
 					)
 					.finder(UrlTemplatePackageResolver.builder()
@@ -221,7 +221,7 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withOs(OS.Linux)
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.X86)
-											.withVersion(UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10)
+											.withVersion(UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 									)
 					)
 					.finder(UrlTemplatePackageResolver.builder()
@@ -240,7 +240,7 @@ public class UbuntuPackageResolver implements PackageFinder {
 											.withOs(OS.Linux)
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.X86)
-											.withVersion(UbuntuVersion.UBUNTU_20_04, UbuntuVersion.UBUNTU_20_10)
+											.withVersion(UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 									)
 					)
 					.finder(UrlTemplatePackageResolver.builder()

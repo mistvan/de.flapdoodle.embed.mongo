@@ -42,7 +42,7 @@ class PlatformMatchTest {
             .architecture(CommonArchitecture.X86_64)
             .build();
     
-    boolean result = PlatformMatch.any().withVersion(UbuntuVersion.UBUNTU_18_04)
+    boolean result = PlatformMatch.any().withVersion(UbuntuVersion.Ubuntu_18_04)
             .match(Distribution.of(Version.of("1.2.3"), platform));
 
     assertThat(result).isFalse();
@@ -53,10 +53,10 @@ class PlatformMatchTest {
     ImmutablePlatform platform = ImmutablePlatform.builder()
             .operatingSystem(OS.Linux)
             .architecture(CommonArchitecture.X86_64)
-            .version(UbuntuVersion.UBUNTU_18_04)
+            .version(UbuntuVersion.Ubuntu_18_04)
             .build();
 
-    boolean result = PlatformMatch.any().withVersion(UbuntuVersion.UBUNTU_18_04, UbuntuVersion.UBUNTU_19_04)
+    boolean result = PlatformMatch.any().withVersion(UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_19_04)
             .match(Distribution.of(Version.of("1.2.3"), platform));
 
     assertThat(result).isTrue();
@@ -67,7 +67,7 @@ class PlatformMatchTest {
     ImmutablePlatform platform = ImmutablePlatform.builder()
             .operatingSystem(OS.Linux)
             .architecture(CommonArchitecture.X86_64)
-            .version(UbuntuVersion.UBUNTU_18_04)
+            .version(UbuntuVersion.Ubuntu_18_04)
             .build();
 
     boolean result = PlatformMatch.any()
