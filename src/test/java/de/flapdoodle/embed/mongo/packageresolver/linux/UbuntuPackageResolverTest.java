@@ -41,7 +41,7 @@ class UbuntuPackageResolverTest {
   @ParameterizedTest
   @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.0"})
   public void ubuntu18arm(String version) {
-    assertThat(linuxWith(CommonArchitecture.ARM_64, UbuntuVersion.UBUNTU_18_04), version)
+    assertThat(linuxWith(CommonArchitecture.ARM_64, UbuntuVersion.Ubuntu_18_04), version)
             .resolvesTo("/linux/mongodb-linux-aarch64-ubuntu1804-{}.tgz");
   }
 
@@ -53,7 +53,7 @@ class UbuntuPackageResolverTest {
   @ParameterizedTest
   @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.0", "4.0.26 - 4.0.1", "3.6.22 - 3.6.20"})
   public void ubuntu18x64(String version) {
-    assertThat(linuxWith(CommonArchitecture.X86_64, UbuntuVersion.UBUNTU_18_04), version)
+    assertThat(linuxWith(CommonArchitecture.X86_64, UbuntuVersion.Ubuntu_18_04), version)
             .resolvesTo("/linux/mongodb-linux-x86_64-ubuntu1804-{}.tgz");
   }
 
@@ -65,7 +65,7 @@ class UbuntuPackageResolverTest {
   @ParameterizedTest
   @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0"})
   public void ubuntu20arm(String version) {
-    assertThat(linuxWith(CommonArchitecture.ARM_64, UbuntuVersion.UBUNTU_20_04), version)
+    assertThat(linuxWith(CommonArchitecture.ARM_64, UbuntuVersion.Ubuntu_20_04), version)
             .resolvesTo("/linux/mongodb-linux-aarch64-ubuntu2004-{}.tgz");
   }
 
@@ -77,7 +77,7 @@ class UbuntuPackageResolverTest {
   @ParameterizedTest
   @ValueSource(strings = {"5.0.2 - 5.0.0", "4.4.9 - 4.4.0"})
   public void ubuntu20x64(String version) {
-    assertThat(linuxWith(CommonArchitecture.X86_64, UbuntuVersion.UBUNTU_20_04), version)
+    assertThat(linuxWith(CommonArchitecture.X86_64, UbuntuVersion.Ubuntu_20_04), version)
             .resolvesTo("/linux/mongodb-linux-x86_64-ubuntu2004-{}.tgz");
   }
 
