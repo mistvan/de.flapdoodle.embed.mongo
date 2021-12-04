@@ -141,6 +141,7 @@ public class LinuxPackageFinder implements PackageFinder {
     return PlatformMatchRules.empty()
             .withRules(
                     ubuntuRule,
+                    centosRule,
                     legacy32,
                     legacy64,
                     hiddenLegacy64,
