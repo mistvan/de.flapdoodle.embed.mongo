@@ -28,6 +28,10 @@ import de.flapdoodle.os.CommonArchitecture;
 import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
+import de.flapdoodle.os.linux.CentosVersion;
+import de.flapdoodle.os.linux.DebianVersion;
+import de.flapdoodle.os.linux.UbuntuVersion;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -57,8 +61,28 @@ class LinuxPackageFinderTest {
             .resolvesTo("/linux/mongodb-linux-x86_64-{}.tgz");
   }
 
+  @Test
+  public void resolveCentosPackage() {
+    assertThat(linuxWith(CommonArchitecture.X86_64)
+      .withVersion(CentosVersion.CentOS_8), "5.0.2")
+      .resolvesTo("/linux/mongodb-linux-x86_64-rhel80-{}.tgz");
+  }
 
-  private static Platform linuxWith(CommonArchitecture architecture) {
+  @Test
+  public void resolveDebianPackage() {
+    assertThat(linuxWith(CommonArchitecture.X86_64)
+      .withVersion(DebianVersion.DEBIAN_9), "5.0.2")
+      .resolvesTo("/linux/mongodb-linux-x86_64-debian92-{}.tgz");
+  }
+
+  @Test
+  public void resolveUbuntuPackage() {
+    assertThat(linuxWith(CommonArchitecture.X86_64)
+      .withVersion(UbuntuVersion.Ubuntu_20_10), "5.0.2")
+      .resolvesTo("/linux/mongodb-linux-x86_64-ubuntu2004-{}.tgz");
+  }
+
+  private static ImmutablePlatform linuxWith(CommonArchitecture architecture) {
     return ImmutablePlatform.builder()
             .operatingSystem(OS.Linux)
             .architecture(architecture)

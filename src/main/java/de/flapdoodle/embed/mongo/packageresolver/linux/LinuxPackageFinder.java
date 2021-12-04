@@ -27,6 +27,7 @@ import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.linux.DebianVersion;
 import de.flapdoodle.os.linux.CentosVersion;
 import de.flapdoodle.os.linux.UbuntuVersion;
 
@@ -50,11 +51,16 @@ public class LinuxPackageFinder implements PackageFinder {
   private static ImmutablePlatformMatchRules rules(Command command) {
     ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
-    ImmutablePlatformMatchRule ubuntuRule = PlatformMatchRule.builder()
-            .match(PlatformMatch.withOs(OS.Linux)
-                    .withVersion(UbuntuVersion.values()))
-            .finder(new UbuntuPackageResolver(command))
-            .build();
+        final ImmutablePlatformMatchRule ubuntuRule = PlatformMatchRule.builder()
+                .match(PlatformMatch.withOs(OS.Linux)
+                        .withVersion(UbuntuVersion.values()))
+                .finder(new UbuntuPackageResolver(command))
+                .build();
+
+        final ImmutablePlatformMatchRule debianRule = PlatformMatchRule.builder()
+                .match(PlatformMatch.withOs(OS.Linux).withVersion(DebianVersion.values()))
+                .finder(new DebianPackageResolver(command))
+                .build();
 
     ImmutablePlatformMatchRule centosRule = PlatformMatchRule.builder()
       .match(PlatformMatch.withOs(OS.Linux)
@@ -141,6 +147,7 @@ public class LinuxPackageFinder implements PackageFinder {
     return PlatformMatchRules.empty()
             .withRules(
                     ubuntuRule,
+                    debianRule,
                     centosRule,
                     legacy32,
                     legacy64,
