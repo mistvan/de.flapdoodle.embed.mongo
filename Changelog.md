@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.2.2
+
+- debian support added
+
 ### 3.2.1
 
 - centos support added
