@@ -94,13 +94,13 @@ public class DownloaderTest {
 		server.stop();
 	}
 
-	//@Test
-	public void testDownload() throws Exception {
-		initRuntime();
-		Distribution d = Distribution.of(Version.of("3.1.1"), Platform.detect());
-		Downloader downloader = new UrlConnectionDownloader();
-		assertNotNull(downloader.download(dc, d));
-	}
+//	//@Test
+//	public void testDownload() throws Exception {
+//		initRuntime();
+//		Distribution d = Distribution.of(Version.of("3.1.1"), Platform.detect());
+//		Downloader downloader = new UrlConnectionDownloader();
+//		assertNotNull(downloader.download(dc, d));
+//	}
 
 	private void initRuntime() {
 		//when(rc.getDefaultfileNaming()).thenReturn(new UUIDTempNaming());
@@ -108,11 +108,11 @@ public class DownloaderTest {
 		when(dc.getProgressListener()).thenReturn(pl);
 	}
 
-	@Test(expected = Exception.class)
-	public void testDownloadShouldThrowExceptionForUnknownVersion() throws Exception {
-		initRuntime();
-		Distribution d = Distribution.of(Version.of("3013.1.1"), Platform.detect());
-		Downloader downloader = Downloader.platformDefault();
-		assertNotNull(downloader.download(dc, d));
-	}
+//	@Test(expected = Exception.class)
+//	public void testDownloadShouldThrowExceptionForUnknownVersion() throws Exception {
+//		initRuntime();
+//		Distribution d = Distribution.of(Version.of("3013.1.1"), Platform.detect());
+//		Downloader downloader = Downloader.platformDefault();
+//		assertNotNull(downloader.download(dc, d));
+//	}
 }

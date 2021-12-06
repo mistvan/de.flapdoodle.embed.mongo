@@ -84,7 +84,7 @@ public abstract class Defaults {
 					.downloadPath(new StaticDownloadPath())
 					.progressListener(new StandardConsoleProgressListener())
 					.artifactStorePath(defaultArtifactStoreLocation())
-					.downloadPrefix("embedmongo-download")
+					//.downloadPrefix("embedmongo-download")
 					.userAgent("Mozilla/5.0 (compatible; Embedded MongoDB; +https://github.com/flapdoodle-oss/embedmongo.flapdoodle.de)");
 		}
 		
