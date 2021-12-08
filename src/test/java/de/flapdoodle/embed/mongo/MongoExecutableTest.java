@@ -24,11 +24,15 @@ import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.transitions.MongodProcessArguments;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.embed.process.transitions.Starter;
@@ -37,6 +41,8 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
+import de.flapdoodle.types.Try;
+import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -66,7 +72,7 @@ public class MongoExecutableTest {
 	private static final Logger logger = LoggerFactory.getLogger(MongoExecutableTest.class.getName());
 
 	@Test
-	public void testStartStopTenTimesWithTransitions() {
+	public void testStartStopTenTimesWithTransitions() throws UnknownHostException {
 		List<Transition<?>> transitions = Defaults.transitionsFor(MongodProcessArguments.withDefaults(), MongodArguments.defaults(), Version.Main.PRODUCTION);
 
 		String dot = Transitions.edgeGraphAsDot("mongod", Transitions.asGraph(transitions));
@@ -76,14 +82,34 @@ public class MongoExecutableTest {
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
 
-			try (TransitionWalker.ReachedState<Starter.Running> running = TransitionWalker.with(transitions).initState(StateID.of(Starter.Running.class))) {
+			try (TransitionWalker.ReachedState<RunningMongodProcess> running = TransitionWalker.with(transitions).initState(StateID.of(RunningMongodProcess.class))) {
 
-//			try (MongoClient mongo = new MongoClient(
-//				new ServerAddress(mongodConfig.net().getServerAddress(), mongodConfig.net().getPort()))) {
-//				DB db = mongo.getDB("test");
-//				DBCollection col = db.createCollection("testCol", new BasicDBObject());
-//				col.save(new BasicDBObject("testDoc", new Date()));
-//			}
+				try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+					DB db = mongo.getDB("test");
+					DBCollection col = db.createCollection("testCol", new BasicDBObject());
+					col.save(new BasicDBObject("testDoc", new Date()));
+					System.out.println("could store doc in database...");
+				}
+			}
+		}
+	}
+
+	@Test
+	public void simple() throws UnknownHostException {
+		List<Transition<?>> transitions = Defaults.transitionsFor(
+			MongodProcessArguments.withDefaults(),
+			MongodArguments.defaults(),
+			Version.Main.PRODUCTION
+		);
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = TransitionWalker.with(transitions)
+			.initState(StateID.of(RunningMongodProcess.class))) {
+
+			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+				MongoDatabase db = mongo.getDatabase("test");
+				MongoCollection<Document> col = db.getCollection("testCol");
+				col.insertOne(new Document("testDoc", new Date()));
+				System.out.println("could store doc in database...");
 			}
 		}
 	}

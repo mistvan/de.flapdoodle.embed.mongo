@@ -13,13 +13,20 @@ import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.StateLookup;
 import de.flapdoodle.reverse.Transition;
+import de.flapdoodle.reverse.naming.HasLabel;
 import org.immutables.value.Value;
 
 import java.util.List;
 import java.util.Set;
 
 @Value.Immutable
-public abstract class MongodProcessArguments implements CommandProcessArguments<MongodArguments> {
+public abstract class MongodProcessArguments implements CommandProcessArguments<MongodArguments>, HasLabel {
+
+	@Override
+	@Value.Auxiliary
+	public String transitionLabel() {
+		return "Create mongod arguments";
+	}
 
 	@Override
 	@Value.Default

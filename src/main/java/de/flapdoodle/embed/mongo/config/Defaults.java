@@ -28,6 +28,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.mongo.transitions.CommandProcessArguments;
 import de.flapdoodle.embed.mongo.transitions.MongodProcessArguments;
+import de.flapdoodle.embed.mongo.transitions.MongodStarter;
 import de.flapdoodle.embed.process.archives.ArchiveType;
 import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
@@ -64,7 +65,10 @@ import de.flapdoodle.embed.process.runtime.CommandLinePostProcessor;
 
 public abstract class Defaults {
 
-	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> List<Transition<?>> transitionsFor(T processArguments, C arguments, Version.Main version) {
+	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> List<Transition<?>> transitionsFor(
+		T processArguments,
+		C arguments, Version.Main version
+	) {
 
 		PersistentDir baseDir = PersistentDir.userHome(".embedmongo").get();
 		Command command=arguments.command();
@@ -119,7 +123,7 @@ public abstract class Defaults {
 				.withExtractedFileSetStore(extractedFileSetStore),
 
 
-			Starter.withDefaults()
+			MongodStarter.withDefaults()
 		);
 	}
 	private static ArchiveType archiveTypeOfLegacy(de.flapdoodle.embed.process.distribution.ArchiveType archiveType) {
