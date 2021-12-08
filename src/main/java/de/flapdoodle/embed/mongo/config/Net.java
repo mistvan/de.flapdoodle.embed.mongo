@@ -26,6 +26,10 @@ import java.net.UnknownHostException;
 
 import de.flapdoodle.embed.process.runtime.Network;
 
+/**
+ * irgendwie passt das nicht
+ */
+@Deprecated
 public class Net {
 
 	private final String bindIp;
@@ -33,7 +37,7 @@ public class Net {
 	private final boolean ipv6;
 
 	public Net() throws IOException {
-		this(null, Network.getFreeServerPort(), Network.localhostIsIPv6());
+		this(null, Network.freeServerPort(Network.getLocalHost()), Network.localhostIsIPv6());
 	}
 
 	public Net(int port, boolean ipv6) {

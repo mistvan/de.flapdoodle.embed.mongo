@@ -20,19 +20,36 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Supplier;
 
+import de.flapdoodle.embed.mongo.commands.CommandArguments;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
+import de.flapdoodle.embed.mongo.transitions.CommandProcessArguments;
+import de.flapdoodle.embed.mongo.transitions.MongodProcessArguments;
+import de.flapdoodle.embed.process.archives.ArchiveType;
+import de.flapdoodle.embed.process.config.SupportConfig;
+import de.flapdoodle.embed.process.config.io.ProcessOutput;
+import de.flapdoodle.embed.process.config.store.*;
+import de.flapdoodle.embed.process.config.store.Package;
+import de.flapdoodle.embed.process.nio.directories.PersistentDir;
+import de.flapdoodle.embed.process.store.*;
+import de.flapdoodle.embed.process.transitions.*;
+import de.flapdoodle.embed.process.types.Name;
+import de.flapdoodle.embed.process.types.ProcessArguments;
+import de.flapdoodle.embed.process.types.ProcessConfig;
+import de.flapdoodle.embed.process.types.ProcessEnv;
+import de.flapdoodle.os.Platform;
+import de.flapdoodle.reverse.Transition;
+import de.flapdoodle.reverse.edges.Derive;
+import de.flapdoodle.reverse.edges.Join;
+import de.flapdoodle.reverse.edges.Start;
 import org.slf4j.Logger;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.process.config.ImmutableRuntimeConfig;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
-import de.flapdoodle.embed.process.config.store.DistributionDownloadPath;
-import de.flapdoodle.embed.process.config.store.DownloadConfig;
-import de.flapdoodle.embed.process.config.store.ImmutableDownloadConfig;
-import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.extract.DirectoryAndExecutableNaming;
 import de.flapdoodle.embed.process.extract.NoopTempNaming;
@@ -44,11 +61,82 @@ import de.flapdoodle.embed.process.io.directories.UserHome;
 import de.flapdoodle.embed.process.io.progress.Slf4jProgressListener;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.embed.process.runtime.CommandLinePostProcessor;
-import de.flapdoodle.embed.process.store.ExtractedArtifactStore;
-import de.flapdoodle.embed.process.store.ImmutableExtractedArtifactStore;
-import de.flapdoodle.embed.process.store.UrlConnectionDownloader;
 
 public abstract class Defaults {
+
+	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> List<Transition<?>> transitionsFor(T processArguments, C arguments, Version.Main version) {
+
+		PersistentDir baseDir = PersistentDir.userHome(".embedmongo").get();
+		Command command=arguments.command();
+
+		// TODO use same legacy directory?
+		ArchiveStore archiveStore = new LocalArchiveStore(baseDir.value().resolve("archives"));
+		ExtractedFileSetStore extractedFileSetStore = new ContentHashExtractedFileSetStore(baseDir.value().resolve("fileSets"));
+		PlatformPackageResolver legacyPackageResolver = new PlatformPackageResolver(command);
+
+		return Arrays.asList(
+			InitTempDirectory.withPlatformTemp(),
+
+			Start.to(Name.class).initializedWith(Name.of(command.commandName())).withTransitionLabel("create Name"),
+
+			Start.to(SupportConfig.class)
+				.initializedWith(SupportConfig.builder()
+					.name(command.commandName())
+					.messageOnException((clazz,ex) -> null)
+					.supportUrl("https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues")
+					.build()).withTransitionLabel("create default"),
+
+			Start.to(ProcessConfig.class).initializedWith(ProcessConfig.defaults()).withTransitionLabel("create default"),
+			Start.to(ProcessEnv.class).initializedWith(ProcessEnv.of(Collections.emptyMap())).withTransitionLabel("create empty env"),
+
+			Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
+//			Start.to(Command.class).initializedWith(command),
+			Start.to(processArguments.arguments()).initializedWith(arguments),
+			Start.to(Net.class).providedBy(Net::defaults),
+
+			Derive.given(Name.class).state(ProcessOutput.class)
+				.deriveBy(name -> ProcessOutput.namedConsole(name.value()))
+				.withTransitionLabel("create named console"),
+
+//			Start.to(ProcessArguments.class).initializedWith(ProcessArguments.of(Arrays.asList("--help")))
+//				.withTransitionLabel("create arguments"),
+			processArguments,
+
+			Start.to(Platform.class).providedBy(Platform::detect),
+
+			Join.given(de.flapdoodle.embed.process.distribution.Version.class).and(Platform.class).state(Distribution.class)
+				.deriveBy(Distribution::of)
+				.withTransitionLabel("version + platform"),
+
+			PackageOfDistribution.with(distribution -> {
+				DistributionPackage legacyPackage = legacyPackageResolver.packageFor(distribution);
+				return Package.of(archiveTypeOfLegacy(legacyPackage.archiveType()),legacyPackage.fileSet(), "https://fastdl.mongodb.org"+legacyPackage.archivePath());
+			}),
+
+			DownloadPackage.with(archiveStore),
+
+			ExtractPackage.withDefaults()
+				.withExtractedFileSetStore(extractedFileSetStore),
+
+
+			Starter.withDefaults()
+		);
+	}
+	private static ArchiveType archiveTypeOfLegacy(de.flapdoodle.embed.process.distribution.ArchiveType archiveType) {
+		switch (archiveType) {
+			case EXE:
+				return ArchiveType.EXE;
+			case TBZ2:
+				return ArchiveType.TBZ2;
+			case TGZ:
+				return ArchiveType.TGZ;
+			case ZIP:
+				return ArchiveType.ZIP;
+			case TXZ:
+				return ArchiveType.TXZ;
+		}
+		throw new IllegalArgumentException("Could not map: "+archiveType);
+	}
 
 	public static ImmutableExtractedArtifactStore extractedArtifactStoreFor(Command command) {
 		return ExtractedArtifactStore.builder()

@@ -25,7 +25,18 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
+import de.flapdoodle.embed.mongo.commands.MongodArguments;
+import de.flapdoodle.embed.mongo.transitions.MongodProcessArguments;
+import de.flapdoodle.embed.process.io.progress.ProgressListeners;
+import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
+import de.flapdoodle.embed.process.transitions.Starter;
+import de.flapdoodle.embed.process.types.RunningProcess;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.Transition;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.Transitions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -53,6 +64,29 @@ import de.flapdoodle.embed.process.runtime.Network;
 public class MongoExecutableTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(MongoExecutableTest.class.getName());
+
+	@Test
+	public void testStartStopTenTimesWithTransitions() {
+		List<Transition<?>> transitions = Defaults.transitionsFor(MongodProcessArguments.withDefaults(), MongodArguments.defaults(), Version.Main.PRODUCTION);
+
+		String dot = Transitions.edgeGraphAsDot("mongod", Transitions.asGraph(transitions));
+		System.out.println("---------------------");
+		System.out.println(dot);
+		System.out.println("---------------------");
+
+		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+
+			try (TransitionWalker.ReachedState<Starter.Running> running = TransitionWalker.with(transitions).initState(StateID.of(Starter.Running.class))) {
+
+//			try (MongoClient mongo = new MongoClient(
+//				new ServerAddress(mongodConfig.net().getServerAddress(), mongodConfig.net().getPort()))) {
+//				DB db = mongo.getDB("test");
+//				DBCollection col = db.createCollection("testCol", new BasicDBObject());
+//				col.save(new BasicDBObject("testDoc", new Date()));
+//			}
+			}
+		}
+	}
 
 	@Test
 	public void testStartStopTenTimesWithNewMongoExecutable() throws IOException {
