@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
+import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -29,12 +30,15 @@ import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.mongo.transitions.CommandProcessArguments;
 import de.flapdoodle.embed.mongo.transitions.MongodProcessArguments;
 import de.flapdoodle.embed.mongo.transitions.MongodStarter;
+import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.archives.ArchiveType;
 import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.config.store.*;
 import de.flapdoodle.embed.process.config.store.Package;
+import de.flapdoodle.embed.process.nio.Directories;
 import de.flapdoodle.embed.process.nio.directories.PersistentDir;
+import de.flapdoodle.embed.process.nio.directories.TempDir;
 import de.flapdoodle.embed.process.store.*;
 import de.flapdoodle.embed.process.transitions.*;
 import de.flapdoodle.embed.process.types.Name;
@@ -42,10 +46,12 @@ import de.flapdoodle.embed.process.types.ProcessArguments;
 import de.flapdoodle.embed.process.types.ProcessConfig;
 import de.flapdoodle.embed.process.types.ProcessEnv;
 import de.flapdoodle.os.Platform;
+import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.edges.Derive;
 import de.flapdoodle.reverse.edges.Join;
 import de.flapdoodle.reverse.edges.Start;
+import de.flapdoodle.types.Try;
 import org.slf4j.Logger;
 
 import de.flapdoodle.embed.mongo.Command;
@@ -94,13 +100,19 @@ public abstract class Defaults {
 			Start.to(ProcessEnv.class).initializedWith(ProcessEnv.of(Collections.emptyMap())).withTransitionLabel("create empty env"),
 
 			Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-//			Start.to(Command.class).initializedWith(command),
+			
 			Start.to(processArguments.arguments()).initializedWith(arguments),
 			Start.to(Net.class).providedBy(Net::defaults),
 
 			Derive.given(Name.class).state(ProcessOutput.class)
 				.deriveBy(name -> ProcessOutput.namedConsole(name.value()))
 				.withTransitionLabel("create named console"),
+
+			Derive.given(TempDir.class).state(DatabaseDir.class)
+				.with(tempDir -> {
+					DatabaseDir databaseDir = Try.get(() -> DatabaseDir.of(tempDir.createDirectory("mongod-database")));
+					return State.of(databaseDir, dir -> Try.run(() -> Directories.deleteAll(dir.value())));
+				}),
 
 //			Start.to(ProcessArguments.class).initializedWith(ProcessArguments.of(Arrays.asList("--help")))
 //				.withTransitionLabel("create arguments"),

@@ -85,31 +85,11 @@ public class MongoExecutableTest {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> running = TransitionWalker.with(transitions).initState(StateID.of(RunningMongodProcess.class))) {
 
 				try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
-					DB db = mongo.getDB("test");
-					DBCollection col = db.createCollection("testCol", new BasicDBObject());
-					col.save(new BasicDBObject("testDoc", new Date()));
+					MongoDatabase db = mongo.getDatabase("test");
+					MongoCollection<Document> col = db.getCollection("testCol");
+					col.insertOne(new Document("testDoc", new Date()));
 					System.out.println("could store doc in database...");
 				}
-			}
-		}
-	}
-
-	@Test
-	public void simple() throws UnknownHostException {
-		List<Transition<?>> transitions = Defaults.transitionsFor(
-			MongodProcessArguments.withDefaults(),
-			MongodArguments.defaults(),
-			Version.Main.PRODUCTION
-		);
-
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = TransitionWalker.with(transitions)
-			.initState(StateID.of(RunningMongodProcess.class))) {
-
-			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
-				MongoDatabase db = mongo.getDatabase("test");
-				MongoCollection<Document> col = db.getCollection("testCol");
-				col.insertOne(new Document("testDoc", new Date()));
-				System.out.println("could store doc in database...");
 			}
 		}
 	}

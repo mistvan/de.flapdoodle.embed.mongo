@@ -4,6 +4,7 @@ import de.flapdoodle.checks.Preconditions;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.embed.process.nio.directories.TempDir;
@@ -61,14 +62,14 @@ public abstract class MongodProcessArguments implements CommandProcessArguments<
 	}
 
 	@Value.Default
-	public StateID<TempDir> tempDir() {
-		return StateID.of(TempDir.class);
+	public StateID<DatabaseDir> databaseDir() {
+		return StateID.of(DatabaseDir.class);
 	}
 
 	@Override
 	@Value.Auxiliary
 	public Set<StateID<?>> sources() {
-		return StateID.setOf(arguments(), platform(), version(), net(), processExecutable(), tempDir());
+		return StateID.setOf(arguments(), platform(), version(), net(), processExecutable(), databaseDir());
 	}
 
 	@Override
@@ -80,9 +81,9 @@ public abstract class MongodProcessArguments implements CommandProcessArguments<
 		IFeatureAwareVersion featureAwareVersion = (IFeatureAwareVersion) version;
 		Net net = lookup.of(net());
 		ExtractedFileSet extractedFileSet=lookup.of(processExecutable());
-		TempDir tempDir=lookup.of(tempDir());
+		DatabaseDir databaseDir=lookup.of(databaseDir());
 
-		List<String> commandLine = arguments.asArguments(platform, featureAwareVersion, net, extractedFileSet.executable(), tempDir.value());
+		List<String> commandLine = arguments.asArguments(platform, featureAwareVersion, net, extractedFileSet.executable(), databaseDir);
 		return State.of(ProcessArguments.of(commandLine));
 	}
 
