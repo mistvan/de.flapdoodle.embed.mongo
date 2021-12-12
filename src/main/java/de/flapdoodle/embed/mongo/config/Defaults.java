@@ -114,8 +114,6 @@ public abstract class Defaults {
 					return State.of(databaseDir, dir -> Try.run(() -> Directories.deleteAll(dir.value())));
 				}),
 
-//			Start.to(ProcessArguments.class).initializedWith(ProcessArguments.of(Arrays.asList("--help")))
-//				.withTransitionLabel("create arguments"),
 			processArguments,
 
 			Start.to(Platform.class).providedBy(Platform::detect),

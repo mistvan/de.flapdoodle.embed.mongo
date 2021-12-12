@@ -82,13 +82,16 @@ public class MongoExecutableTest {
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> running = TransitionWalker.with(transitions).initState(StateID.of(RunningMongodProcess.class))) {
+			for (int i=0;i<10;i++) {
+				try (TransitionWalker.ReachedState<RunningMongodProcess> running = TransitionWalker.with(transitions)
+					.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
-					MongoDatabase db = mongo.getDatabase("test");
-					MongoCollection<Document> col = db.getCollection("testCol");
-					col.insertOne(new Document("testDoc", new Date()));
-					System.out.println("could store doc in database...");
+					try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+						MongoDatabase db = mongo.getDatabase("test");
+						MongoCollection<Document> col = db.getCollection("testCol");
+						col.insertOne(new Document("testDoc", new Date()));
+						System.out.println("could store doc in database...");
+					}
 				}
 			}
 		}
