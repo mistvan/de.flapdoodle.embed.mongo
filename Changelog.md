@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.2.3
+
+- spring boot api fix
+
 ### 3.2.2
 
 - debian support added
