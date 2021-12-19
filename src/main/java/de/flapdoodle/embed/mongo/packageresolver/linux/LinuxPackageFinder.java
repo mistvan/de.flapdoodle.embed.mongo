@@ -22,139 +22,166 @@ package de.flapdoodle.embed.mongo.packageresolver.linux;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.packageresolver.*;
-import de.flapdoodle.embed.process.config.store.*;
+import de.flapdoodle.embed.process.config.store.DistributionPackage;
+import de.flapdoodle.embed.process.config.store.FileSet;
+import de.flapdoodle.embed.process.config.store.FileType;
+import de.flapdoodle.embed.process.config.store.ImmutableFileSet;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
+import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
-import de.flapdoodle.os.linux.DebianVersion;
 import de.flapdoodle.os.linux.CentosVersion;
+import de.flapdoodle.os.linux.DebianVersion;
+import de.flapdoodle.os.linux.LinuxMintVersion;
 import de.flapdoodle.os.linux.UbuntuVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 public class LinuxPackageFinder implements PackageFinder {
 
-  private final Command command;
-  private final ImmutablePlatformMatchRules rules;
+	private static final Logger LOGGER = LoggerFactory.getLogger(LinuxPackageFinder.class);
 
-  public LinuxPackageFinder(Command command) {
-    this.command = command;
-    this.rules = rules(command);
-  }
+	private final Command command;
+	private final ImmutablePlatformMatchRules rules;
 
-  @Override
-  public Optional<DistributionPackage> packageFor(Distribution distribution) {
-    return rules.packageFor(distribution);
-  }
+	public LinuxPackageFinder(Command command) {
+		this.command = command;
+		this.rules = rules(command);
+	}
 
-  private static ImmutablePlatformMatchRules rules(Command command) {
-    ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
+	@Override
+	public Optional<DistributionPackage> packageFor(Distribution distribution) {
+		return rules.packageFor(distribution);
+	}
 
-        final ImmutablePlatformMatchRule ubuntuRule = PlatformMatchRule.builder()
-                .match(PlatformMatch.withOs(OS.Linux)
-                        .withVersion(UbuntuVersion.values()))
-                .finder(new UbuntuPackageResolver(command))
-                .build();
+	private static ImmutablePlatformMatchRules rules(Command command) {
+		ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
-        final ImmutablePlatformMatchRule debianRule = PlatformMatchRule.builder()
-                .match(PlatformMatch.withOs(OS.Linux).withVersion(DebianVersion.values()))
-                .finder(new DebianPackageResolver(command))
-                .build();
+    UbuntuPackageResolver ubuntuPackageResolver = new UbuntuPackageResolver(command);
 
-    ImmutablePlatformMatchRule centosRule = PlatformMatchRule.builder()
+    final ImmutablePlatformMatchRule ubuntuRule = PlatformMatchRule.builder()
+			.match(PlatformMatch.withOs(OS.Linux)
+				.withVersion(UbuntuVersion.values()))
+			.finder(ubuntuPackageResolver)
+			.build();
+
+    final ImmutablePlatformMatchRule linuxMintRule = PlatformMatchRule.builder()
       .match(PlatformMatch.withOs(OS.Linux)
-        .withVersion(CentosVersion.values()))
-      .finder(new CentosPackageResolver(command))
+        .withVersion(LinuxMintVersion.values()))
+      .finder(new LinuxMintPackageResolver(ubuntuPackageResolver))
       .build();
+
+    final ImmutablePlatformMatchRule debianRule = PlatformMatchRule.builder()
+			.match(PlatformMatch.withOs(OS.Linux).withVersion(DebianVersion.values()))
+			.finder(new DebianPackageResolver(command))
+			.build();
+
+		ImmutablePlatformMatchRule centosRule = PlatformMatchRule.builder()
+			.match(PlatformMatch.withOs(OS.Linux)
+				.withVersion(CentosVersion.values()))
+			.finder(new CentosPackageResolver(command))
+			.build();
 
     /*
       Linux (legacy) undefined
       https://fastdl.mongodb.org/linux/mongodb-linux-i686-{}.tgz
       3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
     */
-    PlatformMatchRule legacy32 = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                            VersionRange.of("3.2.0", "3.2.21"),
-                            VersionRange.of("3.0.0", "3.0.14"),
-                            VersionRange.of("2.6.0", "2.6.12")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
-            .finder(UrlTemplatePackageResolver.builder()
-                    .fileSet(fileSet)
-                    .archiveType(ArchiveType.TGZ)
-                    .urlTemplate("/linux/mongodb-linux-i686-{version}.tgz")
-                    .build())
-            .build();
+		PlatformMatchRule legacy32 = PlatformMatchRule.builder()
+			.match(DistributionMatch.any(
+					VersionRange.of("3.2.0", "3.2.21"),
+					VersionRange.of("3.0.0", "3.0.14"),
+					VersionRange.of("2.6.0", "2.6.12")
+				)
+				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
+			.finder(UrlTemplatePackageResolver.builder()
+				.fileSet(fileSet)
+				.archiveType(ArchiveType.TGZ)
+				.urlTemplate("/linux/mongodb-linux-i686-{version}.tgz")
+				.build())
+			.build();
 
   /*
     Linux (legacy) x64
     https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-{}.tgz
     4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
    */
-    PlatformMatchRule legacy64 = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                            VersionRange.of("4.0.0", "4.0.26"),
-                            VersionRange.of("3.6.0", "3.6.22"),
-                            VersionRange.of("3.4.9", "3.4.23"),
-                            VersionRange.of("3.4.0", "3.4.7"),
-                            VersionRange.of("3.2.0", "3.2.21"),
-                            VersionRange.of("3.0.0", "3.0.14"),
-                            VersionRange.of("2.6.0", "2.6.12")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
-            .finder(UrlTemplatePackageResolver.builder()
-                    .fileSet(fileSet)
-                    .archiveType(ArchiveType.TGZ)
-                    .urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
-                    .build())
-            .build();
+		PlatformMatchRule legacy64 = PlatformMatchRule.builder()
+			.match(DistributionMatch.any(
+					VersionRange.of("4.0.0", "4.0.26"),
+					VersionRange.of("3.6.0", "3.6.22"),
+					VersionRange.of("3.4.9", "3.4.23"),
+					VersionRange.of("3.4.0", "3.4.7"),
+					VersionRange.of("3.2.0", "3.2.21"),
+					VersionRange.of("3.0.0", "3.0.14"),
+					VersionRange.of("2.6.0", "2.6.12")
+				)
+				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
+			.finder(UrlTemplatePackageResolver.builder()
+				.fileSet(fileSet)
+				.archiveType(ArchiveType.TGZ)
+				.urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
+				.build())
+			.build();
 
-    PlatformMatchRule hiddenLegacy64 = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                            VersionRange.of("3.3.1", "3.3.1"),
-                            VersionRange.of("3.5.5", "3.5.5")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
-            .finder(UrlTemplatePackageResolver.builder()
-                    .fileSet(fileSet)
-                    .archiveType(ArchiveType.TGZ)
-                    .urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
-                    .build())
-            .build();
+		PlatformMatchRule hiddenLegacy64 = PlatformMatchRule.builder()
+			.match(DistributionMatch.any(
+					VersionRange.of("3.3.1", "3.3.1"),
+					VersionRange.of("3.5.5", "3.5.5")
+				)
+				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
+			.finder(UrlTemplatePackageResolver.builder()
+				.fileSet(fileSet)
+				.archiveType(ArchiveType.TGZ)
+				.urlTemplate("/linux/mongodb-linux-x86_64-{version}.tgz")
+				.build())
+			.build();
 
-    PlatformMatchRule hiddenLegacy32 = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                            VersionRange.of("3.3.1", "3.3.1"),
-                            VersionRange.of("3.5.5", "3.5.5")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
-            .finder(UrlTemplatePackageResolver.builder()
-                    .fileSet(fileSet)
-                    .archiveType(ArchiveType.TGZ)
-                    .urlTemplate("/linux/mongodb-linux-i686-{version}.tgz")
-                    .build())
-            .build();
+		PlatformMatchRule hiddenLegacy32 = PlatformMatchRule.builder()
+			.match(DistributionMatch.any(
+					VersionRange.of("3.3.1", "3.3.1"),
+					VersionRange.of("3.5.5", "3.5.5")
+				)
+				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
+			.finder(UrlTemplatePackageResolver.builder()
+				.fileSet(fileSet)
+				.archiveType(ArchiveType.TGZ)
+				.urlTemplate("/linux/mongodb-linux-i686-{version}.tgz")
+				.build())
+			.build();
 
+		PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
+			.match(PlatformMatch.withOs(OS.Linux))
+			.finder(distribution -> {
+				Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
+					ImmutablePlatform.copyOf(distribution.platform())
+						.withVersion(UbuntuVersion.Ubuntu_20_04));
 
-    PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
-            .match(PlatformMatch.withOs(OS.Linux))
-            .finder(distribution -> {
-              throw new IllegalArgumentException("linux distribution not supported: " + distribution);
-            })
-            .build();
+				LOGGER.warn("because there is no package for "+distribution+" we fall back to "+ubuntuLTSFallback);
 
-    return PlatformMatchRules.empty()
-            .withRules(
-                    ubuntuRule,
-                    debianRule,
-                    centosRule,
-                    legacy32,
-                    legacy64,
-                    hiddenLegacy64,
-                    hiddenLegacy32,
-                    failIfNothingMatches
-            );
-  }
+				Optional<DistributionPackage> resolvedPackage = ubuntuPackageResolver.packageFor(ubuntuLTSFallback);
+				if (!resolvedPackage.isPresent()) {
+					throw new IllegalArgumentException("linux distribution not supported: "+distribution+"(with fallback to "+ubuntuLTSFallback+")");
+				}
+				return resolvedPackage;
+			})
+			.build();
+
+		return PlatformMatchRules.empty()
+			.withRules(
+				ubuntuRule,
+				linuxMintRule,
+				debianRule,
+				centosRule,
+				legacy32,
+				legacy64,
+				hiddenLegacy64,
+				hiddenLegacy32,
+				failIfNothingMatches
+			);
+	}
 
 }

@@ -1,5 +1,14 @@
 ### Changelog
 
+### 3.2.4
+
+- linux mint support
+- linux fallback to ubuntu 20.04 LTS
+
+### 3.2.3
+
+- spring boot api fix
+
 ### 3.2.2
 
 - debian support added

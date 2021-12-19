@@ -30,6 +30,7 @@ import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.os.linux.CentosVersion;
 import de.flapdoodle.os.linux.DebianVersion;
+import de.flapdoodle.os.linux.LinuxMintVersion;
 import de.flapdoodle.os.linux.UbuntuVersion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -79,6 +80,19 @@ class LinuxPackageFinderTest {
   public void resolveUbuntuPackage() {
     assertThat(linuxWith(CommonArchitecture.X86_64)
       .withVersion(UbuntuVersion.Ubuntu_20_10), "5.0.2")
+      .resolvesTo("/linux/mongodb-linux-x86_64-ubuntu2004-{}.tgz");
+  }
+
+  @Test
+  public void resolveLinuxMintPackage() {
+    assertThat(linuxWith(CommonArchitecture.X86_64)
+      .withVersion(LinuxMintVersion.LINUX_MINT_19_0), "5.0.2")
+      .resolvesTo("/linux/mongodb-linux-x86_64-ubuntu1804-{}.tgz");
+  }
+
+  @Test
+  public void resolveFallbackPackage() {
+    assertThat(linuxWith(CommonArchitecture.X86_64), "5.0.2")
       .resolvesTo("/linux/mongodb-linux-x86_64-ubuntu2004-{}.tgz");
   }
 
