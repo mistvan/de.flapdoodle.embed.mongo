@@ -82,7 +82,7 @@ public class MongoExecutableTest {
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
 
-			for (int i=0;i<10;i++) {
+			for (int i=0;i<2;i++) {
 				try (TransitionWalker.ReachedState<RunningMongodProcess> running = TransitionWalker.with(transitions)
 					.initState(StateID.of(RunningMongodProcess.class))) {
 

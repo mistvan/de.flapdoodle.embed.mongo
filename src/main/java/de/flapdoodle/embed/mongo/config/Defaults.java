@@ -30,8 +30,10 @@ import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.mongo.transitions.CommandProcessArguments;
 import de.flapdoodle.embed.mongo.transitions.MongodProcessArguments;
 import de.flapdoodle.embed.mongo.transitions.MongodStarter;
+import de.flapdoodle.embed.mongo.transitions.PackageOfCommandDistribution;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.archives.ArchiveType;
+import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.config.store.*;
@@ -47,6 +49,7 @@ import de.flapdoodle.embed.process.types.ProcessConfig;
 import de.flapdoodle.embed.process.types.ProcessEnv;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.reverse.State;
+import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.edges.Derive;
 import de.flapdoodle.reverse.edges.Join;
@@ -71,6 +74,13 @@ import de.flapdoodle.embed.process.runtime.CommandLinePostProcessor;
 
 public abstract class Defaults {
 
+
+	public static Transition<ExtractedFileSet> extractedFileSetFor(Command command, StateID<TempDir> tempDir, StateID<Version> version, StateID<Name> name) {
+		PersistentDir baseDir = PersistentDir.userHome(".embedmongo").get();
+
+		return null;
+	}
+
 	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> List<Transition<?>> transitionsFor(
 		T processArguments,
 		C arguments, Version.Main version
@@ -87,7 +97,10 @@ public abstract class Defaults {
 		return Arrays.asList(
 			InitTempDirectory.withPlatformTemp(),
 
-			Start.to(Name.class).initializedWith(Name.of(command.commandName())).withTransitionLabel("create Name"),
+			Start.to(Command.class).initializedWith(command).withTransitionLabel("provide Command"),
+
+			//Start.to(Name.class).initializedWith(Name.of(command.commandName())).withTransitionLabel("create Name"),
+			Derive.given(Command.class).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command"),
 
 			Start.to(SupportConfig.class)
 				.initializedWith(SupportConfig.builder()
@@ -122,10 +135,13 @@ public abstract class Defaults {
 				.deriveBy(Distribution::of)
 				.withTransitionLabel("version + platform"),
 
-			PackageOfDistribution.with(distribution -> {
-				DistributionPackage legacyPackage = legacyPackageResolver.packageFor(distribution);
-				return Package.of(archiveTypeOfLegacy(legacyPackage.archiveType()),legacyPackage.fileSet(), "https://fastdl.mongodb.org"+legacyPackage.archivePath());
-			}),
+
+//			PackageOfDistribution.with(distribution -> {
+//				DistributionPackage legacyPackage = legacyPackageResolver.packageFor(distribution);
+//				return Package.of(archiveTypeOfLegacy(legacyPackage.archiveType()),legacyPackage.fileSet(), "https://fastdl.mongodb.org"+legacyPackage.archivePath());
+//			}),
+
+			PackageOfCommandDistribution.withDefaults(),
 
 			DownloadPackage.with(archiveStore),
 
