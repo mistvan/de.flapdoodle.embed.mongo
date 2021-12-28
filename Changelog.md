@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.2.5
+
+- amazon linux support
+
 ### 3.2.4
 
 - linux mint support
