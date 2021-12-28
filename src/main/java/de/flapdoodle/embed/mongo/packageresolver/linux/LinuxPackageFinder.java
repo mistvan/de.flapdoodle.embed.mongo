@@ -31,10 +31,7 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
-import de.flapdoodle.os.linux.CentosVersion;
-import de.flapdoodle.os.linux.DebianVersion;
-import de.flapdoodle.os.linux.LinuxMintVersion;
-import de.flapdoodle.os.linux.UbuntuVersion;
+import de.flapdoodle.os.linux.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +80,12 @@ public class LinuxPackageFinder implements PackageFinder {
 			.match(PlatformMatch.withOs(OS.Linux)
 				.withVersion(CentosVersion.values()))
 			.finder(new CentosPackageResolver(command))
+			.build();
+
+		ImmutablePlatformMatchRule amazonRule = PlatformMatchRule.builder()
+			.match(PlatformMatch.withOs(OS.Linux)
+				.withVersion(AmazonVersion.values()))
+			.finder(new AmazonPackageResolver(command))
 			.build();
 
     /*
@@ -176,6 +179,7 @@ public class LinuxPackageFinder implements PackageFinder {
 				linuxMintRule,
 				debianRule,
 				centosRule,
+				amazonRule,
 				legacy32,
 				legacy64,
 				hiddenLegacy64,

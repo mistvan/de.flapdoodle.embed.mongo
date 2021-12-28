@@ -42,6 +42,10 @@ public class PlatformPackageResolver implements PackageResolver {
     // TODO system property finder
     // TODO put features into this?
 
+		// https://www.mongodb.org/dl/linux
+    // https://www.mongodb.org/dl/osx
+    // https://www.mongodb.org/dl/windows
+
     this.command = command;
     this.rules = PlatformMatchRules.empty()
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Windows), new WindowsPackageFinder(command)))
