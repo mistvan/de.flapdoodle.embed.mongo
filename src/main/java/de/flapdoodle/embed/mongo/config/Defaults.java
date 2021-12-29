@@ -117,25 +117,23 @@ public abstract class Defaults {
 
 		return Arrays.asList(
 			InitTempDirectory.withPlatformTemp(),
+			Start.to(ProcessConfig.class).initializedWith(ProcessConfig.defaults()).withTransitionLabel("create default"),
+			Start.to(ProcessEnv.class).initializedWith(ProcessEnv.of(Collections.emptyMap())).withTransitionLabel("create empty env"),
 
 			Start.to(Command.class).initializedWith(command).withTransitionLabel("provide Command"),
+			Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
 
 			extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)),
 
 			//Start.to(Name.class).initializedWith(Name.of(command.commandName())).withTransitionLabel("create Name"),
 			Derive.given(Command.class).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command"),
 
-			Start.to(SupportConfig.class)
-				.initializedWith(SupportConfig.builder()
-					.name(command.commandName())
+			Derive.given(Command.class).state(SupportConfig.class)
+				.deriveBy(c -> SupportConfig.builder()
+					.name(c.commandName())
 					.messageOnException((clazz, ex) -> null)
 					.supportUrl("https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues")
 					.build()).withTransitionLabel("create default"),
-
-			Start.to(ProcessConfig.class).initializedWith(ProcessConfig.defaults()).withTransitionLabel("create default"),
-			Start.to(ProcessEnv.class).initializedWith(ProcessEnv.of(Collections.emptyMap())).withTransitionLabel("create empty env"),
-
-			Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
 
 			Start.to(processArguments.arguments()).initializedWith(arguments),
 			Start.to(Net.class).providedBy(Net::defaults),
