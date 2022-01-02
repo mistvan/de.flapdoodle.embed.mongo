@@ -22,11 +22,10 @@ package de.flapdoodle.embed.mongo.config;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.commands.CommandArguments;
+import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
-import de.flapdoodle.embed.mongo.transitions.CommandProcessArguments;
-import de.flapdoodle.embed.mongo.transitions.MongodStarter;
-import de.flapdoodle.embed.mongo.transitions.PackageOfCommandDistribution;
+import de.flapdoodle.embed.mongo.transitions.*;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.archives.ArchiveType;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
@@ -61,9 +60,9 @@ import de.flapdoodle.embed.process.types.ProcessConfig;
 import de.flapdoodle.embed.process.types.ProcessEnv;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.reverse.*;
-import de.flapdoodle.reverse.edges.Derive;
-import de.flapdoodle.reverse.edges.Join;
-import de.flapdoodle.reverse.edges.Start;
+import de.flapdoodle.reverse.transitions.Derive;
+import de.flapdoodle.reverse.transitions.Join;
+import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
 import org.slf4j.Logger;
 
@@ -85,9 +84,7 @@ public abstract class Defaults {
 		ArchiveStore archiveStore = new LocalArchiveStore(baseDir.value().resolve("archives"));
 		ExtractedFileSetStore extractedFileSetStore = new ContentHashExtractedFileSetStore(baseDir.value().resolve("fileSets"));
 
-		List<Transition<?>> transitions = Arrays.asList(
-//			InitTempDirectory.withPlatformTemp(),
-
+		Transitions transitions = Transitions.from(
 			Derive.given(localCommandStateID).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command"),
 
 			PackageOfCommandDistribution.withDefaults(),
@@ -98,7 +95,7 @@ public abstract class Defaults {
 				.withExtractedFileSetStore(extractedFileSetStore)
 		);
 
-		return TransitionWalker.with(transitions)
+		return transitions.walker()
 			.asTransitionTo(TransitionMapping.builder("extract file set", StateMapping.of(StateID.of(ExtractedFileSet.class), destination))
 				.addMappings(StateMapping.of(distributionStateID, localDistributionStateID))
 				.addMappings(StateMapping.of(tempDirStateID, localTempDirStateID))
@@ -106,7 +103,69 @@ public abstract class Defaults {
 				.build());
 	}
 
-	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> List<Transition<?>> transitionsFor(
+	public static Transitions workspaceDefaults() {
+		return Transitions.from(
+			InitTempDirectory.withPlatformTemp()
+		);
+	}
+
+	public static Transitions versionAndPlatform() {
+		return Transitions.from(
+			Start.to(Platform.class).providedBy(Platform::detect),
+			Join.given(de.flapdoodle.embed.process.distribution.Version.class).and(Platform.class).state(Distribution.class)
+				.deriveBy(Distribution::of)
+				.withTransitionLabel("version + platform")
+		);
+	}
+
+	public static Transitions processDefaults() {
+		return Transitions.from(
+			Start.to(ProcessConfig.class).initializedWith(ProcessConfig.defaults()).withTransitionLabel("create default"),
+			Start.to(ProcessEnv.class).initializedWith(ProcessEnv.of(Collections.emptyMap())).withTransitionLabel("create empty env"),
+
+			Derive.given(Name.class).state(ProcessOutput.class)
+				.deriveBy(name -> ProcessOutput.namedConsole(name.value()))
+				.withTransitionLabel("create named console"),
+
+			Derive.given(Command.class).state(SupportConfig.class)
+				.deriveBy(c -> SupportConfig.builder()
+					.name(c.commandName())
+					.messageOnException((clazz, ex) -> null)
+					.supportUrl("https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues")
+					.build()).withTransitionLabel("create default")
+			);
+	}
+
+	public static Transitions commandName() {
+		return Transitions.from(
+			Derive.given(Command.class).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command")
+		);
+	}
+
+	public static Transitions transitionsForMongod(de.flapdoodle.embed.process.distribution.Version version) {
+		return workspaceDefaults()
+			.addAll(versionAndPlatform())
+			.addAll(processDefaults())
+			.addAll(commandName())
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(
+				Start.to(Command.class).initializedWith(Command.MongoD).withTransitionLabel("provide Command"),
+				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
+				Start.to(Net.class).providedBy(Net::defaults),
+
+				Derive.given(TempDir.class).state(DatabaseDir.class)
+					.with(tempDir -> {
+						DatabaseDir databaseDir = Try.get(() -> DatabaseDir.of(tempDir.createDirectory("mongod-database")));
+						return State.of(databaseDir, dir -> Try.run(() -> Directories.deleteAll(dir.value())));
+					}),
+
+				Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()),
+				MongodProcessArguments.withDefaults(),
+				MongodStarter.withDefaults()
+			);
+	}
+
+	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> Transitions transitionsFor(
 		T processArguments,
 		C arguments, Version.Main version
 	) {
@@ -115,50 +174,28 @@ public abstract class Defaults {
 
 		// TODO use same legacy directory?
 
-		return Arrays.asList(
-			InitTempDirectory.withPlatformTemp(),
-			Start.to(ProcessConfig.class).initializedWith(ProcessConfig.defaults()).withTransitionLabel("create default"),
-			Start.to(ProcessEnv.class).initializedWith(ProcessEnv.of(Collections.emptyMap())).withTransitionLabel("create empty env"),
+		return workspaceDefaults()
+			.addAll(versionAndPlatform())
+			.addAll(processDefaults())
+			.addAll(commandName())
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(
+				Start.to(Command.class).initializedWith(command).withTransitionLabel("provide Command"),
+				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
+				Start.to(Net.class).providedBy(Net::defaults),
 
-			Start.to(Command.class).initializedWith(command).withTransitionLabel("provide Command"),
-			Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
+				Derive.given(TempDir.class).state(DatabaseDir.class)
+					.with(tempDir -> {
+						DatabaseDir databaseDir = Try.get(() -> DatabaseDir.of(tempDir.createDirectory("mongod-database")));
+						return State.of(databaseDir, dir -> Try.run(() -> Directories.deleteAll(dir.value())));
+					}),
 
-			extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)),
-
-			//Start.to(Name.class).initializedWith(Name.of(command.commandName())).withTransitionLabel("create Name"),
-			Derive.given(Command.class).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command"),
-
-			Derive.given(Command.class).state(SupportConfig.class)
-				.deriveBy(c -> SupportConfig.builder()
-					.name(c.commandName())
-					.messageOnException((clazz, ex) -> null)
-					.supportUrl("https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues")
-					.build()).withTransitionLabel("create default"),
-
-			Start.to(processArguments.arguments()).initializedWith(arguments),
-			Start.to(Net.class).providedBy(Net::defaults),
-
-			Derive.given(Name.class).state(ProcessOutput.class)
-				.deriveBy(name -> ProcessOutput.namedConsole(name.value()))
-				.withTransitionLabel("create named console"),
-
-			Derive.given(TempDir.class).state(DatabaseDir.class)
-				.with(tempDir -> {
-					DatabaseDir databaseDir = Try.get(() -> DatabaseDir.of(tempDir.createDirectory("mongod-database")));
-					return State.of(databaseDir, dir -> Try.run(() -> Directories.deleteAll(dir.value())));
-				}),
-
-			processArguments,
-
-			Start.to(Platform.class).providedBy(Platform::detect),
-			Join.given(de.flapdoodle.embed.process.distribution.Version.class).and(Platform.class).state(Distribution.class)
-				.deriveBy(Distribution::of)
-				.withTransitionLabel("version + platform"),
-
-
-			MongodStarter.withDefaults()
-		);
+				Start.to(processArguments.arguments()).initializedWith(arguments),
+				processArguments,
+				MongodStarter.withDefaults()
+			);
 	}
+
 	private static ArchiveType archiveTypeOfLegacy(de.flapdoodle.embed.process.distribution.ArchiveType archiveType) {
 		switch (archiveType) {
 			case EXE:

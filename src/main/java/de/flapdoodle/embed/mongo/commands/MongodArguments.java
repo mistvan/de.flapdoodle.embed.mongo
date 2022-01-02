@@ -131,7 +131,7 @@ public abstract class MongodArguments implements CommandArguments {
 		return ImmutableMongodArguments.builder();
 	}
 
-	public static MongodArguments defaults() {
+	public static ImmutableMongodArguments defaults() {
 		return builder().build();
 	}
 
