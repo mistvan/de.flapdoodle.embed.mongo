@@ -60,32 +60,6 @@ public class MongoExecutableTest {
 	private static final Logger logger = LoggerFactory.getLogger(MongoExecutableTest.class.getName());
 
 	@Test
-	public void testStartStopTenTimesWithTransitions() throws UnknownHostException {
-		Transitions transitions = Defaults.transitionsForMongod(Version.Main.PRODUCTION);
-
-		String dot = Transitions.edgeGraphAsDot("mongod", transitions.asGraph());
-		System.out.println("---------------------");
-		System.out.println(dot);
-		System.out.println("---------------------");
-
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-
-			for (int i = 0; i < 2; i++) {
-				try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
-					.initState(StateID.of(RunningMongodProcess.class))) {
-
-					try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
-						MongoDatabase db = mongo.getDatabase("test");
-						MongoCollection<Document> col = db.getCollection("testCol");
-						col.insertOne(new Document("testDoc", new Date()));
-						System.out.println("could store doc in database...");
-					}
-				}
-			}
-		}
-	}
-
-	@Test
 	public void testStartStopTenTimesWithNewMongoExecutable() throws IOException {
 		boolean useMongodb = true;
 		int loops = 10;
