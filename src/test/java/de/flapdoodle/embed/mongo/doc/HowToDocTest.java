@@ -31,8 +31,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +86,7 @@ import de.flapdoodle.testdoc.TabSize;
 
 public class HowToDocTest {
 
-	@ClassRule
+	@RegisterExtension
 	public static final Recording recording=Recorder.with("Howto.md",TabSize.spaces(2));
 	
 	@Test
