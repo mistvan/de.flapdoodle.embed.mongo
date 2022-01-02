@@ -16,9 +16,12 @@ import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
+import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.types.Try;
 import org.assertj.core.api.Assertions;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
@@ -65,12 +68,10 @@ public class HowToUseTransitionsTest {
 		File jsonFile = new File(Thread.currentThread().getContextClassLoader().getResource("sample.json").getFile());
 
 		ImmutableMongoImportArguments arguments = MongoImportArguments.builder()
-//			.isVerbose(true)
 			.databaseName("importDatabase")
 			.collectionName("importCollection")
 			.importFile(jsonFile.getAbsolutePath())
 			.isJsonArray(true)
-//			.dropCollection(true)
 			.upsertDocuments(true)
 			.build();
 
@@ -91,6 +92,57 @@ public class HowToUseTransitionsTest {
 
 				try (TransitionWalker.ReachedState<RunningMongoImportProcess> running = withMongoDbServerAddress.walker()
 					.initState(StateID.of(RunningMongoImportProcess.class))) {
+
+					try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
+						MongoDatabase db = mongo.getDatabase("importDatabase");
+						MongoCollection<Document> col = db.getCollection("importCollection");
+
+						ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
+
+						assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
+					}
+				}
+			}
+		}
+	}
+
+	@Test
+	public void startMongoImportAsOneTransition() throws UnknownHostException {
+
+		File jsonFile = new File(Thread.currentThread().getContextClassLoader().getResource("sample.json").getFile());
+
+		ImmutableMongoImportArguments arguments = MongoImportArguments.builder()
+			.databaseName("importDatabase")
+			.collectionName("importCollection")
+			.importFile(jsonFile.getAbsolutePath())
+			.isJsonArray(true)
+			.upsertDocuments(true)
+			.build();
+
+		Transitions mongodTransitions = Defaults.transitionsForMongod(Version.Main.PRODUCTION);
+
+		Transitions mongoImportTransitions = Defaults.transitionsForMongoImport(Version.Main.PRODUCTION)
+			.replace(Start.to(MongoImportArguments.class).initializedWith(arguments))
+			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+			.addAll(mongodTransitions.walker()
+				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+					.build()));
+
+
+		String dot = Transitions.edgeGraphAsDot("mongoImport", mongoImportTransitions.asGraph());
+		System.out.println("---------------------");
+		System.out.println(dot);
+		System.out.println("---------------------");
+
+		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+
+			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = mongoImportTransitions.walker()
+				.initState(StateID.of(RunningMongodProcess.class))) {
+
+//				Transitions withMongoDbServerAddress = mongoImportTransitions.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
+
+				try (TransitionWalker.ReachedState<RunningMongoImportProcess> running = mongoD.initState(StateID.of(RunningMongoImportProcess.class))) {
 
 					try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
 						MongoDatabase db = mongo.getDatabase("importDatabase");
