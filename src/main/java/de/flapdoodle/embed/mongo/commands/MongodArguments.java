@@ -41,14 +41,8 @@ import java.util.*;
 import static java.lang.String.format;
 
 @Value.Immutable
-public abstract class MongodArguments implements CommandArguments {
+public abstract class MongodArguments {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MongodArguments.class);
-
-	@Override
-	@Value.Auxiliary
-	public Command command() {
-		return Command.MongoD;
-	}
 
 	@Value.Default
 	public int syncDelay() {

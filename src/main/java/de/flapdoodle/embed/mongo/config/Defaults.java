@@ -22,6 +22,7 @@ package de.flapdoodle.embed.mongo.config;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.commands.CommandArguments;
+import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
@@ -140,6 +141,21 @@ public abstract class Defaults {
 		return Transitions.from(
 			Derive.given(Command.class).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command")
 		);
+	}
+
+	public static Transitions transitionsForMongoImport(de.flapdoodle.embed.process.distribution.Version version) {
+		return workspaceDefaults()
+			.addAll(versionAndPlatform())
+			.addAll(processDefaults())
+			.addAll(commandName())
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(
+				Start.to(Command.class).initializedWith(Command.MongoImport).withTransitionLabel("provide Command"),
+				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
+				Start.to(MongoImportArguments.class).initializedWith(MongoImportArguments.defaults()),
+				MongoImportProcessArguments.withDefaults(),
+				MongoImportStarter.withDefaults()
+			);
 	}
 
 	public static Transitions transitionsForMongod(de.flapdoodle.embed.process.distribution.Version version) {
