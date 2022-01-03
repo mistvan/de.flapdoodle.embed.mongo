@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.2.6
+
+- centos bugfix
+
 ### 3.2.5
 
 - amazon linux support
