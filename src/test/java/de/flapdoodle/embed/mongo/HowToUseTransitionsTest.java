@@ -140,8 +140,6 @@ public class HowToUseTransitionsTest {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = mongoImportTransitions.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
-//				Transitions withMongoDbServerAddress = mongoImportTransitions.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
-
 				try (TransitionWalker.ReachedState<RunningMongoImportProcess> running = mongoD.initState(StateID.of(RunningMongoImportProcess.class))) {
 
 					try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
