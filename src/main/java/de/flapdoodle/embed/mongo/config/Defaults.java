@@ -106,7 +106,7 @@ public abstract class Defaults {
 
 	public static Transitions workspaceDefaults() {
 		return Transitions.from(
-			InitTempDirectory.withPlatformTemp()
+			InitTempDirectory.withPlatformTempRandomSubDir()
 		);
 	}
 
