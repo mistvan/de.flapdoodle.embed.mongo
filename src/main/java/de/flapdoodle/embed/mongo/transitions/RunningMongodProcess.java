@@ -24,10 +24,7 @@ import com.mongodb.ServerAddress;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.runtime.Mongod;
 import de.flapdoodle.embed.process.config.SupportConfig;
-import de.flapdoodle.embed.process.io.LogWatchStreamProcessor;
-import de.flapdoodle.embed.process.io.Processors;
-import de.flapdoodle.embed.process.io.StreamProcessor;
-import de.flapdoodle.embed.process.io.StreamToLineProcessor;
+import de.flapdoodle.embed.process.io.*;
 import de.flapdoodle.embed.process.runtime.ProcessControl;
 import de.flapdoodle.embed.process.runtime.Processes;
 import de.flapdoodle.embed.process.types.RunningProcess;
@@ -55,13 +52,14 @@ public class RunningMongodProcess extends RunningProcess {
 		ProcessControl process,
 		Path pidFile,
 		long timeout,
+		Runnable onStop,
 		SupportConfig supportConfig,
 		Platform platform,
 		Net net,
 		StreamProcessor commandOutput,
 		int mongodProcessId
 	) {
-		super(process, pidFile, timeout);
+		super(process, pidFile, timeout, onStop);
 		this.supportConfig = supportConfig;
 		this.platform = platform;
 		this.commandOutput = commandOutput;
@@ -129,13 +127,13 @@ public class RunningMongodProcess extends RunningProcess {
 
 			LogWatchStreamProcessor logWatch = new LogWatchStreamProcessor(successMessage(), knownFailureMessages(),
 				StreamToLineProcessor.wrap(processOutput.output()));
-			Processors.connect(process.getReader(), logWatch);
-			Processors.connect(process.getError(), StreamToLineProcessor.wrap(processOutput.error()));
+			ReaderProcessor output = Processors.connect(process.getReader(), logWatch);
+			ReaderProcessor error = Processors.connect(process.getError(), StreamToLineProcessor.wrap(processOutput.error()));
 
 			logWatch.waitForResult(startupTimeout);
 			if (logWatch.isInitWithSuccess()) {
 				int pid = Mongod.getMongodProcessId(logWatch.getOutput(), -1);
-				return new RunningMongodProcess(process, pidFile, timeout, supportConfig, platform, net, processOutput.commands(), pid);
+				return new RunningMongodProcess(process, pidFile, timeout, () -> ReaderProcessor.abortAll(output,error), supportConfig, platform, net, processOutput.commands(), pid);
 
 			} else {
 				String failureFound = logWatch.getFailureFound();
