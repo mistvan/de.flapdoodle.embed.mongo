@@ -80,7 +80,7 @@ public abstract class Defaults {
 		StateID<Command> localCommandStateID = StateID.of(Command.class);
 
 		PersistentDir baseDir = PersistentDir.userHome(".embedmongo").get();
-		ArchiveStore archiveStore = new LocalArchiveStore(baseDir.value().resolve("archives"));
+		DownloadCache downloadCache = new LocalDownloadCache(baseDir.value().resolve("archives"));
 		ExtractedFileSetStore extractedFileSetStore = new ContentHashExtractedFileSetStore(baseDir.value().resolve("fileSets"));
 
 		Transitions transitions = Transitions.from(
@@ -88,7 +88,7 @@ public abstract class Defaults {
 
 			PackageOfCommandDistribution.withDefaults(),
 
-			DownloadPackage.with(archiveStore),
+			DownloadPackage.with(downloadCache),
 
 			ExtractPackage.withDefaults()
 				.withExtractedFileSetStore(extractedFileSetStore)
