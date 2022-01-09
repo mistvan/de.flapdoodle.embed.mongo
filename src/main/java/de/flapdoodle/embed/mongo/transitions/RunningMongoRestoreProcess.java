@@ -6,9 +6,9 @@ import de.flapdoodle.embed.process.types.RunningProcess;
 
 import java.nio.file.Path;
 
-public class RunningMongoImportProcess extends RunningProcess {
+public class RunningMongoRestoreProcess extends RunningProcess {
 
-	public RunningMongoImportProcess(ProcessControl process, ProcessOutput processOutput, Path pidFile, long timeout) {
+	public RunningMongoRestoreProcess(ProcessControl process, ProcessOutput processOutput, Path pidFile, long timeout) {
 		super(process, processOutput, pidFile, timeout);
 	}
 

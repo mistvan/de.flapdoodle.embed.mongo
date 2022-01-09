@@ -20,105 +20,161 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.hamcrest.core.Is;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.mongodb.MongoClient;
-
+import com.mongodb.ServerAddress;
+import de.flapdoodle.embed.mongo.commands.ImmutableMongoDumpArguments;
+import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.MongoDumpConfig;
-import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.config.RuntimeConfig;
-import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.embed.mongo.transitions.RunningMongoDumpProcess;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.embed.process.io.progress.ProgressListeners;
+import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.TransitionMapping;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.Transitions;
+import de.flapdoodle.reverse.transitions.Derive;
+import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.types.Try;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Path;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MongoDumpExecutableTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
-    private MongodExecutable mongodExe;
-    private MongodProcess mongod;
-    private Net net;
+    private static void dump(Version.Main version, MongoDumpArguments mongoDumpArguments, Runnable afterDump) {
+        try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+            Transitions transitions = Defaults.transitionsForMongoDump(version)
+              .replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
+              .addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+                .deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+              .addAll(Defaults.transitionsForMongod(version).walker()
+                .asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+                  .build()));
 
+            try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
+              .initState(StateID.of(RunningMongodProcess.class))) {
 
-    @Before
-    public void setUp() throws IOException {
-        net = new Net(Network.getLocalHost().getHostAddress(),
-                Network.getFreeServerPort(),
-                Network.localhostIsIPv6());
-        final Version.Main version = Version.Main.PRODUCTION;
-        MongodConfig mongodConfig = MongodConfig.builder()
-                .version(version)
-                .cmdOptions(getCmdOptions(version))
-                .net(net)
-                .build();
+                try (TransitionWalker.ReachedState<RunningMongoDumpProcess> runningDump = runningMongoD.initState(
+                  StateID.of(RunningMongoDumpProcess.class))) {
 
-        RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
-        mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
-        mongod = mongodExe.start();
-        MongoClient mongoClient = new MongoClient(net.getServerAddress().getHostName(), net.getPort());
-        String dumpDir = Thread.currentThread().getContextClassLoader().getResource("dump").getFile();
-        mongoRestoreExecutable(dumpDir).start();
+                    System.out.println("-------------------");
+                    System.out.println("dump started");
+                    System.out.println("-------------------");
+                }
 
-        assertThat(mongoClient.getDatabase("restoredb").getCollection("sample").count(), Is.is(3L));
-    }
-
-    @After
-    public void after() {
-        mongod.stop();
-        mongodExe.stop();
+                afterDump.run();
+            }
+        }
     }
 
     @Test
-    public void testStartMongoDump() throws IOException {
-        final Version.Main version = Version.Main.PRODUCTION;
-        MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
-                .version(version)
-                .cmdOptions(getCmdOptions(version))
-                .net(net)
-                .out(temp.getRoot().getAbsolutePath())
-                .build();
+    public void dumpToArchive(@TempDir Path temp) {
+        Path archive = temp.resolve("foo.archive.gz");
 
-        MongoDumpStarter.getDefaultInstance().prepare(mongoDumpConfig).start();
-        assertTrue(Arrays.stream(temp.getRoot().listFiles()).anyMatch(f -> "restoredb".equals(f.getName())));
+        ImmutableMongoDumpArguments mongoDumpArguments = MongoDumpArguments.builder()
+          .verbose(true)
+          .archive(archive.toAbsolutePath().toString())
+          .gzip(true)
+          .build();
+
+        dump(Version.Main.PRODUCTION, mongoDumpArguments, () -> {
+            assertThat(archive).exists()
+              .isRegularFile();
+        });
     }
 
     @Test
-    public void testStartMongoDumpToArchive() throws IOException {
-        final Version.Main version = Version.Main.PRODUCTION;
-        MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
-                .version(version)
-                .cmdOptions(getCmdOptions(version))
-                .net(net)
-                .archive(temp.getRoot().getAbsolutePath())
-                .build();
-        MongoDumpStarter.getDefaultInstance().prepare(mongoDumpConfig).start();
+    public void dumpToDirectory(@TempDir Path temp) {
+        Path directory = temp.resolve("dump");
 
-        assertTrue(Arrays.stream(temp.getRoot().listFiles()).anyMatch(f -> "archive".equals(f.getName())));
+        ImmutableMongoDumpArguments mongoDumpArguments = MongoDumpArguments.builder()
+          .verbose(true)
+          .dir(directory.toAbsolutePath().toString())
+          .build();
+
+        dump(Version.Main.PRODUCTION, mongoDumpArguments, () -> {
+            assertThat(directory).exists()
+              .isDirectory();
+        });
     }
 
-    private MongoRestoreExecutable mongoRestoreExecutable(String dumpLocation) throws IOException {
-        MongoRestoreConfig mongoRestoreConfig = MongoRestoreConfig.builder()
-                .version(Version.Main.PRODUCTION)
-                .net(net)
-                .isDropCollection(true)
-                .dir(dumpLocation)
-                .build();
 
-        return MongoRestoreStarter.getDefaultInstance().prepare(mongoRestoreConfig);
-    }
-
+////    @Rule
+////    public TemporaryFolder temp = new TemporaryFolder();
+//    private MongodExecutable mongodExe;
+//    private MongodProcess mongod;
+//    private Net net;
+//
+//
+//    @BeforeEach
+//    public void setUp() throws IOException {
+//        net = new Net(Network.getLocalHost().getHostAddress(),
+//                Network.getFreeServerPort(),
+//                Network.localhostIsIPv6());
+//        final Version.Main version = Version.Main.PRODUCTION;
+//        MongodConfig mongodConfig = MongodConfig.builder()
+//                .version(version)
+//                .cmdOptions(getCmdOptions(version))
+//                .net(net)
+//                .build();
+//
+//        RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
+//        mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
+//        mongod = mongodExe.start();
+//        MongoClient mongoClient = new MongoClient(net.getServerAddress().getHostName(), net.getPort());
+//        String dumpDir = Thread.currentThread().getContextClassLoader().getResource("dump").getFile();
+//        mongoRestoreExecutable(dumpDir).start();
+//
+//        assertThat(mongoClient.getDatabase("restoredb").getCollection("sample").count(), Is.is(3L));
+//    }
+//
+//    @AfterEach
+//    public void after() {
+//        mongod.stop();
+//        mongodExe.stop();
+//    }
+//
+//    @Test
+//    public void testStartMongoDump(@TempDir Path temp) throws IOException {
+//        final Version.Main version = Version.Main.PRODUCTION;
+//        MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
+//                .version(version)
+//                .cmdOptions(getCmdOptions(version))
+//                .net(net)
+//                .out(temp.toAbsolutePath().toString())
+//                .build();
+//
+//        MongoDumpStarter.getDefaultInstance().prepare(mongoDumpConfig).start();
+//        assertTrue(Arrays.stream(temp.getRoot().listFiles()).anyMatch(f -> "restoredb".equals(f.getName())));
+//    }
+//
+//    @Test
+//    public void testStartMongoDumpToArchive() throws IOException {
+//        final Version.Main version = Version.Main.PRODUCTION;
+//        MongoDumpConfig mongoDumpConfig = MongoDumpConfig.builder()
+//                .version(version)
+//                .cmdOptions(getCmdOptions(version))
+//                .net(net)
+//                .archive(temp.getRoot().getAbsolutePath())
+//                .build();
+//        MongoDumpStarter.getDefaultInstance().prepare(mongoDumpConfig).start();
+//
+//        assertTrue(Arrays.stream(temp.getRoot().listFiles()).anyMatch(f -> "archive".equals(f.getName())));
+//    }
+//
+//    private MongoRestoreExecutable mongoRestoreExecutable(String dumpLocation) throws IOException {
+//        MongoRestoreConfig mongoRestoreConfig = MongoRestoreConfig.builder()
+//                .version(Version.Main.PRODUCTION)
+//                .net(net)
+//                .isDropCollection(true)
+//                .dir(dumpLocation)
+//                .build();
+//
+//        return MongoRestoreStarter.getDefaultInstance().prepare(mongoRestoreConfig);
+//    }
+//
 }

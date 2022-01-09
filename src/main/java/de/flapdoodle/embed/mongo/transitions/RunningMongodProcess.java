@@ -30,6 +30,7 @@ import de.flapdoodle.embed.process.runtime.Processes;
 import de.flapdoodle.embed.process.types.RunningProcess;
 import de.flapdoodle.embed.process.types.RunningProcessFactory;
 import de.flapdoodle.os.Platform;
+import de.flapdoodle.types.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +74,9 @@ public class RunningMongodProcess extends RunningProcess {
 
 	@Override
 	public void stop() {
-		stopInternal();
-		super.stop();
+		Try.runable(this::stopInternal)
+			.andFinally(super::stop)
+			.run();
 	}
 
 	//	@Override
@@ -129,32 +131,29 @@ public class RunningMongodProcess extends RunningProcess {
 				StreamToLineProcessor.wrap(processOutput.output()));
 			ReaderProcessor output = Processors.connect(process.getReader(), logWatch);
 			ReaderProcessor error = Processors.connect(process.getError(), StreamToLineProcessor.wrap(processOutput.error()));
+			Runnable closeAllOutputs = () -> ReaderProcessor.abortAll(output, error);
 
 			logWatch.waitForResult(startupTimeout);
 			if (logWatch.isInitWithSuccess()) {
 				int pid = Mongod.getMongodProcessId(logWatch.getOutput(), -1);
-				return new RunningMongodProcess(process, pidFile, timeout, () -> ReaderProcessor.abortAll(output,error), supportConfig, platform, net, processOutput.commands(), pid);
+				return new RunningMongodProcess(process, pidFile, timeout, closeAllOutputs, supportConfig, platform, net, processOutput.commands(), pid);
 
 			} else {
-				String failureFound = logWatch.getFailureFound();
-				if (failureFound==null) {
-					failureFound="\n" +
+				String failureFound = logWatch.getFailureFound() != null
+					? logWatch.getFailureFound()
+					: "\n" +
 						"----------------------\n" +
 						"Hmm.. no failure message.. \n" +
 						"...the cause must be somewhere in the process output\n" +
 						"----------------------\n" +
 						""+logWatch.getOutput();
-				}
-//				try {
-//					// Process could be finished with success here! In this case no need to throw an exception!
-//					if(process.waitFor() != 0){
-//						throw new RuntimeException("Could not start process: "+failureFound);
-//					}
-//				} catch (InterruptedException e) {
-//					Thread.currentThread().interrupt();
-//					throw new RuntimeException("Could not start process: "+failureFound, e);
-//				}
-				throw new RuntimeException("Could not start process: "+failureFound);
+
+				return Try.<RunningMongodProcess, RuntimeException>supplier(() -> {
+					throw new RuntimeException("Could not start process: "+failureFound);
+				})
+					.andFinally(() -> process.stop(timeout))
+					.andFinally(closeAllOutputs)
+					.get();
 			}
 		};
 	}

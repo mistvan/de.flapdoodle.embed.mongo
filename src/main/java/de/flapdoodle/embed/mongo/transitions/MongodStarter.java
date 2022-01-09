@@ -24,15 +24,14 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
-import de.flapdoodle.embed.process.transitions.ImmutableStarter;
-import de.flapdoodle.embed.process.types.*;
+import de.flapdoodle.embed.process.types.ProcessConfig;
+import de.flapdoodle.embed.process.types.RunningProcess;
+import de.flapdoodle.embed.process.types.RunningProcessFactory;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.StateLookup;
-import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.naming.HasLabel;
-import org.immutables.builder.Builder;
 import org.immutables.value.Value;
 
 import java.io.IOException;
@@ -41,42 +40,12 @@ import java.util.Map;
 import java.util.Set;
 
 @Value.Immutable
-public class MongodStarter implements Transition<RunningMongodProcess>, HasLabel {
+public class MongodStarter implements CommonStarter<RunningMongodProcess>, HasLabel {
 
 	@Override
 	@Value.Default
 	public String transitionLabel() {
 		return "Start Mongod";
-	}
-
-	@Value.Default
-	public StateID<ExtractedFileSet> processExecutable() {
-		return StateID.of(ExtractedFileSet.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessConfig> processConfig() {
-		return StateID.of(ProcessConfig.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessEnv> processEnv() {
-		return StateID.of(ProcessEnv.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessArguments> arguments() {
-		return StateID.of(ProcessArguments.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessOutput> processOutput() {
-		return StateID.of(ProcessOutput.class);
-	}
-
-	@Value.Default
-	public StateID<SupportConfig> supportConfig() {
-		return StateID.of(SupportConfig.class);
 	}
 
 	@Value.Default

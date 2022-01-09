@@ -27,13 +27,11 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.distribution.Version;
-import de.flapdoodle.embed.process.nio.directories.TempDir;
 import de.flapdoodle.embed.process.types.ProcessArguments;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.StateLookup;
-import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.naming.HasLabel;
 import org.immutables.value.Value;
 

@@ -43,6 +43,11 @@ public abstract class Arguments {
 			if (condition) add(parts);
 			return this;
 		}
+
+		public Builder addIf(String key, Optional<String> value) {
+			value.ifPresent(it -> add(key, it));
+			return this;
+		}
 	}
 
 	public static Builder builder() {

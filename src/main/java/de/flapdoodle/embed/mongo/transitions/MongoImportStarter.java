@@ -3,7 +3,10 @@ package de.flapdoodle.embed.mongo.transitions;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
-import de.flapdoodle.embed.process.types.*;
+import de.flapdoodle.embed.process.types.ProcessArguments;
+import de.flapdoodle.embed.process.types.ProcessConfig;
+import de.flapdoodle.embed.process.types.ProcessEnv;
+import de.flapdoodle.embed.process.types.RunningProcess;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.StateLookup;
@@ -83,9 +86,8 @@ public abstract class MongoImportStarter implements Transition<RunningMongoImpor
 		SupportConfig supportConfig = lookup.of(supportConfig());
 
 		try {
-			RunningProcessFactory<RunningMongoImportProcess> factory = RunningMongoImportProcess.factory();
 
-			RunningMongoImportProcess running = RunningProcess.start(factory, fileSet.executable(), arguments, environment, processConfig,
+			RunningMongoImportProcess running = RunningProcess.start(RunningMongoImportProcess::new, fileSet.executable(), arguments, environment, processConfig,
 				processOutput, supportConfig);
 
 			return State.of(running, RunningProcess::stop);

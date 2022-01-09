@@ -1,11 +1,13 @@
 package de.flapdoodle.embed.mongo;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Resources;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
+import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -72,7 +74,9 @@ public class HowToUseTransitionsTest {
 			.upsertDocuments(true)
 			.build();
 
-		Transitions transitions = Defaults.transitionsForMongoImport(Version.Main.PRODUCTION)
+		Version.Main version = Version.Main.PRODUCTION;
+
+		Transitions transitions = Defaults.transitionsForMongoImport(version)
 			.replace(Start.to(MongoImportArguments.class).initializedWith(arguments));
 
 		String dot = Transitions.edgeGraphAsDot("mongoImport", transitions.asGraph());
@@ -82,7 +86,7 @@ public class HowToUseTransitionsTest {
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = Defaults.transitionsForMongod(version)
 				.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
@@ -106,24 +110,21 @@ public class HowToUseTransitionsTest {
 
 	@Test
 	public void startMongoImportAsOneTransition() throws UnknownHostException {
-
-		File jsonFile = new File(Thread.currentThread().getContextClassLoader().getResource("sample.json").getFile());
-
 		ImmutableMongoImportArguments arguments = MongoImportArguments.builder()
 			.databaseName("importDatabase")
 			.collectionName("importCollection")
-			.importFile(jsonFile.getAbsolutePath())
+			.importFile(Resources.getResource("sample.json").getFile())
 			.isJsonArray(true)
 			.upsertDocuments(true)
 			.build();
 
-		Transitions mongodTransitions = Defaults.transitionsForMongod(Version.Main.PRODUCTION);
+		Version.Main version = Version.Main.PRODUCTION;
 
-		Transitions mongoImportTransitions = Defaults.transitionsForMongoImport(Version.Main.PRODUCTION)
+		Transitions mongoImportTransitions = Defaults.transitionsForMongoImport(version)
 			.replace(Start.to(MongoImportArguments.class).initializedWith(arguments))
 			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-			.addAll(mongodTransitions.walker()
+			.addAll(Defaults.transitionsForMongod(version).walker()
 				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 					.build()));
 
@@ -139,6 +140,7 @@ public class HowToUseTransitionsTest {
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
 				try (TransitionWalker.ReachedState<RunningMongoImportProcess> running = mongoD.initState(StateID.of(RunningMongoImportProcess.class))) {
+					System.out.println("import started: "+running.current());
 				}
 
 				try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
