@@ -106,19 +106,13 @@ public class MongoRestoreExecutableTest {
 				try (TransitionWalker.ReachedState<RunningMongoDumpProcess> runningDump = runningMongoD.initState(
 					StateID.of(RunningMongoDumpProcess.class))) {
 
-					System.out.println("-------------------");
-					System.out.println("dump started");
-					System.out.println("-------------------");
 				}
 
         beforeRestore.accept(serverAddress);
 
-				try (TransitionWalker.ReachedState<RunningMongoRestoreProcess> runningDump = runningMongoD.initState(
+				try (TransitionWalker.ReachedState<RunningMongoRestoreProcess> runningRestore = runningMongoD.initState(
 					StateID.of(RunningMongoRestoreProcess.class))) {
 
-					System.out.println("-------------------");
-					System.out.println("restore started");
-					System.out.println("-------------------");
 				}
 
 				afterRestore.accept(serverAddress);
