@@ -22,6 +22,7 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.checks.Preconditions;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
+import de.flapdoodle.embed.mongo.commands.MongosArguments;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 @Value.Immutable
-public abstract class MongodProcessArguments implements CommandProcessArguments<MongodArguments>, HasLabel {
+public abstract class MongosProcessArguments implements CommandProcessArguments<MongosArguments>, HasLabel {
 
 	@Override
 	@Value.Auxiliary
@@ -55,8 +56,8 @@ public abstract class MongodProcessArguments implements CommandProcessArguments<
 
 	@Override
 	@Value.Default
-	public StateID<MongodArguments> arguments() {
-		return StateID.of(MongodArguments.class);
+	public StateID<MongosArguments> arguments() {
+		return StateID.of(MongosArguments.class);
 	}
 
 	@Value.Default
@@ -74,36 +75,30 @@ public abstract class MongodProcessArguments implements CommandProcessArguments<
 		return StateID.of(Net.class);
 	}
 
-	@Value.Default
-	public StateID<DatabaseDir> databaseDir() {
-		return StateID.of(DatabaseDir.class);
-	}
-
 	@Override
 	@Value.Auxiliary
 	public Set<StateID<?>> sources() {
-		return StateID.setOf(arguments(), platform(), version(), net(), databaseDir());
+		return StateID.setOf(arguments(), platform(), version(), net());
 	}
 
 	@Override
 	public State<ProcessArguments> result(StateLookup lookup) {
-		MongodArguments arguments = lookup.of(arguments());
+		MongosArguments arguments = lookup.of(arguments());
 		Platform platform = lookup.of(platform());
 		Version version = lookup.of(version());
 		Preconditions.checkArgument(version instanceof IFeatureAwareVersion,"invalid type: %s does not implement %s",version, IFeatureAwareVersion.class);
 		IFeatureAwareVersion featureAwareVersion = (IFeatureAwareVersion) version;
 		Net net = lookup.of(net());
-		DatabaseDir databaseDir=lookup.of(databaseDir());
 
-		List<String> commandLine = arguments.asArguments(platform, featureAwareVersion, net, databaseDir);
+		List<String> commandLine = arguments.asArguments(platform, featureAwareVersion, net);
 		return State.of(ProcessArguments.of(commandLine));
 	}
 
-	public static ImmutableMongodProcessArguments withDefaults() {
+	public static ImmutableMongosProcessArguments withDefaults() {
 		return builder().build();
 	}
 
-	public static ImmutableMongodProcessArguments.Builder builder() {
-		return ImmutableMongodProcessArguments.builder();
+	public static ImmutableMongosProcessArguments.Builder builder() {
+		return ImmutableMongosProcessArguments.builder();
 	}
 }

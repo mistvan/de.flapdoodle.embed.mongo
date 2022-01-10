@@ -209,6 +209,23 @@ public abstract class Defaults {
 			);
 	}
 
+	public static Transitions transitionsForMongos(de.flapdoodle.embed.process.distribution.Version version) {
+		return workspaceDefaults()
+			.addAll(versionAndPlatform())
+			.addAll(processDefaults())
+			.addAll(commandName())
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(
+				Start.to(Command.class).initializedWith(Command.MongoS).withTransitionLabel("provide Command"),
+				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
+				Start.to(Net.class).providedBy(Net::defaults),
+
+				Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()),
+				MongosProcessArguments.withDefaults(),
+				MongosStarter.withDefaults()
+			);
+	}
+
 	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> Transitions transitionsFor(
 		T processArguments,
 		C arguments, Version.Main version

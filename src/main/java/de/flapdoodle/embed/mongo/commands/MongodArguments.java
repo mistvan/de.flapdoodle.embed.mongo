@@ -27,7 +27,6 @@ import de.flapdoodle.embed.mongo.config.SupportConfig;
 import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
-import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.runtime.NUMA;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
@@ -115,10 +114,9 @@ public abstract class MongodArguments {
 		Platform platform,
 		IFeatureAwareVersion version,
 		Net net,
-		Path executable,
 		DatabaseDir dbDirectory
 	) {
-		return warpWithNumaSupport(platform, getCommandLine(this, version, net, executable, dbDirectory.value()));
+		return warpWithNumaSupport(platform, getCommandLine(this, version, net, dbDirectory.value()));
 	}
 
 	public static ImmutableMongodArguments.Builder builder() {
@@ -133,7 +131,6 @@ public abstract class MongodArguments {
 		MongodArguments config,
 		IFeatureAwareVersion version,
 		Net net,
-		Path executable,
 		Path dbDirectory
 	) {
 		Arguments.Builder builder = Arguments.builder();
