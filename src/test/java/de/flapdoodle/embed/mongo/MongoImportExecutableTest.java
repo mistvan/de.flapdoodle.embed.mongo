@@ -21,21 +21,45 @@
  */
 package de.flapdoodle.embed.mongo;
 
+import com.google.common.collect.Lists;
+import com.google.common.io.Resources;
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
+import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.config.MongoImportConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
+import de.flapdoodle.embed.process.io.progress.ProgressListeners;
+import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.TransitionMapping;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.Transitions;
+import de.flapdoodle.reverse.transitions.Derive;
+import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.types.Try;
+import org.assertj.core.api.Assertions;
+import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -43,82 +67,84 @@ import static org.junit.Assert.assertEquals;
  */
 public class MongoImportExecutableTest {
 
-    @Test
-    public void testStartMongoImport() throws IOException {
+	@Test
+	public void importPrimerDataset() throws UnknownHostException {
+		String jsonFile = Resources.getResource("primer-dataset.json").getFile();
 
-        Net net = new Net(Network.getFreeServerPort(), Network.localhostIsIPv6());
-        final Version.Main version = Version.Main.PRODUCTION;
-        MongodConfig mongodConfig = MongodConfig.builder()
-                .version(version).net(net)
-                .cmdOptions(getCmdOptions(version))
-                .build();
+		runImport(Version.Main.PRODUCTION, importJson(jsonFile),
+			onTestCollection(col -> assertThat(col.countDocuments()).isEqualTo(0)),
+			onTestCollection(col -> assertThat(col.countDocuments()).isEqualTo(5000)));
+	}
 
-        RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
+	@Test
+	public void importSampleDataset() throws UnknownHostException {
+		String jsonFile = Resources.getResource("sample.json").getFile();
 
-        MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
-        MongodProcess mongod = mongodExe.start();
+		runImport(Version.Main.PRODUCTION, importJson(jsonFile),
+			onTestCollection(col -> assertThat(col.countDocuments()).isEqualTo(0)),
+			onTestCollection(col -> {
+				ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
 
-        File jsonFile = new File(Thread.currentThread().getContextClassLoader().getResource("primer-dataset.json").getFile());
-        String importDatabase = "importDatabase";
-        String importCollection = "importCollection";
-        MongoImportExecutable mongoImportExecutable = mongoImportExecutable(net.getPort(), importDatabase,
-                importCollection, jsonFile.getAbsolutePath(), true, true, true);
-        MongoClient mongoClient = new MongoClient(net.getServerAddress().getHostName(), net.getPort());
-        MongoImportProcess mongoImportProcess = mongoImportExecutable.start();
-        //            everything imported?
-        assertEquals(5000, mongoClient.getDatabase(importDatabase).getCollection(importCollection).count());
-        mongoImportProcess.stop();
+				assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
+			}));
+	}
 
-        mongod.stop();
-        mongodExe.stop();
-    }
+	private static void runImport(
+		Version.Main version,
+		MongoImportArguments mongoImportArguments,
+		Consumer<ServerAddress> beforeImport,
+		Consumer<ServerAddress> afterImport
+	) throws UnknownHostException {
 
-    @Test
-    public void testMongoImportDoesNotStopMainMongodProcess() throws IOException, InterruptedException {
+		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+			Transitions transitions = Defaults.transitionsForMongoImport(version)
+				.replace(Start.to(MongoImportArguments.class).initializedWith(mongoImportArguments))
+				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+				.addAll(Defaults.transitionsForMongod(version).walker()
+					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+						.build()));
 
-        final Version.Main version = Version.Main.PRODUCTION;
-        MongodConfig mongodConfig = MongodConfig.builder()
-                .version(version)
-                .net(new Net(12346, Network.localhostIsIPv6()))
-                //.cmdOptions(getCmdOptions(version))
-                .build();
+			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
+				.initState(StateID.of(RunningMongodProcess.class))) {
 
-        RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
+				ServerAddress serverAddress = runningMongoD.current().getServerAddress();
 
-        MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
-        MongodProcess mongod = mongodExe.start();
+				beforeImport.accept(serverAddress);
 
-        File jsonFile = new File(Thread.currentThread().getContextClassLoader().getResource("sample.json").getFile());
+				try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executedDump = runningMongoD.initState(
+					StateID.of(ExecutedMongoImportProcess.class))) {
+					System.out.println("import return code: " + executedDump.current().returnCode());
 
-        MongoImportExecutable mongoImportExecutable = mongoImportExecutable(12346, "importDatabase", "importCollection",
-                jsonFile.getAbsolutePath(), true, true, true);
-        MongoImportProcess mongoImportProcess = null;
+					assertThat(executedDump.current().returnCode())
+						.describedAs("import successful")
+						.isEqualTo(0);
+				}
 
-        try {
-            mongoImportProcess = mongoImportExecutable.start();
-            mongoImportProcess.stop();
-        } finally {
-            Assert.assertTrue("mongoDB process should still be running", mongod.isProcessRunning());
-        }
+				afterImport.accept(serverAddress);
+			}
+		}
+	}
 
-        mongod.stop();
-        mongodExe.stop();
-    }
+	private static ImmutableMongoImportArguments importJson(String jsonFile) {
+		return MongoImportArguments.builder()
+			.databaseName("importDatabase")
+			.collectionName("importCollection")
+			.upsertDocuments(true)
+			.dropCollection(true)
+			.isJsonArray(true)
+			.importFile(jsonFile)
+			.build();
+	}
 
-    private MongoImportExecutable mongoImportExecutable(int port, String dbName, String collection, String jsonFile, Boolean jsonArray, Boolean upsert, Boolean drop) throws
-            IOException {
-        MongoImportConfig mongoImportConfig = MongoImportConfig.builder()
-                .version(Version.Main.PRODUCTION)
-                .net(new Net(port, Network.localhostIsIPv6()))
-                .databaseName(dbName)
-                .collectionName(collection)
-                .isUpsertDocuments(upsert)
-                .isDropCollection(drop)
-                .isJsonArray(jsonArray)
-                .importFile(jsonFile)
-                .build();
+	private static Consumer<ServerAddress> onTestCollection(Consumer<MongoCollection<Document>> onCollection) {
+		return serverAddress -> {
+			try (MongoClient mongo = new MongoClient(serverAddress)) {
+				MongoDatabase db = mongo.getDatabase("importDatabase");
+				MongoCollection<Document> col = db.getCollection("importCollection");
 
-        return MongoImportStarter.getDefaultInstance().prepare(mongoImportConfig);
-    }
-
+				onCollection.accept(col);
+			}
+		};
+	}
 }

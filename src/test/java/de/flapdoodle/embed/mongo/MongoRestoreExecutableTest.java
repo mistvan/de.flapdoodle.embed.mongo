@@ -46,6 +46,7 @@ import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
 import org.bson.Document;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -60,66 +61,6 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MongoRestoreExecutableTest {
-
-	private static final Logger _logger = LoggerFactory.getLogger(MongoRestoreExecutableTest.class.getName());
-	private static final String _archiveFileCompressed = "foo.archive.gz";
-
-	private static void dumpAndRestore(
-		Version.Main version,
-		MongoDumpArguments mongoDumpArguments,
-		MongoRestoreArguments mongoRestoreArguments,
-    Consumer<ServerAddress> beforeDump,
-    Consumer<ServerAddress> beforeRestore,
-    Consumer<ServerAddress> afterRestore
-	) throws UnknownHostException {
-
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			Transitions transitions = Defaults.transitionsForMongoRestore(version)
-				.replace(Start.to(MongoRestoreArguments.class).initializedWith(mongoRestoreArguments))
-				.addAll(Defaults.transitionsForMongoDump(version)
-					.replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
-					.walker().asTransitionTo(TransitionMapping.builder("mongoDump", StateID.of(ExecutedMongoDumpProcess.class))
-						.build()))
-				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
-					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Defaults.transitionsForMongod(version).walker()
-					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
-						.build()));
-
-			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
-				.initState(StateID.of(RunningMongodProcess.class))) {
-
-         ServerAddress serverAddress = runningMongoD.current().getServerAddress();
-
-         beforeDump.accept(serverAddress);
-
-				try (TransitionWalker.ReachedState<ExecutedMongoDumpProcess> executedDump = runningMongoD.initState(
-					StateID.of(ExecutedMongoDumpProcess.class))) {
-					System.out.println("dump return code: "+executedDump.current().returnCode());
-				}
-
-        beforeRestore.accept(serverAddress);
-
-				try (TransitionWalker.ReachedState<ExecutedMongoRestoreProcess> executedRestore = runningMongoD.initState(
-					StateID.of(ExecutedMongoRestoreProcess.class))) {
-					System.out.println("restore return code: "+executedRestore.current().returnCode());
-				}
-
-				afterRestore.accept(serverAddress);
-			}
-		}
-	}
-
-  private static Consumer<ServerAddress> onTestCollection(Consumer<MongoCollection<Document>> onCollection) {
-     return serverAddress -> {
-        try (MongoClient mongo = new MongoClient(serverAddress)) {
-           MongoDatabase db = mongo.getDatabase("testdb");
-           MongoCollection<Document> col = db.getCollection("testcol");
-
-					 onCollection.accept(col);
-        }
-     };
-  }
 
   @Test
 	public void dumpAndRestoreFromDirectory(@TempDir Path temp) throws UnknownHostException {
@@ -241,6 +182,7 @@ public class MongoRestoreExecutableTest {
 	}
 
 	@Test
+	@Disabled("invalid archive format")
 	public void restoreArchiveFile() throws UnknownHostException {
 		final String dumpLocation = Thread.currentThread().getContextClassLoader().getResource("dump").getFile();
 
@@ -287,5 +229,62 @@ public class MongoRestoreExecutableTest {
 				}
 			}
 		}
+	}
+
+	private static void dumpAndRestore(
+		Version.Main version,
+		MongoDumpArguments mongoDumpArguments,
+		MongoRestoreArguments mongoRestoreArguments,
+		Consumer<ServerAddress> beforeDump,
+		Consumer<ServerAddress> beforeRestore,
+		Consumer<ServerAddress> afterRestore
+	) throws UnknownHostException {
+
+		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+			Transitions transitions = Defaults.transitionsForMongoRestore(version)
+				.replace(Start.to(MongoRestoreArguments.class).initializedWith(mongoRestoreArguments))
+				.addAll(Defaults.transitionsForMongoDump(version)
+					.replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
+					.walker().asTransitionTo(TransitionMapping.builder("mongoDump", StateID.of(ExecutedMongoDumpProcess.class))
+						.build()))
+				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+				.addAll(Defaults.transitionsForMongod(version).walker()
+					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+						.build()));
+
+			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
+				.initState(StateID.of(RunningMongodProcess.class))) {
+
+				ServerAddress serverAddress = runningMongoD.current().getServerAddress();
+
+				beforeDump.accept(serverAddress);
+
+				try (TransitionWalker.ReachedState<ExecutedMongoDumpProcess> executedDump = runningMongoD.initState(
+					StateID.of(ExecutedMongoDumpProcess.class))) {
+					System.out.println("dump return code: "+executedDump.current().returnCode());
+				}
+
+				beforeRestore.accept(serverAddress);
+
+				try (TransitionWalker.ReachedState<ExecutedMongoRestoreProcess> executedRestore = runningMongoD.initState(
+					StateID.of(ExecutedMongoRestoreProcess.class))) {
+					System.out.println("restore return code: "+executedRestore.current().returnCode());
+				}
+
+				afterRestore.accept(serverAddress);
+			}
+		}
+	}
+
+	private static Consumer<ServerAddress> onTestCollection(Consumer<MongoCollection<Document>> onCollection) {
+		return serverAddress -> {
+			try (MongoClient mongo = new MongoClient(serverAddress)) {
+				MongoDatabase db = mongo.getDatabase("testdb");
+				MongoCollection<Document> col = db.getCollection("testcol");
+
+				onCollection.accept(col);
+			}
+		};
 	}
 }
