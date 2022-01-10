@@ -20,27 +20,20 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.mongodb.MongoClient;
-
-import de.flapdoodle.embed.mongo.MongoShellExecutable;
-import de.flapdoodle.embed.mongo.MongoShellProcess;
-import de.flapdoodle.embed.mongo.MongoShellStarter;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.*;
 import de.flapdoodle.embed.mongo.config.MongoShellConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
+
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 
 public class StartMongoDBServerAndMongoShellClientTest {

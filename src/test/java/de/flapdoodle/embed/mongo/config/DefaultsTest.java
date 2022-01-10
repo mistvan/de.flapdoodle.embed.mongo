@@ -20,9 +20,8 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
+import com.google.common.collect.ImmutableMap;
+import de.flapdoodle.embed.process.io.directories.UserHome;
 import org.junit.Assert;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,9 +31,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import com.google.common.collect.ImmutableMap;
-
-import de.flapdoodle.embed.process.io.directories.UserHome;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 class DefaultsTest {
 

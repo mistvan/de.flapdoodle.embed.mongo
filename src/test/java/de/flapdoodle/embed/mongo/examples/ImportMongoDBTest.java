@@ -21,26 +21,19 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import org.junit.Test;
-
 import com.mongodb.MongoClient;
-
-import de.flapdoodle.embed.mongo.MongoImportExecutable;
-import de.flapdoodle.embed.mongo.MongoImportProcess;
-import de.flapdoodle.embed.mongo.MongoImportStarter;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.*;
 import de.flapdoodle.embed.mongo.config.MongoImportConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
+
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 /**
  * Created by canyaman on 10/04/14.

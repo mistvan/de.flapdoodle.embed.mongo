@@ -20,17 +20,12 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class Enums {
 

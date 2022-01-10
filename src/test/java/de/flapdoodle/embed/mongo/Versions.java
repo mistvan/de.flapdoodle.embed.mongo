@@ -20,11 +20,11 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import java.util.Collection;
-import java.util.Comparator;
-
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.process.distribution.Version;
+
+import java.util.Collection;
+import java.util.Comparator;
 
 public class Versions {
 

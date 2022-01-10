@@ -21,17 +21,7 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.mongodb.MongoClient;
-
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.config.MongoImportConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
@@ -39,6 +29,14 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by canyaman on 10/04/14.

@@ -20,16 +20,16 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
 import org.bson.Document;
@@ -42,18 +42,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 /**
  * Test whether a race condition occurs between setup and tear down of setting

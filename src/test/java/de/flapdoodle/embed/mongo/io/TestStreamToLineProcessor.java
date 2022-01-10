@@ -20,14 +20,13 @@
  */
 package de.flapdoodle.embed.mongo.io;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
-
 import de.flapdoodle.embed.process.io.StreamProcessor;
 import de.flapdoodle.embed.process.io.StreamToLineProcessor;
 import junit.framework.TestCase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //CHECKSTYLE:OFF
 public class TestStreamToLineProcessor extends TestCase {

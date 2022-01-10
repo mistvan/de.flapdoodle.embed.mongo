@@ -25,7 +25,7 @@ import de.flapdoodle.embed.mongo.commands.ImmutableMongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.RunningMongoDumpProcess;
+import de.flapdoodle.embed.mongo.transitions.ExecutedMongoDumpProcess;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
@@ -58,11 +58,11 @@ public class MongoDumpExecutableTest {
             try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
               .initState(StateID.of(RunningMongodProcess.class))) {
 
-                try (TransitionWalker.ReachedState<RunningMongoDumpProcess> runningDump = runningMongoD.initState(
-                  StateID.of(RunningMongoDumpProcess.class))) {
+                try (TransitionWalker.ReachedState<ExecutedMongoDumpProcess> executedDump = runningMongoD.initState(
+                  StateID.of(ExecutedMongoDumpProcess.class))) {
 
                     System.out.println("-------------------");
-                    System.out.println("dump started");
+                    System.out.println("dump executed: "+executedDump.current().returnCode());
                     System.out.println("-------------------");
                 }
 

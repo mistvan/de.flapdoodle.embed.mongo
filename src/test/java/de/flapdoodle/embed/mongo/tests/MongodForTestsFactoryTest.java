@@ -20,8 +20,13 @@
  */
 package de.flapdoodle.embed.mongo.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.mongodb.*;
+import com.mongodb.util.JSON;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,19 +34,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.util.JSON;
-
-import de.flapdoodle.embed.mongo.distribution.Version;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class MongodForTestsFactoryTest {
 	private static MongodForTestsFactory testsFactory;

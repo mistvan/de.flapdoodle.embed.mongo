@@ -20,14 +20,8 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-
-import java.io.IOException;
-import java.net.UnknownHostException;
-
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -37,6 +31,11 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 import junit.framework.TestCase;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
+
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 // ->
 public abstract class AbstractMongoDBTest extends TestCase {

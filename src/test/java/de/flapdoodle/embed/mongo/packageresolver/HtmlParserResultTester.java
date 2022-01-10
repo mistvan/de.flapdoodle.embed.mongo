@@ -23,9 +23,7 @@ package de.flapdoodle.embed.mongo.packageresolver;
 import com.google.common.base.Preconditions;
 import de.flapdoodle.embed.mongo.distribution.NumericVersion;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
-import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import org.assertj.core.api.Assertions;
 
 import java.util.List;
 import java.util.Optional;

@@ -20,26 +20,19 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import java.io.IOException;
-
-import org.bson.Document;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.mongodb.MongoClient;
-
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.MongosExecutable;
-import de.flapdoodle.embed.mongo.MongosProcess;
-import de.flapdoodle.embed.mongo.MongosStarter;
+import de.flapdoodle.embed.mongo.*;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.MongosConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.bson.Document;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.IOException;
 
 
 public class StartConfigAndMongoDBServerTest {

@@ -7,11 +7,10 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
-import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.RunningMongoImportProcess;
+import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
@@ -29,7 +28,6 @@ import java.io.File;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -92,8 +90,12 @@ public class HowToUseTransitionsTest {
 
 				Transitions withMongoDbServerAddress = transitions.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
 
-				try (TransitionWalker.ReachedState<RunningMongoImportProcess> running = withMongoDbServerAddress.walker()
-					.initState(StateID.of(RunningMongoImportProcess.class))) {
+				try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executed = withMongoDbServerAddress.walker()
+					.initState(StateID.of(ExecutedMongoImportProcess.class))) {
+
+					assertThat(executed.current().returnCode())
+						.describedAs("mongo import was successful")
+						.isEqualTo(0);
 				}
 
 				try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
@@ -139,8 +141,12 @@ public class HowToUseTransitionsTest {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = mongoImportTransitions.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (TransitionWalker.ReachedState<RunningMongoImportProcess> running = mongoD.initState(StateID.of(RunningMongoImportProcess.class))) {
-					System.out.println("import started: "+running.current());
+				try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> running = mongoD.initState(StateID.of(ExecutedMongoImportProcess.class))) {
+					System.out.println("import done: "+running.current().returnCode());
+
+					assertThat(running.current().returnCode())
+						.describedAs("import successful")
+						.isEqualTo(0);
 				}
 
 				try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {

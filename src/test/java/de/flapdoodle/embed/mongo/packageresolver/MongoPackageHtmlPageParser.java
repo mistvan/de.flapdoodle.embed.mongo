@@ -21,7 +21,6 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import com.google.common.io.Resources;
-import de.flapdoodle.embed.mongo.distribution.NumericVersion;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,9 +29,9 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {

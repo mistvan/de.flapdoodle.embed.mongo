@@ -32,15 +32,12 @@ import de.flapdoodle.embed.mongo.commands.ImmutableMongoRestoreArguments;
 import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoRestoreArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.*;
-import de.flapdoodle.embed.process.config.RuntimeConfig;
+import de.flapdoodle.embed.mongo.transitions.ExecutedMongoDumpProcess;
+import de.flapdoodle.embed.mongo.transitions.ExecutedMongoRestoreProcess;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
-import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -48,21 +45,18 @@ import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
-import org.assertj.core.api.Assertions;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MongoRestoreExecutableTest {

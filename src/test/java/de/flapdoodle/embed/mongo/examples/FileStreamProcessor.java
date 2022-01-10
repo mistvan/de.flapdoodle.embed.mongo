@@ -20,12 +20,12 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
+import de.flapdoodle.embed.process.io.StreamProcessor;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import de.flapdoodle.embed.process.io.StreamProcessor;
 
 // ...
 public class FileStreamProcessor implements StreamProcessor {
