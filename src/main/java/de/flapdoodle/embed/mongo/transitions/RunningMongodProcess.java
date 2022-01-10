@@ -29,6 +29,7 @@ import de.flapdoodle.embed.process.runtime.ProcessControl;
 import de.flapdoodle.embed.process.runtime.Processes;
 import de.flapdoodle.embed.process.types.RunningProcess;
 import de.flapdoodle.embed.process.types.RunningProcessFactory;
+import de.flapdoodle.embed.process.types.RunningProcessImpl;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.types.Try;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RunningMongodProcess extends RunningProcess {
+public class RunningMongodProcess extends RunningProcessImpl {
 
 	private static Logger LOGGER= LoggerFactory.getLogger(RunningMongodProcess.class);
 
@@ -73,10 +74,12 @@ public class RunningMongodProcess extends RunningProcess {
 	}
 
 	@Override
-	public void stop() {
-		Try.runable(this::stopInternal)
-			.andFinally(super::stop)
-			.run();
+	public int stop() {
+		try {
+			stopInternal();
+		} finally {
+			return super.stop();
+		}
 	}
 
 	//	@Override

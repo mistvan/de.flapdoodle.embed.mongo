@@ -27,7 +27,6 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoIterable;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoRestoreArguments;
 import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
@@ -53,7 +52,6 @@ import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
 import org.assertj.core.api.Assertions;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -293,82 +291,5 @@ public class MongoRestoreExecutableTest {
 				}
 			}
 		}
-	}
-
-	@Test
-	public void testStartMongoRestore() throws IOException, InterruptedException {
-
-		final int serverPort = Network.getFreeServerPort();
-		final String dumpLocation = Thread.currentThread().getContextClassLoader().getResource("dump").getFile();
-
-		final Version.Main version = Version.Main.PRODUCTION;
-		final MongodConfig mongodConfig = MongodConfig.builder()
-			.version(version)
-			.net(new Net(serverPort, Network.localhostIsIPv6()))
-			.cmdOptions(getCmdOptions(version))
-			.build();
-
-		final RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
-
-		final MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
-		final MongodProcess mongod = mongodExe.start();
-
-		final MongoRestoreExecutable mongoRestoreExecutable = mongoRestoreExecutable(serverPort, dumpLocation, true);
-		final MongoRestoreExecutable mongoRestoreExecutableArchive = mongoRestoreExecutableWithArchiveCompressed(serverPort, dumpLocation, true);
-
-		MongoRestoreProcess mongoRestoreProcess = null;
-		MongoRestoreProcess mongoRestoreArchiveProcess = null;
-
-		boolean dataRestored = false;
-		try {
-			mongoRestoreProcess = mongoRestoreExecutable.start();
-			mongoRestoreArchiveProcess = mongoRestoreExecutableArchive.start();
-
-			dataRestored = true;
-
-		}
-		catch (Exception e) {
-			_logger.info("MongoRestore exception: {}", e.getStackTrace());
-			dataRestored = false;
-		}
-		finally {
-			Assertions.assertThat(dataRestored)
-				.describedAs("mongoDB restore data in json format")
-				.isTrue();
-			mongoRestoreProcess.stop();
-			mongoRestoreArchiveProcess.stop();
-		}
-
-		mongod.stop();
-		mongodExe.stop();
-	}
-
-	private MongoRestoreExecutable mongoRestoreExecutable(final int port,
-		final String dumpLocation,
-		final Boolean drop) throws IOException {
-
-		MongoRestoreConfig mongoRestoreConfig = MongoRestoreConfig.builder()
-			.version(Version.Main.PRODUCTION)
-			.net(new Net(port, Network.localhostIsIPv6()))
-			.isDropCollection(drop)
-			.dir(dumpLocation)
-			.build();
-
-		return MongoRestoreStarter.getDefaultInstance().prepare(mongoRestoreConfig);
-	}
-
-	private MongoRestoreExecutable mongoRestoreExecutableWithArchiveCompressed(final int port,
-		final String dumpLocation,
-		final Boolean drop) throws IOException {
-
-		MongoRestoreConfig mongoRestoreConfig = MongoRestoreConfig.builder()
-			.version(Version.Main.PRODUCTION)
-			.archive(String.format("%s/%s", dumpLocation, _archiveFileCompressed))
-			.isGzip(true)
-			.net(new Net(port, Network.localhostIsIPv6()))
-			.isDropCollection(drop)
-			.build();
-
-		return MongoRestoreStarter.getDefaultInstance().prepare(mongoRestoreConfig);
 	}
 }
