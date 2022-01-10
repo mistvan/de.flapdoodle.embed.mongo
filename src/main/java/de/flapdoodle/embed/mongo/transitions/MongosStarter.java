@@ -39,52 +39,12 @@ import java.util.Map;
 import java.util.Set;
 
 @Value.Immutable
-public class MongosStarter implements Transition<RunningMongosProcess>, HasLabel {
+public abstract class MongosStarter extends MongoServerStarter<RunningMongosProcess> implements HasLabel {
 
 	@Override
 	@Value.Default
 	public String transitionLabel() {
 		return "Start Mongos";
-	}
-
-	@Value.Default
-	public StateID<ExtractedFileSet> processExecutable() {
-		return StateID.of(ExtractedFileSet.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessConfig> processConfig() {
-		return StateID.of(ProcessConfig.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessEnv> processEnv() {
-		return StateID.of(ProcessEnv.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessArguments> arguments() {
-		return StateID.of(ProcessArguments.class);
-	}
-
-	@Value.Default
-	public StateID<ProcessOutput> processOutput() {
-		return StateID.of(ProcessOutput.class);
-	}
-
-	@Value.Default
-	public StateID<SupportConfig> supportConfig() {
-		return StateID.of(SupportConfig.class);
-	}
-
-	@Value.Default
-	public StateID<Platform> platform() {
-		return StateID.of(Platform.class);
-	}
-
-	@Value.Default
-	public StateID<Net> net() {
-		return StateID.of(Net.class);
 	}
 
 	@Override
@@ -94,41 +54,8 @@ public class MongosStarter implements Transition<RunningMongosProcess>, HasLabel
 	}
 
 	@Override
-	public Set<StateID<?>> sources() {
-		return StateID.setOf(
-			processExecutable(),
-			processConfig(),
-			processEnv(),
-			arguments(),
-			processOutput(),
-			supportConfig(),
-			platform(),
-			net()
-		);
-	}
-
-	@Override
-	public State<RunningMongosProcess> result(StateLookup lookup) {
-		ExtractedFileSet fileSet = lookup.of(processExecutable());
-		List<String> arguments = lookup.of(arguments()).value();
-		Map<String, String> environment = lookup.of(processEnv()).value();
-		ProcessConfig processConfig = lookup.of(processConfig());
-		ProcessOutput processOutput = lookup.of(processOutput());
-		SupportConfig supportConfig = lookup.of(supportConfig());
-		Platform platform = lookup.of(platform());
-		Net net = lookup.of(net());
-
-		try {
-			RunningProcessFactory<RunningMongosProcess> factory = RunningMongosProcess.factory(20000, supportConfig, platform, net);
-
-			RunningMongosProcess running = RunningProcess.start(factory, fileSet.executable(), arguments, environment, processConfig,
-				processOutput, supportConfig);
-			
-			return State.of(running, RunningProcess::stop);
-		}
-		catch (IOException ix) {
-			throw new RuntimeException("could not start process", ix);
-		}
+	protected RunningProcessFactory<RunningMongosProcess> factory(long startupTimeout, SupportConfig supportConfig, Platform platform, Net net) {
+		return RunningMongosProcess.factory(startupTimeout,supportConfig,platform,net);
 	}
 
 	public static ImmutableMongosStarter.Builder builder() {

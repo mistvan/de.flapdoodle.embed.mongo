@@ -114,9 +114,6 @@ ${testCustomOutputToConsolePrefix}
 ${testCustomOutputToFile}
 ...
 
-...
-${testCustomOutputToFile.FileStreamProcessor}
-...
 ```
 
 #### ... to java logging
