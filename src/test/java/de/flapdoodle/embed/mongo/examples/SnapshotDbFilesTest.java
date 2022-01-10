@@ -23,35 +23,46 @@ package de.flapdoodle.embed.mongo.examples;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.processlistener.CopyDbFilesFromDirBeforeProcessStop;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.embed.mongo.types.DatabaseDir;
+import de.flapdoodle.embed.mongo.util.FileUtils;
 import de.flapdoodle.embed.process.io.directories.PlatformTempDir;
 import de.flapdoodle.embed.process.io.file.Files;
+import de.flapdoodle.reverse.Listener;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.types.Try;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class SnapshotDbFilesTest extends AbstractMongoDBTest {
+public class SnapshotDbFilesTest {
 
-	@Override
-	protected ImmutableMongodConfig.Builder createMongodConfigBuilder() throws IOException {
-		ImmutableMongodConfig.Builder builder = super.createMongodConfigBuilder();
-		builder.processListener(
-				new CopyDbFilesFromDirBeforeProcessStop(Files.createTempDir(new PlatformTempDir(), "embedmongo-snapshot"))
-				)
-		.cmdOptions(MongoCmdOptions.builder()
-				.useNoPrealloc(false)
-				.useSmallFiles(false)
-				.syncDelay(1)
-				.build());
-		return builder;
-	}
-	
-	public void testUseSnapshotFiles() {
-		DB db = getMongo().getDB("test");
-		DBCollection col = db.createCollection("testCol", new BasicDBObject());
-		col.save(new BasicDBObject("testDoc", new Date()));
+	@Test
+	public void snapshotDbFiles(@TempDir Path destination) {
+		Listener listener = Listener.typedBuilder()
+			.onStateTearDown(StateID.of(DatabaseDir.class), databaseDir -> {
+				Try.run(() -> FileUtils.copyDirectory(databaseDir.value(), destination));
+			})
+			.build();
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION).walker()
+			.initState(StateID.of(RunningMongodProcess.class), listener)) {
+
+		}
+
+		assertThat(destination)
+			.isDirectory()
+			.isDirectoryContaining(path -> path.getFileName().toString().startsWith("WiredTiger.lock"));
 	}
 }

@@ -20,78 +20,37 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import com.mongodb.*;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
+import com.mongodb.MongoClient;
+import de.flapdoodle.embed.mongo.commands.MongodArguments;
+import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.transitions.Start;
+import org.bson.Document;
 
-import static org.junit.Assert.fail;
+import java.net.UnknownHostException;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ShardServerMongoDBTest {
 
-    private MongodExecutable mongodExe;
-    private MongodProcess mongod;
+    @org.junit.jupiter.api.Test
+    public void shardServerOptionVisibleInAdminDb() throws UnknownHostException {
+        try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+          .replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
+            .withIsShardServer(true)))
+          .walker()
+          .initState(StateID.of(RunningMongodProcess.class))) {
+            try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+                List<String> arguments = mongo.getDatabase("admin")
+                  .runCommand(new Document("getCmdLineOpts", 1))
+                  .getList("argv", String.class);
 
-    private MongoClient mongo;
-
-    @Before
-    public void setUp() throws Exception {
-
-        MongodStarter runtime = MongodStarter.getDefaultInstance();
-        final Version.Main version = Version.Main.PRODUCTION;
-        MongodConfig config = MongodConfig.builder()
-                .version(version)
-                .cmdOptions(MongoCmdOptions.builder()
-                        .useNoPrealloc(false)
-                        .useSmallFiles(false)
-                        .useNoJournal(false)
-                        .build())
-                .isShardServer(true)
-                .build();
-
-        mongodExe = runtime.prepare(config);
-        mongod = mongodExe.start();
-
-        mongo = new MongoClient(config.net().getServerAddress().getHostName(),
-                config.net().getPort());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-        mongod.stop();
-        mongodExe.stop();
-    }
-
-    public Mongo getMongo() {
-        return mongo;
-    }
-
-    /*
-     * Get command list options (http://docs.mongodb.org/manual/reference/command/getCmdLineOpts/)
-     */
-    @Test
-    public void testIsShardServer() {
-        DB mongoAdminDB = getMongo().getDB("admin");
-        CommandResult cr = mongoAdminDB.command(new BasicDBObject(
-                "getCmdLineOpts", 1));
-        Object arguments = cr.get("argv");
-        if (arguments instanceof BasicDBList) {
-            BasicDBList argumentList = (BasicDBList) arguments;
-            for (Object arg : argumentList) {
-                if (arg.equals("--shardsvr")) {
-                    return;
-                }
+                assertThat(arguments).contains("--shardsvr");
             }
-            fail("Could not find --shardsvr in the argument list.");
-        } else {
-            fail("Could not get argv from getCmdLineOpts command.");
         }
     }
 

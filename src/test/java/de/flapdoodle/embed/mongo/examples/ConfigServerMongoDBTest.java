@@ -20,77 +20,38 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import com.mongodb.*;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
+import com.mongodb.MongoClient;
+import de.flapdoodle.embed.mongo.commands.MongodArguments;
+import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import junit.framework.TestCase;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.transitions.Start;
+import org.bson.Document;
+import org.junit.jupiter.api.Test;
 
-public class ConfigServerMongoDBTest extends TestCase {
+import java.net.UnknownHostException;
+import java.util.List;
 
-	private MongodExecutable _mongodExe;
-	private MongodProcess _mongod;
+import static org.assertj.core.api.Assertions.assertThat;
 
-	private MongoClient _mongo;
+public class ConfigServerMongoDBTest {
 
-	@Override
-	protected void setUp() throws Exception {
+	@Test
+	public void configServerOptionVisibleInAdminDb() throws UnknownHostException {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+			.replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
+				.withIsConfigServer(true)))
+			.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
+			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+				List<String> arguments = mongo.getDatabase("admin")
+					.runCommand(new Document("getCmdLineOpts", 1))
+					.getList("argv", String.class);
 
-		MongodStarter runtime = MongodStarter.getDefaultInstance();
-		final Version.Main version = Version.Main.PRODUCTION;
-		MongodConfig config = MongodConfig.builder()
-		    .version(version)
-		    .cmdOptions(MongoCmdOptions.builder()
-					.useNoPrealloc(false)
-					.useSmallFiles(false)
-					.useNoJournal(false)
-					.build())
-		    .isConfigServer(true)
-		    .build();
-		
-		_mongodExe = runtime.prepare(config);
-		_mongod = _mongodExe.start();
-
-		super.setUp();
-
-		_mongo = new MongoClient(config.net().getServerAddress().getHostName(),
-				config.net().getPort());
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
-		_mongod.stop();
-		_mongodExe.stop();
-	}
-
-	public Mongo getMongo() {
-		return _mongo;
-	}
-
-	/*
-	 * Get command list options (http://docs.mongodb.org/manual/reference/command/getCmdLineOpts/)
-	 */
-	public void testIsConfigServer() {
-		DB mongoAdminDB = getMongo().getDB("admin");
-		CommandResult cr = mongoAdminDB.command(new BasicDBObject(
-				"getCmdLineOpts", 1));
-		Object arguments = cr.get("argv");
-		if (arguments instanceof BasicDBList) {
-			BasicDBList argumentList = (BasicDBList) arguments;
-			for(Object arg: argumentList) {
-				if (arg.equals("--configsvr")) {
-					return;
-				}
+				assertThat(arguments).contains("--configsvr");
 			}
-			fail("Could not find --configsvr in the argument list.");
-		}
-		else{
-			fail("Could not get argv from getCmdLineOpts command.");
 		}
 	}
 
