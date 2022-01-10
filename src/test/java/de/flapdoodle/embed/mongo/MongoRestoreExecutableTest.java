@@ -36,9 +36,7 @@ import de.flapdoodle.embed.mongo.config.MongoRestoreConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.RunningMongoDumpProcess;
-import de.flapdoodle.embed.mongo.transitions.RunningMongoRestoreProcess;
-import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.embed.mongo.transitions.*;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
@@ -86,7 +84,7 @@ public class MongoRestoreExecutableTest {
 				.replace(Start.to(MongoRestoreArguments.class).initializedWith(mongoRestoreArguments))
 				.addAll(Defaults.transitionsForMongoDump(version)
 					.replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
-					.walker().asTransitionTo(TransitionMapping.builder("mongoDump", StateID.of(RunningMongoDumpProcess.class))
+					.walker().asTransitionTo(TransitionMapping.builder("mongoDump", StateID.of(ExecutedMongoDumpProcess.class))
 						.build()))
 				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
@@ -101,16 +99,16 @@ public class MongoRestoreExecutableTest {
 
          beforeDump.accept(serverAddress);
 
-				try (TransitionWalker.ReachedState<RunningMongoDumpProcess> runningDump = runningMongoD.initState(
-					StateID.of(RunningMongoDumpProcess.class))) {
-
+				try (TransitionWalker.ReachedState<ExecutedMongoDumpProcess> executedDump = runningMongoD.initState(
+					StateID.of(ExecutedMongoDumpProcess.class))) {
+					System.out.println("dump return code: "+executedDump.current().returnCode());
 				}
 
         beforeRestore.accept(serverAddress);
 
-				try (TransitionWalker.ReachedState<RunningMongoRestoreProcess> runningRestore = runningMongoD.initState(
-					StateID.of(RunningMongoRestoreProcess.class))) {
-
+				try (TransitionWalker.ReachedState<ExecutedMongoRestoreProcess> executedRestore = runningMongoD.initState(
+					StateID.of(ExecutedMongoRestoreProcess.class))) {
+					System.out.println("restore return code: "+executedRestore.current().returnCode());
 				}
 
 				afterRestore.accept(serverAddress);
@@ -228,11 +226,11 @@ public class MongoRestoreExecutableTest {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (TransitionWalker.ReachedState<RunningMongoRestoreProcess> runningRestore = runningMongoD.initState(
-					StateID.of(RunningMongoRestoreProcess.class))) {
+				try (TransitionWalker.ReachedState<ExecutedMongoRestoreProcess> executedRestore = runningMongoD.initState(
+					StateID.of(ExecutedMongoRestoreProcess.class))) {
 
 					System.out.println("-------------------");
-					System.out.println("restore started");
+					System.out.println("restore done: "+executedRestore.current().returnCode());
 					System.out.println("-------------------");
 				}
 
@@ -273,12 +271,16 @@ public class MongoRestoreExecutableTest {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (TransitionWalker.ReachedState<RunningMongoRestoreProcess> runningRestore = runningMongoD.initState(
-					StateID.of(RunningMongoRestoreProcess.class))) {
+				try (TransitionWalker.ReachedState<ExecutedMongoRestoreProcess> executedRestore = runningMongoD.initState(
+					StateID.of(ExecutedMongoRestoreProcess.class))) {
 
 					System.out.println("-------------------");
-					System.out.println("restore started");
+					System.out.println("restore done: "+executedRestore.current().returnCode());
 					System.out.println("-------------------");
+
+					assertThat(executedRestore.current().returnCode())
+						.describedAs("restore process must be successful")
+						.isEqualTo(0);
 				}
 
 				try (MongoClient mongo = new MongoClient(runningMongoD.current().getServerAddress())) {

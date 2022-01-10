@@ -152,7 +152,7 @@ public abstract class Defaults {
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
 				Start.to(MongoImportArguments.class).initializedWith(MongoImportArguments.defaults()),
 				MongoImportProcessArguments.withDefaults(),
-				MongoImportStarter.withDefaults()
+				ExecutedMongoImportProcess.withDefaults()
 			);
 	}
 
@@ -167,7 +167,7 @@ public abstract class Defaults {
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
 				Start.to(MongoDumpArguments.class).initializedWith(MongoDumpArguments.defaults()),
 				MongoDumpProcessArguments.withDefaults(),
-				MongoDumpStarter.withDefaults()
+				ExecutedMongoDumpProcess.withDefaults()
 			);
 	}
 
@@ -182,7 +182,7 @@ public abstract class Defaults {
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
 				Start.to(MongoRestoreArguments.class).initializedWith(MongoRestoreArguments.defaults()),
 				MongoRestoreProcessArguments.withDefaults(),
-				MongoRestoreStarter.withDefaults()
+				ExecutedMongoRestoreProcess.withDefaults()
 			);
 	}
 

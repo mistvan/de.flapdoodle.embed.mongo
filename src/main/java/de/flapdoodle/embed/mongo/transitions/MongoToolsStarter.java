@@ -56,5 +56,4 @@ public abstract class MongoToolsStarter<T extends RunningProcess> implements Com
 			throw new RuntimeException("could not start process", ix);
 		}
 	}
-
 }

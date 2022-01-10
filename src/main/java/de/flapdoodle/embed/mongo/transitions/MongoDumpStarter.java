@@ -14,7 +14,8 @@ public abstract class MongoDumpStarter extends MongoToolsStarter<RunningMongoDum
 		return "Start MongoDump";
 	}
 
-	@Override protected RunningProcessFactory<RunningMongoDumpProcess> processfactory() {
+	@Override
+	protected RunningProcessFactory<RunningMongoDumpProcess> processfactory() {
 		return RunningMongoDumpProcess::new;
 	}
 
