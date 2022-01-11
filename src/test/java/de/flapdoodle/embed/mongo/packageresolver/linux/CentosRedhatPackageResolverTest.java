@@ -29,10 +29,11 @@ import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.os.linux.CentosVersion;
+import de.flapdoodle.os.linux.RedhatVersion;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class CentosPackageResolverTest {
+class CentosRedhatPackageResolverTest {
 	/*
 		RedHat / CentOS 6.2+ x64
 		--
@@ -45,6 +46,8 @@ class CentosPackageResolverTest {
 		"3.2.21 - 3.2.0", "3.0.14 - 3.0.0" })
 	public void centos6(String version) {
 		assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_6), version)
+			.resolvesTo("/linux/mongodb-linux-x86_64-rhel62-{}.tgz");
+		assertThat(linuxWith(CommonArchitecture.X86_64, RedhatVersion.Redhat_6), version)
 			.resolvesTo("/linux/mongodb-linux-x86_64-rhel62-{}.tgz");
 	}
 
@@ -62,6 +65,8 @@ class CentosPackageResolverTest {
 	public void centos7(String version) {
 		assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_7), version)
 			.resolvesTo("/linux/mongodb-linux-x86_64-rhel70-{}.tgz");
+		assertThat(linuxWith(CommonArchitecture.X86_64, RedhatVersion.Redhat_7), version)
+			.resolvesTo("/linux/mongodb-linux-x86_64-rhel70-{}.tgz");
 	}
 
   /*
@@ -75,6 +80,8 @@ class CentosPackageResolverTest {
 	@ValueSource(strings = { "5.0.2 - 5.0.0", "4.4.9 - 4.4.0", "4.2.16 - 4.2.5", "4.2.3 - 4.2.1", "4.0.26 - 4.0.14", "3.6.22 - 3.6.17" })
 	public void centos8(String version) {
 		assertThat(linuxWith(CommonArchitecture.X86_64, CentosVersion.CentOS_8), version)
+			.resolvesTo("/linux/mongodb-linux-x86_64-rhel80-{}.tgz");
+		assertThat(linuxWith(CommonArchitecture.X86_64, RedhatVersion.Redhat_8), version)
 			.resolvesTo("/linux/mongodb-linux-x86_64-rhel80-{}.tgz");
 	}
 
@@ -90,6 +97,8 @@ class CentosPackageResolverTest {
 	public void centos8arm(String version) {
 		assertThat(linuxWith(CommonArchitecture.ARM_64, CentosVersion.CentOS_8), version)
 			.resolvesTo("/linux/mongodb-linux-aarch64-rhel82-{}.tgz");
+		assertThat(linuxWith(CommonArchitecture.ARM_64, RedhatVersion.Redhat_8), version)
+			.resolvesTo("/linux/mongodb-linux-aarch64-rhel82-{}.tgz");
 	}
 
 	private static Platform linuxWith(CommonArchitecture architecture, de.flapdoodle.os.Version version) {
@@ -102,7 +111,7 @@ class CentosPackageResolverTest {
 
 	private static HtmlParserResultTester assertThat(Platform platform, String versionList) {
 		return HtmlParserResultTester.with(
-			new CentosPackageResolver(Command.Mongo),
+			new CentosRedhatPackageResolver(Command.Mongo),
 			version -> Distribution.of(Version.of(version), platform),
 			versionList);
 	}

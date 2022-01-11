@@ -32,16 +32,18 @@ import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.linux.CentosVersion;
+import de.flapdoodle.os.linux.OracleVersion;
+import de.flapdoodle.os.linux.RedhatVersion;
 import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.Optional;
 
-public class CentosPackageResolver implements PackageFinder {
+public class CentosRedhatPackageResolver implements PackageFinder {
 
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
 
-  public CentosPackageResolver(Command command) {
+  public CentosRedhatPackageResolver(Command command) {
     this.command = command;
     this.rules = rules(command);
   }
@@ -82,7 +84,7 @@ public class CentosPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_6
+							CentosVersion.CentOS_6, RedhatVersion.Redhat_6, OracleVersion.Oracle_6
 						)
 					)
 			)
@@ -110,7 +112,7 @@ public class CentosPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_6
+							CentosVersion.CentOS_6, RedhatVersion.Redhat_6, OracleVersion.Oracle_6
 						)
 					)
 			)
@@ -147,7 +149,7 @@ public class CentosPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_7
+							CentosVersion.CentOS_7, RedhatVersion.Redhat_7
 						)
 					)
 			)
@@ -176,7 +178,7 @@ public class CentosPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_7
+							CentosVersion.CentOS_7, RedhatVersion.Redhat_7
 						)
 					)
 			)
@@ -209,7 +211,7 @@ public class CentosPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_8
+							CentosVersion.CentOS_8, RedhatVersion.Redhat_8
 						)
 					)
 			)
@@ -234,7 +236,7 @@ public class CentosPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_8
+							CentosVersion.CentOS_8, RedhatVersion.Redhat_8
 						)
 					)
 			)
@@ -263,7 +265,7 @@ public class CentosPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
 											.withVersion(
-													CentosVersion.CentOS_8
+													CentosVersion.CentOS_8, RedhatVersion.Redhat_8
 											)
 									)
 					)
@@ -284,7 +286,7 @@ public class CentosPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
 											.withVersion(
-												CentosVersion.CentOS_8
+												CentosVersion.CentOS_8, RedhatVersion.Redhat_8
 											)
 									)
 					)

@@ -79,7 +79,7 @@ public class LinuxPackageFinder implements PackageFinder {
 		ImmutablePlatformMatchRule centosRule = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux)
 				.withVersion(CentosVersion.values()))
-			.finder(new CentosPackageResolver(command))
+			.finder(new CentosRedhatPackageResolver(command))
 			.build();
 
 		ImmutablePlatformMatchRule amazonRule = PlatformMatchRule.builder()
