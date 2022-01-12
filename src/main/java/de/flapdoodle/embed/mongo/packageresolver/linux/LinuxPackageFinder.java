@@ -82,6 +82,18 @@ public class LinuxPackageFinder implements PackageFinder {
 			.finder(new CentosRedhatPackageResolver(command))
 			.build();
 
+		ImmutablePlatformMatchRule redhatRule = PlatformMatchRule.builder()
+				.match(PlatformMatch.withOs(OS.Linux)
+						.withVersion(RedhatVersion.values()))
+				.finder(new CentosRedhatPackageResolver(command))
+				.build();
+
+		ImmutablePlatformMatchRule oracleRule = PlatformMatchRule.builder()
+				.match(PlatformMatch.withOs(OS.Linux)
+						.withVersion(OracleVersion.values()))
+				.finder(new CentosRedhatPackageResolver(command))
+				.build();
+
 		ImmutablePlatformMatchRule amazonRule = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux)
 				.withVersion(AmazonVersion.values()))
@@ -179,6 +191,8 @@ public class LinuxPackageFinder implements PackageFinder {
 				linuxMintRule,
 				debianRule,
 				centosRule,
+				redhatRule,
+				oracleRule,
 				amazonRule,
 				legacy32,
 				legacy64,
