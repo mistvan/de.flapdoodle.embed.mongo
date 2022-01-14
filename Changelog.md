@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.2.8
+
+- redhat support fixed thanks to @infoShare
+
 ### 3.2.7
 
 - redhat support
