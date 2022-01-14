@@ -149,7 +149,7 @@ public class CentosRedhatPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_7, RedhatVersion.Redhat_7
+							CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
 						)
 					)
 			)
@@ -178,7 +178,7 @@ public class CentosRedhatPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_7, RedhatVersion.Redhat_7
+							CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
 						)
 					)
 			)
@@ -211,7 +211,7 @@ public class CentosRedhatPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_8, RedhatVersion.Redhat_8
+							CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
 						)
 					)
 			)
@@ -236,7 +236,7 @@ public class CentosRedhatPackageResolver implements PackageFinder {
 						.withBitSize(BitSize.B64)
 						.withCpuType(CPUType.X86)
 						.withVersion(
-							CentosVersion.CentOS_8, RedhatVersion.Redhat_8
+							CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
 						)
 					)
 			)
@@ -265,7 +265,7 @@ public class CentosRedhatPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
 											.withVersion(
-													CentosVersion.CentOS_8, RedhatVersion.Redhat_8
+													CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
 											)
 									)
 					)
@@ -286,7 +286,7 @@ public class CentosRedhatPackageResolver implements PackageFinder {
 											.withBitSize(BitSize.B64)
 											.withCpuType(CPUType.ARM)
 											.withVersion(
-												CentosVersion.CentOS_8, RedhatVersion.Redhat_8
+												CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
 											)
 									)
 					)
