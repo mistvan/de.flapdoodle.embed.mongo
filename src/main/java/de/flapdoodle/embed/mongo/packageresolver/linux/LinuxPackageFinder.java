@@ -174,10 +174,10 @@ public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules 
 		PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux))
 			.finder(distribution -> {
-//				if (!distribution.platform().distribution().isPresent()) {
-//					// only fallback if no linux dist is detected
-//					return Optional.empty();
-//				}
+				if (distribution.platform().distribution().isPresent()) {
+					// only fallback if no linux dist is detected
+					return Optional.empty();
+				}
 
 				Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
 					ImmutablePlatform.copyOf(distribution.platform())
