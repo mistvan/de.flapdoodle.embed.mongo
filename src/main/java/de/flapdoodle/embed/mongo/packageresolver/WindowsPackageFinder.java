@@ -32,13 +32,18 @@ import de.flapdoodle.os.OS;
 import java.util.Optional;
 
 
-public class WindowsPackageFinder implements PackageFinder {
+public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRules {
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
 
   public WindowsPackageFinder(Command command) {
     this.command = command;
     this.rules = rules(command);
+  }
+
+  @Override
+  public PlatformMatchRules rules() {
+    return rules;
   }
 
   @Override

@@ -33,7 +33,7 @@ import java.util.Optional;
  * bc mongodb decided to reinvent their artifact naming which is some kind of complex
  * we have to deal with that somehow
  */
-public class PlatformPackageResolver implements PackageResolver {
+public class PlatformPackageResolver implements PackageResolver, HasPlatformMatchRules {
 
   private final Command command;
   private final PlatformMatchRules rules;
@@ -61,5 +61,14 @@ public class PlatformPackageResolver implements PackageResolver {
   public DistributionPackage packageFor(Distribution distribution) {
     Optional<DistributionPackage> result = rules.packageFor(distribution);
     return result.orElseThrow(() -> new IllegalArgumentException("could not resolve package for "+distribution));
+  }
+
+  @Override
+  public PlatformMatchRules rules() {
+    return rules;
+  }
+
+  public void explain() {
+    ExplainRules.explain(this.rules);
   }
 }

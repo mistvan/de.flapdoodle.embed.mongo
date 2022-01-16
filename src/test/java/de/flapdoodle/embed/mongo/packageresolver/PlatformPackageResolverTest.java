@@ -52,6 +52,11 @@ class PlatformPackageResolverTest {
         .matchesPath("/sunos5/mongodb-sunos5-x86_64-3.4.5.tgz");
   }
 
+  @Test
+  public void explain() {
+    testee.explain();
+  }
+
   private WithDistributionPackage assertThatDistributionPackageFor(Version version, OS os, CommonArchitecture architecture) {
     return new WithDistributionPackage(testee.packageFor(TestUtils.distributionOf(version, os, architecture)));
   }

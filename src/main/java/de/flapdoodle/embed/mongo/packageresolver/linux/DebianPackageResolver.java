@@ -35,7 +35,7 @@ import de.flapdoodle.os.linux.DebianVersion;
 
 import java.util.Optional;
 
-public class DebianPackageResolver implements PackageFinder {
+public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRules {
 
     private final ImmutablePlatformMatchRules rules;
 
@@ -44,6 +44,11 @@ public class DebianPackageResolver implements PackageFinder {
     }
 
     @Override
+    public PlatformMatchRules rules() {
+      return rules;
+    }
+
+  @Override
     public Optional<DistributionPackage> packageFor(final Distribution distribution) {
         return rules.packageFor(distribution);
     }

@@ -38,7 +38,7 @@ public abstract class UrlTemplatePackageResolver implements PackageFinder {
 
   protected abstract ArchiveType archiveType();
   protected abstract FileSet fileSet();
-  protected abstract String urlTemplate();
+  abstract String urlTemplate();
 
   @Override
   public Optional<DistributionPackage> packageFor(Distribution distribution) {

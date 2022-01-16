@@ -20,8 +20,10 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver.linux;
 
+import de.flapdoodle.embed.mongo.packageresolver.HasPlatformMatchRules;
 import de.flapdoodle.embed.mongo.packageresolver.PackageFinder;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformMatch;
+import de.flapdoodle.embed.mongo.packageresolver.PlatformMatchRules;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.ImmutablePlatform;

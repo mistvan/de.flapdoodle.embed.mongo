@@ -32,13 +32,18 @@ import de.flapdoodle.os.OS;
 import java.util.Optional;
 
 
-public class SolarisPackageFinder implements PackageFinder {
+public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRules {
   private final Command command;
   private final PlatformMatchRules rules;
 
   public SolarisPackageFinder(Command command) {
     this.command = command;
     this.rules = rules(command);
+  }
+
+  @Override
+  public PlatformMatchRules rules() {
+    return rules;
   }
 
   @Override

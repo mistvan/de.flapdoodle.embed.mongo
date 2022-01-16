@@ -35,7 +35,7 @@ import de.flapdoodle.os.linux.AmazonVersion;
 
 import java.util.Optional;
 
-public class AmazonPackageResolver implements PackageFinder {
+public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRules {
 
 	private final ImmutablePlatformMatchRules rules;
 
@@ -43,6 +43,11 @@ public class AmazonPackageResolver implements PackageFinder {
 		this.rules = rules(command);
 	}
 
+	@Override
+	public PlatformMatchRules rules() {
+		return rules;
+	}
+	
 	@Override
 	public Optional<DistributionPackage> packageFor(final Distribution distribution) {
 		return rules.packageFor(distribution);

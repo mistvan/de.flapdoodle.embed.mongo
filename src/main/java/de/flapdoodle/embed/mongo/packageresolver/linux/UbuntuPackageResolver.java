@@ -32,7 +32,7 @@ import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.Optional;
 
-public class UbuntuPackageResolver implements PackageFinder {
+public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRules {
 
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
@@ -42,7 +42,12 @@ public class UbuntuPackageResolver implements PackageFinder {
     this.rules = rules(command);
   }
 
-  @Override
+	@Override
+	public PlatformMatchRules rules() {
+		return rules;
+	}
+
+	@Override
   public Optional<DistributionPackage> packageFor(Distribution distribution) {
     return rules.packageFor(distribution);
   }

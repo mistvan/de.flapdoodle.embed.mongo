@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class LinuxPackageFinder implements PackageFinder {
+public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LinuxPackageFinder.class);
 
@@ -47,6 +47,11 @@ public class LinuxPackageFinder implements PackageFinder {
 	public LinuxPackageFinder(Command command) {
 		this.command = command;
 		this.rules = rules(command);
+	}
+
+	@Override
+	public PlatformMatchRules rules() {
+		return rules;
 	}
 
 	@Override
@@ -173,6 +178,11 @@ public class LinuxPackageFinder implements PackageFinder {
 		PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux))
 			.finder(distribution -> {
+				if (!distribution.platform().distribution().isPresent()) {
+					// only fallback if no linux dist is detected
+					return Optional.empty();
+				}
+
 				Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
 					ImmutablePlatform.copyOf(distribution.platform())
 						.withVersion(UbuntuVersion.Ubuntu_20_04));

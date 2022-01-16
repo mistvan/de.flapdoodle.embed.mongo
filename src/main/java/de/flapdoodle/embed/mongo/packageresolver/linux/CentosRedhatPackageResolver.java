@@ -38,7 +38,7 @@ import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.Optional;
 
-public class CentosRedhatPackageResolver implements PackageFinder {
+public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMatchRules {
 
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
@@ -48,7 +48,12 @@ public class CentosRedhatPackageResolver implements PackageFinder {
     this.rules = rules(command);
   }
 
-  @Override
+	@Override
+	public PlatformMatchRules rules() {
+		return rules;
+	}
+
+	@Override
   public Optional<DistributionPackage> packageFor(Distribution distribution) {
     return rules.packageFor(distribution);
   }
