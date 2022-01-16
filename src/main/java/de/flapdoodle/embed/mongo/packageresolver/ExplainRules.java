@@ -20,19 +20,11 @@ public final class ExplainRules {
 	static void explain(int level, PlatformMatchRules rules) {
 		String indent=indent(level);
 		rules.rules().forEach(rule -> {
-			explainMatch(level, rule.match());
+			String explained = explainMatch(rule.match());
+			System.out.print(indent);
+			System.out.println("matching "+explained);
 			explainFinder(level, rule.finder());
 		});
-	}
-
-	static void explainMatch(int level, DistributionMatch match) {
-		String indent=indent(level);
-		System.out.print(indent);
-
-		String explained = explainMatch(match);
-
-
-		System.out.println(explained);
 	}
 
 	static String explainMatch(DistributionMatch match) {
@@ -56,7 +48,9 @@ public final class ExplainRules {
 				.collect(Collectors.joining(",", "(version is any of", ")")));
 		}
 
-		return parts.stream().collect(Collectors.joining(" and ","(",")"));
+		return !parts.isEmpty()
+			? parts.stream().collect(Collectors.joining(" and ", "(", ")"))
+			: "(any)";
 	}
 
 	private static String explainVersionRange(VersionRange versionRange) {
@@ -71,7 +65,7 @@ public final class ExplainRules {
 		String indent=indent(level);
 		System.out.print(indent);
 		if (finder instanceof UrlTemplatePackageResolver) {
-			System.out.println("url="+((UrlTemplatePackageResolver) finder).urlTemplate());
+			System.out.println(" -> "+((UrlTemplatePackageResolver) finder).urlTemplate());
 		} else {
 			System.out.println(finder.getClass().getSimpleName());
 		}

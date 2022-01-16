@@ -160,9 +160,7 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
 
       PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.OS_X))
-            .finder(distribution -> {
-              throw new IllegalArgumentException("osx distribution not supported: " + distribution);
-            })
+            .finder(PackageFinder.failWithMessage(distribution -> "osx distribution not supported: " + distribution))
             .build();
 
       switch (command) {

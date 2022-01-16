@@ -31,11 +31,15 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.Version;
 import de.flapdoodle.os.linux.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules {
 
@@ -83,23 +87,15 @@ public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules 
 
 		CentosRedhatPackageResolver centosRedhatPackageResolver = new CentosRedhatPackageResolver(command);
 
-		ImmutablePlatformMatchRule centosRule = PlatformMatchRule.builder()
+		List<Version> centosRedhatAndOracleVersions = Stream.of(Stream.of(CentosVersion.values()), Stream.of(RedhatVersion.values()),
+				Stream.of(OracleVersion.values()))
+			.flatMap(it -> it).collect(Collectors.toList());
+
+		ImmutablePlatformMatchRule centosRedhatOracleRule = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux)
-				.withVersion(CentosVersion.values()))
+				.withVersion(centosRedhatAndOracleVersions))
 			.finder(centosRedhatPackageResolver)
 			.build();
-
-		ImmutablePlatformMatchRule redhatRule = PlatformMatchRule.builder()
-				.match(PlatformMatch.withOs(OS.Linux)
-						.withVersion(RedhatVersion.values()))
-				.finder(centosRedhatPackageResolver)
-				.build();
-
-		ImmutablePlatformMatchRule oracleRule = PlatformMatchRule.builder()
-				.match(PlatformMatch.withOs(OS.Linux)
-						.withVersion(OracleVersion.values()))
-				.finder(centosRedhatPackageResolver)
-				.build();
 
 		ImmutablePlatformMatchRule amazonRule = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux)
@@ -178,10 +174,10 @@ public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules 
 		PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux))
 			.finder(distribution -> {
-				if (!distribution.platform().distribution().isPresent()) {
-					// only fallback if no linux dist is detected
-					return Optional.empty();
-				}
+//				if (!distribution.platform().distribution().isPresent()) {
+//					// only fallback if no linux dist is detected
+//					return Optional.empty();
+//				}
 
 				Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
 					ImmutablePlatform.copyOf(distribution.platform())
@@ -202,9 +198,7 @@ public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules 
 				ubuntuRule,
 				linuxMintRule,
 				debianRule,
-				centosRule,
-				redhatRule,
-				oracleRule,
+				centosRedhatOracleRule,
 				amazonRule,
 				legacy32,
 				legacy64,

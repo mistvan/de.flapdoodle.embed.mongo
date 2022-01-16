@@ -217,9 +217,7 @@ public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRule
 
     ImmutablePlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.Windows))
-            .finder(distribution -> {
-              throw new IllegalArgumentException("windows distribution not supported: " + distribution);
-            })
+            .finder(PackageFinder.failWithMessage(distribution -> "windows distribution not supported: " + distribution))
             .build();
 
       switch (command) {

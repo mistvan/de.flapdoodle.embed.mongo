@@ -96,9 +96,7 @@ public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRule
 
     PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.Solaris))
-            .finder(distribution -> {
-              throw new IllegalArgumentException("osx distribution not supported: " + distribution);
-            })
+            .finder(PackageFinder.failWithMessage(distribution -> "solaris distribution not supported: " + distribution))
             .build();
 
 

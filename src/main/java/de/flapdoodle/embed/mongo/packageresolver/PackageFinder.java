@@ -24,7 +24,26 @@ import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.distribution.Distribution;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface PackageFinder {
   Optional<DistributionPackage> packageFor(Distribution distribution);
+
+  class FailWithMessage implements PackageFinder {
+
+    private final Function<Distribution, String> messageFactory;
+
+    public FailWithMessage(Function<Distribution,String> messageFactory) {
+      this.messageFactory = messageFactory;
+    }
+
+    @Override public Optional<DistributionPackage> packageFor(Distribution distribution) {
+      throw new IllegalArgumentException(messageFactory.apply(distribution));
+    }
+  }
+
+  static PackageFinder failWithMessage(Function<Distribution, String> messageFactory) {
+    return new FailWithMessage(messageFactory);
+  }
 }
