@@ -25,7 +25,7 @@ import org.immutables.value.Value;
 import static java.lang.Math.abs;
 
 @Value.Immutable
-public interface NumericVersion {
+public interface NumericVersion extends Comparable<NumericVersion> {
 	@Value.Parameter
 	int major();
 
@@ -34,6 +34,18 @@ public interface NumericVersion {
 
 	@Value.Parameter
 	int patch();
+
+	@Override
+	@Value.Auxiliary
+	default int compareTo(NumericVersion other) {
+		int mc = Integer.compare(major(), other.major());
+		int mm = Integer.compare(minor(), other.minor());
+		int mp = Integer.compare(patch(), other.patch());
+
+		return mc != 0 ? mc
+			: mm != 0 ? mm
+			: mp;
+	}
 
 	static NumericVersion of(int major, int minor, int patch) {
 		return ImmutableNumericVersion.of(major, minor, patch);
@@ -77,14 +89,7 @@ public interface NumericVersion {
 	}
 
 	default boolean isNewer(NumericVersion other) {
-    if (major()>other.major()) return true;
-    if (major()==other.major()) {
-      if (minor()>other.minor()) return true;
-      if (minor()==other.minor()) {
-        return patch() > other.patch();
-      }
-    }
-    return false;
+		return compareTo(other)>0;
 	}
 
 	default boolean isOlderOrEqual(NumericVersion other) {
@@ -92,18 +97,11 @@ public interface NumericVersion {
 	}
 
 	default boolean isOlder(NumericVersion other) {
-    if (major()<other.major()) return true;
-    if (major()==other.major()) {
-      if (minor()<other.minor()) return true;
-      if (minor()==other.minor()) {
-        return patch() < other.patch();
-      }
-    }
-    return false;
+		return compareTo(other)<0;
 	}
 
 	default boolean isEqual(NumericVersion other) {
-		return major() == other.major() && minor() == other.minor() && patch() == other.patch();
+		return compareTo(other) == 0;
 	}
 
 	default boolean isNextOrPrevPatch(NumericVersion other) {

@@ -1,0 +1,2 @@
+copy html from https://www.mongodb.com/download-center/community/releases
+copy html from https://www.mongodb.com/download-center/database-tools/releases/archive

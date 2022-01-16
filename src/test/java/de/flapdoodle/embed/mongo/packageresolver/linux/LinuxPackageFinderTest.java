@@ -28,12 +28,7 @@ import de.flapdoodle.os.CommonArchitecture;
 import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
-import de.flapdoodle.os.linux.CentosVersion;
-import de.flapdoodle.os.linux.DebianVersion;
-import de.flapdoodle.os.linux.LinuxMintVersion;
-import de.flapdoodle.os.linux.OracleVersion;
-import de.flapdoodle.os.linux.RedhatVersion;
-import de.flapdoodle.os.linux.UbuntuVersion;
+import de.flapdoodle.os.linux.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -74,6 +69,7 @@ class LinuxPackageFinderTest {
   @Test
   public void resolveOraclePackage() {
     assertThat(linuxWith(CommonArchitecture.X86_64)
+      .withDistribution(LinuxDistribution.Oracle)
             .withVersion(OracleVersion.Oracle_6), "4.4.9")
             .resolvesTo("/linux/mongodb-linux-x86_64-rhel62-{}.tgz");
   }

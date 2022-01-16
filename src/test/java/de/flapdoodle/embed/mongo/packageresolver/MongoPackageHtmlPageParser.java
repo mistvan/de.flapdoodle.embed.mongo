@@ -21,7 +21,8 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import com.google.common.io.Resources;
-import de.flapdoodle.embed.mongo.distribution.NumericVersion;
+import de.flapdoodle.types.ThrowingSupplier;
+import de.flapdoodle.types.Try;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,18 +32,30 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
 
   public static void main(String[] args) throws IOException {
-    URL url = Resources.getResource("mongo-db-versions.html");
-    System.out.println("-> "+url);
-    Document document = Jsoup.parse(Resources.toString(url, StandardCharsets.UTF_8));
+    List<String> resources = Arrays.asList(
+      "versions/react/mongo-db-versions-2021-10-28.html",
+      "versions/react/mongo-db-versions-2022-01-16.html"
+    );
 
-    List<ParsedVersion> versions = parse(document);
+    List<List<ParsedVersion>> allVersions = resources.stream()
+      //.map(it -> Try.supplier(() -> parse(Jsoup.parse(Resources.toString(Resources.getResource(it), StandardCharsets.UTF_8)))))
+      .map(it -> Try.supplier(() -> Resources.toString(Resources.getResource(it), StandardCharsets.UTF_8))
+        .mapCheckedException(RuntimeException::new)
+        .get())
+      .map(Jsoup::parse)
+      .map(MongoPackageHtmlPageParser::parse)
+      .collect(Collectors.toList());
+
+    List<ParsedVersion> versions = mergeAll(allVersions);
+
+//    List<ParsedVersion> versions = parse(Jsoup.parse(Resources.toString(Resources.getResource("versions/react/mongo-db-versions-2021-10-28.html"), StandardCharsets.UTF_8)));
+
 //    dump(versions);
     List<String> names = namesOf(versions)
             .stream()
@@ -70,6 +83,47 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
       compressedVersionAndUrl(filtered);
     });
   }
+
+  private static List<ParsedVersion> mergeAll(List<List<ParsedVersion>> allVersions) {
+    List<ParsedVersion> flatmapped = allVersions.stream().flatMap(it -> it.stream()).collect(Collectors.toList());
+
+    Set<String> versions = flatmapped.stream()
+      .map(it -> it.version)
+      .collect(Collectors.toSet());
+
+    return versions.stream().map(v -> new ParsedVersion(v, mergeDists(v, flatmapped)))
+      .collect(Collectors.toList());
+  }
+
+  private static List<ParsedDist> mergeDists(String v, List<ParsedVersion> src) {
+    List<ParsedDist> matchingDists = src.stream()
+      .filter(pv -> v.equals(pv.version))
+      .flatMap(pv -> pv.dists.stream())
+      .collect(Collectors.toList());
+
+    return groupByName(matchingDists);
+  }
+
+  private static List<ParsedDist> groupByName(List<ParsedDist> matchingDists) {
+    Map<String, List<ParsedDist>> groupedByName = matchingDists.stream()
+      .collect(Collectors.groupingBy(pd -> pd.name));
+    
+    return groupedByName.entrySet().stream()
+      .map(entry -> new ParsedDist(entry.getKey(), entry.getValue().stream()
+        .flatMap(it -> it.urls.stream())
+        .collect(Collectors.toList())))
+      .collect(Collectors.toList());
+  }
+
+//  private static List<ParsedDist> mergeDists(String v, List<List<ParsedVersion>> allVersions) {
+//    matching = allVersions.stream()
+//      .flatMap(all -> all.stream()
+//        .filter(pv -> v.equals(pv.version))
+//        .flatMap(pv -> pv.dists))
+//      .collect(Collectors.toList());
+//
+//    return null;
+//  }
 
   static List<ParsedVersion> parse(Document document) {
     List<ParsedVersion> versions=new ArrayList<>();

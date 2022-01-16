@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class MongoToolsPackageHtmlPageParser extends AbstractPackageHtmlParser {
 		public static void main(String[] args) throws IOException {
-				URL url = Resources.getResource("mongotools-versions.html");
+				URL url = Resources.getResource("versions/react/mongotools-versions-2021-10-28.html");
 				System.out.println("-> " + url);
 				Document document = Jsoup.parse(Resources.toString(url, StandardCharsets.UTF_8));
 

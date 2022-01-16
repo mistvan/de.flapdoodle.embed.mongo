@@ -20,12 +20,16 @@
 ====
 
 Amazon Linux 2 ARM 64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-4.4.9.tgz
 4.4.8
@@ -38,6 +42,8 @@ Amazon Linux 2 ARM 64
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-4.4.5.tgz
 4.4.4
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-4.4.4.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-4.2.16.tgz
 4.2.15
@@ -48,12 +54,16 @@ Amazon Linux 2 ARM 64
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-4.2.13.tgz
 -----------------------------------
 Amazon Linux 2 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.4.9.tgz
 4.4.8
@@ -74,6 +84,8 @@ Amazon Linux 2 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.2.16.tgz
 4.2.15
@@ -106,6 +118,8 @@ Amazon Linux 2 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.0.26.tgz
 4.0.25
@@ -160,16 +174,22 @@ Amazon Linux 2 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-3.6.22.tgz
 -----------------------------------
 Amazon Linux x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.4.9.tgz
 4.4.8
@@ -190,6 +210,8 @@ Amazon Linux x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.2.16.tgz
 4.2.15
@@ -222,6 +244,8 @@ Amazon Linux x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.0.26.tgz
 4.0.25
@@ -276,6 +300,8 @@ Amazon Linux x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.6.22.tgz
 3.6.21
@@ -322,6 +348,8 @@ Amazon Linux x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.4.23.tgz
 3.4.22
@@ -368,6 +396,8 @@ Amazon Linux x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.2.21.tgz
 3.2.20
@@ -412,6 +442,8 @@ Amazon Linux x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.0.14.tgz
 3.0.13
@@ -444,12 +476,16 @@ Amazon Linux x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-3.0.0.tgz
 -----------------------------------
 Debian 10.0 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.4.9.tgz
 4.4.8
@@ -470,6 +506,8 @@ Debian 10.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.2.16.tgz
 4.2.15
@@ -586,6 +624,8 @@ Debian 7.1 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-3.0.14.tgz
 3.0.13
@@ -618,6 +658,8 @@ Debian 7.1 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-3.0.0.tgz
 -----------------------------------
 Debian 8.1 x64
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-4.0.26.tgz
 4.0.25
@@ -672,6 +714,8 @@ Debian 8.1 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.6.22.tgz
 3.6.21
@@ -718,6 +762,8 @@ Debian 8.1 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.4.23.tgz
 3.4.22
@@ -764,6 +810,8 @@ Debian 8.1 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.2.21.tgz
 3.2.20
@@ -794,12 +842,16 @@ Debian 8.1 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-3.2.8.tgz
 -----------------------------------
 Debian 9.2 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.4.9.tgz
 4.4.8
@@ -820,6 +872,8 @@ Debian 9.2 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.2.16.tgz
 4.2.15
@@ -852,6 +906,8 @@ Debian 9.2 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.0.26.tgz
 4.0.25
@@ -906,6 +962,8 @@ Debian 9.2 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-3.6.22.tgz
 3.6.21
@@ -944,6 +1002,8 @@ Debian 9.2 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-3.6.5.tgz
 -----------------------------------
 Linux (legacy) undefined
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.21.tgz
 3.2.20
@@ -988,6 +1048,8 @@ Linux (legacy) undefined
   https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.0.14.tgz
 3.0.13
@@ -1046,6 +1108,8 @@ Linux (legacy) undefined
   https://fastdl.mongodb.org/linux/mongodb-linux-i686-2.6.0.tgz
 -----------------------------------
 Linux (legacy) x64
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.26.tgz
 4.0.25
@@ -1100,6 +1164,8 @@ Linux (legacy) x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.22.tgz
 3.6.21
@@ -1146,6 +1212,8 @@ Linux (legacy) x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.23.tgz
 3.4.22
@@ -1192,6 +1260,8 @@ Linux (legacy) x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.21.tgz
 3.2.20
@@ -1236,6 +1306,8 @@ Linux (legacy) x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.0.14.tgz
 3.0.13
@@ -1294,6 +1366,8 @@ Linux (legacy) x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.6.0.tgz
 -----------------------------------
 RedHat / CentOS 5.5 x64
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-3.2.21.tgz
 3.2.20
@@ -1338,6 +1412,8 @@ RedHat / CentOS 5.5 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-3.0.14.tgz
 3.0.13
@@ -1370,6 +1446,8 @@ RedHat / CentOS 5.5 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-3.0.0.tgz
 -----------------------------------
 RedHat / CentOS 6.2+ x64
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.4.9.tgz
 4.4.8
@@ -1390,6 +1468,8 @@ RedHat / CentOS 6.2+ x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.2.16.tgz
 4.2.15
@@ -1422,6 +1502,8 @@ RedHat / CentOS 6.2+ x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.0.26.tgz
 4.0.25
@@ -1476,6 +1558,8 @@ RedHat / CentOS 6.2+ x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.6.22.tgz
 3.6.21
@@ -1522,6 +1606,8 @@ RedHat / CentOS 6.2+ x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.4.23.tgz
 3.4.22
@@ -1568,6 +1654,8 @@ RedHat / CentOS 6.2+ x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.2.21.tgz
 3.2.20
@@ -1612,6 +1700,8 @@ RedHat / CentOS 6.2+ x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-3.0.14.tgz
 3.0.13
@@ -1690,12 +1780,16 @@ RedHat / CentOS 6.7 s390x
   https://fastdl.mongodb.org/linux/mongodb-linux-s390x-rhel67-4.0.0.tgz
 -----------------------------------
 RedHat / CentOS 7.0 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.4.9.tgz
 4.4.8
@@ -1716,6 +1810,8 @@ RedHat / CentOS 7.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.16.tgz
 4.2.15
@@ -1748,6 +1844,8 @@ RedHat / CentOS 7.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.26.tgz
 4.0.25
@@ -1802,6 +1900,8 @@ RedHat / CentOS 7.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.6.22.tgz
 3.6.21
@@ -1848,6 +1948,8 @@ RedHat / CentOS 7.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.4.23.tgz
 3.4.22
@@ -1894,6 +1996,8 @@ RedHat / CentOS 7.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.2.21.tgz
 3.2.20
@@ -1938,6 +2042,8 @@ RedHat / CentOS 7.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.0.14.tgz
 3.0.13
@@ -1970,6 +2076,8 @@ RedHat / CentOS 7.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-3.0.0.tgz
 -----------------------------------
 RedHat / CentOS 7.2 s390x
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-s390x-rhel72-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-s390x-rhel72-5.0.2.tgz
 5.0.1
@@ -2032,12 +2140,16 @@ RedHat / CentOS 7.2 s390x
   https://fastdl.mongodb.org/linux/mongodb-linux-s390x-rhel72-4.0.6.tgz
 -----------------------------------
 RedHat / CentOS 8.0 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.4.9.tgz
 4.4.8
@@ -2058,6 +2170,8 @@ RedHat / CentOS 8.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.2.16.tgz
 4.2.15
@@ -2088,6 +2202,8 @@ RedHat / CentOS 8.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.2.2.tgz
 4.2.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.2.1.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.0.26.tgz
 4.0.25
@@ -2114,6 +2230,8 @@ RedHat / CentOS 8.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.0.15.tgz
 4.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-4.0.14.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-3.6.22.tgz
 3.6.21
@@ -2126,14 +2244,20 @@ RedHat / CentOS 8.0 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-3.6.18.tgz
 3.6.17
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-3.6.17.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-3.4.24.tgz
 -----------------------------------
 RedHat / CentOS 8.2 ARM 64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-4.4.9.tgz
 4.4.8
@@ -2222,6 +2346,8 @@ SUSE 11 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse11-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse11-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse11-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse11-3.0.14.tgz
 3.0.13
@@ -2304,12 +2430,16 @@ SUSE 12 s390x
   https://fastdl.mongodb.org/linux/mongodb-linux-s390x-suse12-4.0.6.tgz
 -----------------------------------
 SUSE 12 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.4.9.tgz
 4.4.8
@@ -2330,6 +2460,8 @@ SUSE 12 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.2.16.tgz
 4.2.15
@@ -2362,6 +2494,8 @@ SUSE 12 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.0.26.tgz
 4.0.25
@@ -2416,6 +2550,8 @@ SUSE 12 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.6.22.tgz
 3.6.21
@@ -2462,6 +2598,8 @@ SUSE 12 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.4.23.tgz
 3.4.22
@@ -2508,6 +2646,8 @@ SUSE 12 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.2.21.tgz
 3.2.20
@@ -2554,12 +2694,16 @@ SUSE 12 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-3.2.0.tgz
 -----------------------------------
 SUSE 15 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-4.4.9.tgz
 4.4.8
@@ -2580,6 +2724,8 @@ SUSE 15 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-4.2.16.tgz
 4.2.15
@@ -2688,6 +2834,8 @@ Ubuntu 12.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1204-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1204-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1204-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1204-3.0.14.tgz
 3.0.13
@@ -2720,6 +2868,8 @@ Ubuntu 12.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1204-3.0.0.tgz
 -----------------------------------
 Ubuntu 14.04 x64
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-4.0.26.tgz
 4.0.25
@@ -2770,6 +2920,8 @@ Ubuntu 14.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.6.22.tgz
 3.6.21
@@ -2814,6 +2966,8 @@ Ubuntu 14.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.4.23.tgz
 3.4.20
@@ -2856,6 +3010,8 @@ Ubuntu 14.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.2.21.tgz
 3.2.20
@@ -2900,6 +3056,8 @@ Ubuntu 14.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.0.14.tgz
 3.0.13
@@ -2932,6 +3090,8 @@ Ubuntu 14.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.0.0.tgz
 -----------------------------------
 Ubuntu 16.04 ARM 64
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-4.0.26.tgz
 4.0.25
@@ -2986,6 +3146,8 @@ Ubuntu 16.04 ARM 64
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-3.6.22.tgz
 3.6.21
@@ -3032,6 +3194,8 @@ Ubuntu 16.04 ARM 64
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-3.4.23.tgz
 3.4.22
@@ -3080,6 +3244,8 @@ Ubuntu 16.04 ARM 64
   https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-3.4.0.tgz
 -----------------------------------
 Ubuntu 16.04 x64
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.4.9.tgz
 4.4.8
@@ -3100,6 +3266,8 @@ Ubuntu 16.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.16.tgz
 4.2.15
@@ -3132,6 +3300,8 @@ Ubuntu 16.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.0.26.tgz
 4.0.25
@@ -3186,6 +3356,8 @@ Ubuntu 16.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.6.22.tgz
 3.6.21
@@ -3232,6 +3404,8 @@ Ubuntu 16.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.4.23.tgz
 3.4.22
@@ -3278,6 +3452,8 @@ Ubuntu 16.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.4.1.tgz
 3.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.2.21.tgz
 3.2.20
@@ -3310,12 +3486,16 @@ Ubuntu 16.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.2.7.tgz
 -----------------------------------
 Ubuntu 18.04 ARM 64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.9.tgz
 4.4.8
@@ -3336,6 +3516,8 @@ Ubuntu 18.04 ARM 64
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-4.2.16.tgz
 4.2.15
@@ -3418,12 +3600,16 @@ Ubuntu 18.04 s390x
   https://fastdl.mongodb.org/linux/mongodb-linux-s390x-ubuntu1804-4.0.6.tgz
 -----------------------------------
 Ubuntu 18.04 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.4.9.tgz
 4.4.8
@@ -3444,6 +3630,8 @@ Ubuntu 18.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.16.tgz
 4.2.15
@@ -3476,6 +3664,8 @@ Ubuntu 18.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.0.26.tgz
 4.0.25
@@ -3528,6 +3718,8 @@ Ubuntu 18.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.0.2.tgz
 4.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.0.1.tgz
+3.6.23
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-3.6.22.tgz
 3.6.21
@@ -3536,12 +3728,16 @@ Ubuntu 18.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-3.6.20.tgz
 -----------------------------------
 Ubuntu 20.04 ARM 64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-4.4.9.tgz
 4.4.8
@@ -3564,12 +3760,16 @@ Ubuntu 20.04 ARM 64
   https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-4.4.0.tgz
 -----------------------------------
 Ubuntu 20.04 x64
+5.0.5
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-4.4.9.tgz
 4.4.8
@@ -3592,6 +3792,8 @@ Ubuntu 20.04 x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-4.4.0.tgz
 -----------------------------------
 Windows Server 2008 R2+, without SSL x64
+3.4.24
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.4.24.zip
 3.4.23
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.4.23.zip
 3.4.22
@@ -3638,6 +3840,8 @@ Windows Server 2008 R2+, without SSL x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.4.1.zip
 3.4.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.4.0.zip
+3.2.22
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.2.22.zip
 3.2.21
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.2.21.zip
 3.2.20
@@ -3682,6 +3886,8 @@ Windows Server 2008 R2+, without SSL x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.2.1.zip
 3.2.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.2.0.zip
+3.0.15
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.0.15.zip
 3.0.14
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-3.0.14.zip
 3.0.13
@@ -3740,12 +3946,16 @@ Windows Server 2008 R2+, without SSL x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-2.6.0.zip
 -----------------------------------
 Windows x64
+5.0.5
+  https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-5.0.5.zip
 5.0.2
   https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-5.0.2.zip
 5.0.1
   https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-5.0.1.zip
 5.0.0
   https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-5.0.0.zip
+4.4.11
+  https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-4.4.11.zip
 4.4.9
   https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-4.4.9.zip
 4.4.8
@@ -3766,6 +3976,8 @@ Windows x64
   https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-4.4.1.zip
 4.4.0
   https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-4.4.0.zip
+4.2.18
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.18.zip
 4.2.16
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.16.zip
 4.2.15
@@ -3798,6 +4010,8 @@ Windows x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.1.zip
 4.2.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.0.zip
+4.0.27
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.27.zip
 4.0.26
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.26.zip
 4.0.25
@@ -3852,6 +4066,8 @@ Windows x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.1.zip
 4.0.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.0.zip
+3.6.23
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.6.23.zip
 3.6.22
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.6.22.zip
 3.6.21
@@ -3898,6 +4114,8 @@ Windows x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.6.1.zip
 3.6.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.6.0.zip
+3.4.24
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.4.24.zip
 3.4.23
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.4.23.zip
 3.4.22
@@ -3944,6 +4162,8 @@ Windows x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.4.1.zip
 3.4.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.4.0.zip
+3.2.22
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.2.22.zip
 3.2.21
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.2.21.zip
 3.2.20
@@ -3988,6 +4208,8 @@ Windows x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.2.1.zip
 3.2.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.2.0.zip
+3.0.15
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.0.15.zip
 3.0.14
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.0.14.zip
 3.0.13
@@ -4020,12 +4242,16 @@ Windows x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-3.0.0.zip
 -----------------------------------
 macOS x64
+5.0.5
+  https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-5.0.5.tgz
 5.0.2
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-5.0.2.tgz
 5.0.1
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-5.0.1.tgz
 5.0.0
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-5.0.0.tgz
+4.4.11
+  https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.4.11.tgz
 4.4.9
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.4.9.tgz
 4.4.8
@@ -4046,6 +4272,8 @@ macOS x64
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.4.1.tgz
 4.4.0
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.4.0.tgz
+4.2.18
+  https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.2.18.tgz
 4.2.16
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.2.16.tgz
 4.2.15
@@ -4078,6 +4306,8 @@ macOS x64
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.2.1.tgz
 4.2.0
   https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-4.2.0.tgz
+4.0.27
+  https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-4.0.27.tgz
 4.0.26
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-4.0.26.tgz
 4.0.25
@@ -4132,6 +4362,8 @@ macOS x64
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-4.0.1.tgz
 4.0.0
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-4.0.0.tgz
+3.6.23
+  https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.6.23.tgz
 3.6.22
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.6.22.tgz
 3.6.21
@@ -4178,6 +4410,9 @@ macOS x64
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.6.1.tgz
 3.6.0
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.6.0.tgz
+3.4.24
+  https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.4.24.tgz
+  https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.4.24.tgz
 3.4.23
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.4.23.tgz
   https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.4.23.tgz
@@ -4247,6 +4482,9 @@ macOS x64
 3.4.0
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.4.0.tgz
   https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.4.0.tgz
+3.2.22
+  https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.2.22.tgz
+  https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.2.22.tgz
 3.2.21
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.2.21.tgz
   https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.2.21.tgz
@@ -4313,6 +4551,9 @@ macOS x64
 3.2.0
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.2.0.tgz
   https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.0.15.tgz
+  https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.0.14.tgz
   https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-3.0.14.tgz
@@ -4424,6 +4665,8 @@ sunos5 x64
   https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-3.2.1.tgz
 3.2.0
   https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-3.2.0.tgz
+3.0.15
+  https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-3.0.15.tgz
 3.0.14
   https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-3.0.14.tgz
 3.0.13
@@ -4530,6 +4773,8 @@ ubuntu1410-clang x64
   https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1410-clang-3.0.0.tgz
 -----------------------------------
 windows_i686 undefined
+3.2.22
+  https://fastdl.mongodb.org/win32/mongodb-win32-i386-3.2.22.zip
 3.2.21
   https://fastdl.mongodb.org/win32/mongodb-win32-i386-3.2.21.zip
 3.2.20
@@ -4574,6 +4819,8 @@ windows_i686 undefined
   https://fastdl.mongodb.org/win32/mongodb-win32-i386-3.2.1.zip
 3.2.0
   https://fastdl.mongodb.org/win32/mongodb-win32-i386-3.2.0.zip
+3.0.15
+  https://fastdl.mongodb.org/win32/mongodb-win32-i386-3.0.15.zip
 3.0.14
   https://fastdl.mongodb.org/win32/mongodb-win32-i386-3.0.14.zip
 3.0.13
@@ -4632,6 +4879,8 @@ windows_i686 undefined
   https://fastdl.mongodb.org/win32/mongodb-win32-i386-2.6.0.zip
 -----------------------------------
 windows_x86_64 x64
+3.4.24
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.4.24.zip
 3.4.23
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.4.23.zip
 3.4.22
@@ -4678,6 +4927,8 @@ windows_x86_64 x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.4.1.zip
 3.4.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.4.0.zip
+3.2.22
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.2.22.zip
 3.2.21
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.2.21.zip
 3.2.20
@@ -4722,6 +4973,8 @@ windows_x86_64 x64
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.2.1.zip
 3.2.0
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.2.0.zip
+3.0.15
+  https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.0.15.zip
 3.0.14
   https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-3.0.14.zip
 3.0.13
@@ -4786,73 +5039,73 @@ windows_x86_64 x64
 -----------------------------------
 Amazon Linux 2 ARM 64
 --
-4.4.3 - 4.4.0, 4.2.12 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.4.3 - 4.4.0, 4.2.12 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.4, 4.2.16 - 4.2.13
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.4, 4.2.18 - 4.2.18, 4.2.16 - 4.2.13
 -----------------------------------
 Amazon Linux 2 x64
 --
-4.2.4 - 4.2.4, 3.6.21 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 3.6.21 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.22
 -----------------------------------
 Amazon Linux x64
 --
 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 Debian 10.0 x64
 --
-4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1
 -----------------------------------
 Debian 7.1 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.6, 3.4.23 - 3.4.16, 3.4.8 - 3.4.8, 3.2.21 - 3.2.21, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.6, 3.4.24 - 3.4.16, 3.4.8 - 3.4.8, 3.2.22 - 3.2.21, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-{}.tgz
-3.6.5 - 3.6.0, 3.4.15 - 3.4.9, 3.4.7 - 3.4.0, 3.2.20 - 3.2.0, 3.0.14 - 3.0.0
+3.6.5 - 3.6.0, 3.4.15 - 3.4.9, 3.4.7 - 3.4.0, 3.2.20 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 Debian 8.1 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 3.4.8 - 3.4.8, 3.2.7 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 3.4.8 - 3.4.8, 3.2.7 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian81-{}.tgz
-4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.8
+4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.8
 -----------------------------------
 Debian 9.2 x64
 --
-4.2.4 - 4.2.4, 3.6.4 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 3.6.4 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.5
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.5
 -----------------------------------
 Linux (legacy) undefined
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0
 https://fastdl.mongodb.org/linux/mongodb-linux-i686-{}.tgz
-3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 -----------------------------------
 Linux (legacy) x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 3.4.8
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 3.4.8
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-{}.tgz
-4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 -----------------------------------
 RedHat / CentOS 5.5 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel55-{}.tgz
-3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+3.2.22 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 RedHat / CentOS 6.2+ x64
 --
-5.0.2 - 5.0.0, 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-{}.tgz
-4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 RedHat / CentOS 6.7 s390x
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.0.26 - 4.0.13, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.0.27 - 4.0.13, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-s390x-rhel67-{}.tgz
 4.2.9 - 4.2.5, 4.2.3 - 4.2.0, 4.0.12 - 4.0.0
 -----------------------------------
@@ -4860,152 +5113,152 @@ RedHat / CentOS 7.0 x64
 --
 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 RedHat / CentOS 7.2 s390x
 --
-4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.0.26 - 4.0.14, 4.0.5 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.4.11 - 4.4.11, 4.2.18 - 4.2.18, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.0.27 - 4.0.14, 4.0.5 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-s390x-rhel72-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.9 - 4.2.5, 4.2.3 - 4.2.0, 4.0.13 - 4.0.6
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.9 - 4.2.5, 4.2.3 - 4.2.0, 4.0.13 - 4.0.6
 -----------------------------------
 RedHat / CentOS 8.0 x64
 --
-4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.13 - 4.0.0, 3.6.16 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.13 - 4.0.0, 3.6.16 - 3.6.0, 3.4.23 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1, 4.0.26 - 4.0.14, 3.6.22 - 3.6.17
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1, 4.0.27 - 4.0.14, 3.6.23 - 3.6.17, 3.4.24
 -----------------------------------
 RedHat / CentOS 8.2 ARM 64
 --
-4.4.3 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.4.3 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.4
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.4
 -----------------------------------
 SUSE 11 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.3, 3.4.23 - 3.4.15, 3.4.8 - 3.4.8, 3.2.21 - 3.2.20, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.3, 3.4.24 - 3.4.15, 3.4.8 - 3.4.8, 3.2.22 - 3.2.20, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse11-{}.tgz
-3.6.2 - 3.6.0, 3.4.14 - 3.4.9, 3.4.7 - 3.4.0, 3.2.19 - 3.2.0, 3.0.14 - 3.0.0
+3.6.2 - 3.6.0, 3.4.14 - 3.4.9, 3.4.7 - 3.4.0, 3.2.19 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 SUSE 12 s390x
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.7, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.0.26 - 4.0.14, 4.0.5 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.7, 4.2.18 - 4.2.18, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.0.27 - 4.0.14, 4.0.5 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-s390x-suse12-{}.tgz
 4.4.6 - 4.4.0, 4.2.9 - 4.2.5, 4.2.3 - 4.2.0, 4.0.13 - 4.0.6
 -----------------------------------
 SUSE 12 x64
 --
-4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse12-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0
 -----------------------------------
 SUSE 15 x64
 --
-4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-suse15-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1
 -----------------------------------
 Ubuntu 12.04 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.4, 3.4.23 - 3.4.15, 3.4.8 - 3.4.8, 3.2.21 - 3.2.20, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.4, 3.4.24 - 3.4.15, 3.4.8 - 3.4.8, 3.2.22 - 3.2.20, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1204-{}.tgz
-3.6.3 - 3.6.0, 3.4.14 - 3.4.9, 3.4.7 - 3.4.0, 3.2.19 - 3.2.0, 3.0.14 - 3.0.0
+3.6.3 - 3.6.0, 3.4.14 - 3.4.9, 3.4.7 - 3.4.0, 3.2.19 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 Ubuntu 14.04 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.11 - 4.0.10, 3.6.13 - 3.6.13, 3.4.22 - 3.4.21, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.11 - 4.0.10, 3.6.13 - 3.6.13, 3.4.22 - 3.4.21, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-{}.tgz
-4.0.26 - 4.0.12, 4.0.9 - 4.0.0, 3.6.22 - 3.6.14, 3.6.12 - 3.6.0, 3.4.23 - 3.4.23, 3.4.20 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+4.0.27 - 4.0.12, 4.0.9 - 4.0.0, 3.6.23 - 3.6.14, 3.6.12 - 3.6.0, 3.4.24 - 3.4.23, 3.4.20 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0
 -----------------------------------
 Ubuntu 16.04 ARM 64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 3.4.8 - 3.4.8, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 3.4.8 - 3.4.8, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-arm64-ubuntu1604-{}.tgz
-4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0
+4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0
 -----------------------------------
 Ubuntu 16.04 x64
 --
-5.0.2 - 5.0.0, 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 3.2.6 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 3.2.6 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-{}.tgz
-4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.7
+4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.7
 -----------------------------------
 Ubuntu 18.04 ARM 64
 --
-4.2.4 - 4.2.4, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
 -----------------------------------
 Ubuntu 18.04 s390x
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.7, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.26 - 4.0.14, 4.0.5 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.7, 4.2.18 - 4.2.18, 4.2.16 - 4.2.10, 4.2.4 - 4.2.4, 4.2.0 - 4.2.0, 4.0.27 - 4.0.14, 4.0.5 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-s390x-ubuntu1804-{}.tgz
 4.4.6 - 4.4.0, 4.2.9 - 4.2.5, 4.2.3 - 4.2.1, 4.0.13 - 4.0.6
 -----------------------------------
 Ubuntu 18.04 x64
 --
-4.2.4 - 4.2.4, 4.0.0 - 4.0.0, 3.6.19 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.4 - 4.2.4, 4.0.0 - 4.0.0, 3.6.19 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.1, 3.6.22 - 3.6.20
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.27 - 4.0.1, 3.6.23 - 3.6.20
 -----------------------------------
 Ubuntu 20.04 ARM 64
 --
-4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0
 -----------------------------------
 Ubuntu 20.04 x64
 --
-4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0
 -----------------------------------
 Windows Server 2008 R2+, without SSL x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.8
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.8
 https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-{}.zip
-3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 -----------------------------------
 Windows x64
 --
 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{}.zip
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0
 https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-{}.zip
-4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
+4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0
 https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-{}.zip
-4.2.16 - 4.2.5, 4.2.3 - 4.2.0
+4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
 -----------------------------------
 macOS x64
 https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{}.tgz
-4.0.26 - 4.0.0, 3.6.22 - 3.6.0
+4.0.27 - 4.0.0, 3.6.23 - 3.6.0
 --
 4.2.4 - 4.2.4, 3.4.8
 https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{}.tgz|https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-{}.tgz
-3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.4
+3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.4
 https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-{}.tgz
 3.0.3 - 3.0.0, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-{}.tgz
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
 -----------------------------------
 sunos5 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.6, 3.2.21 - 3.2.15
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.6, 3.2.22 - 3.2.15
 https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-{}.tgz
-3.4.5 - 3.4.0, 3.2.14 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+3.4.5 - 3.4.0, 3.2.14 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 -----------------------------------
 ubuntu1410-clang x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.10, 3.0.14 - 3.0.13, 2.6.12 - 2.6.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0, 3.2.22 - 3.2.10, 3.0.15 - 3.0.13, 2.6.12 - 2.6.0
 https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1410-clang-{}.tgz
 3.2.9 - 3.2.0, 3.0.12 - 3.0.0
 -----------------------------------
 windows_i686 undefined
 https://fastdl.mongodb.org/win32/mongodb-win32-i386-{}.zip
-3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.24 - 3.4.0
 -----------------------------------
 windows_x86_64 x64
 --
-5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.8
+5.0.5 - 5.0.5, 5.0.2 - 5.0.0, 4.4.11 - 4.4.11, 4.4.9 - 4.4.0, 4.2.18 - 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.8
 https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{}.zip
-3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
+3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
