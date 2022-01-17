@@ -25,7 +25,6 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import org.immutables.value.Value;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Value.Immutable

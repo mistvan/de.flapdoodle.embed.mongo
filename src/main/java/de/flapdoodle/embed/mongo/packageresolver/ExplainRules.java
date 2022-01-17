@@ -28,14 +28,14 @@ public final class ExplainRules {
 	}
 
 	static String explainMatch(DistributionMatch match) {
-		HasOptionalResult<DistributionMatch, String> explainRules = ExplainRules.<DistributionMatch, PlatformMatch, String>mapIfInstance(PlatformMatch.class,
-				platformMatch -> explainPlatformMatch(platformMatch))
-			.or(mapIfInstance(DistributionMatch.AndThen.class, andThen -> ""+explainMatch(andThen.first())+" and "+explainMatch(andThen.second())))
-			.or(mapIfInstance(DistributionMatch.Any.class, any -> any.matcher().stream().map(ExplainRules::explainMatch).collect(Collectors.joining(" or "))))
-			.or(mapIfInstance(VersionRange.class, versionRange -> explainVersionRange(versionRange)));
-
-		return explainRules.apply(match)
-			.orElseGet(() -> match.getClass().getSimpleName());
+		return forType(DistributionMatch.class)
+			.mapIfInstance(PlatformMatch.class, ExplainRules::explainPlatformMatch)
+			.orMapIfInstance(DistributionMatch.AndThen.class, andThen -> "" + explainMatch(andThen.first()) + " and " + explainMatch(andThen.second()))
+			.orMapIfInstance(DistributionMatch.Any.class, any -> any.matcher().stream().map(ExplainRules::explainMatch).collect(Collectors.joining(" or ")))
+			.orMapIfInstance(VersionRange.class, ExplainRules::explainVersionRange)
+			.orMapIfInstance(DistributionMatch.class, it -> it.getClass().getSimpleName())
+			.apply(match)
+			.get();
 	}
 
 	private static String explainPlatformMatch(PlatformMatch match) {
@@ -62,13 +62,16 @@ public final class ExplainRules {
 	}
 
 	private static void explainFinder(int level, PackageFinder finder) {
+
+		String finderExplained = forType(PackageFinder.class)
+			.mapIfInstance(UrlTemplatePackageResolver.class, it -> "-> "+it.urlTemplate())
+			.orMapIfInstance(PackageFinder.class, it -> it.getClass().getSimpleName())
+			.apply(finder)
+			.get();
+
 		String indent=indent(level);
 		System.out.print(indent);
-		if (finder instanceof UrlTemplatePackageResolver) {
-			System.out.println(" -> "+((UrlTemplatePackageResolver) finder).urlTemplate());
-		} else {
-			System.out.println(finder.getClass().getSimpleName());
-		}
+		System.out.println(finderExplained);
 
 		if (finder instanceof HasPlatformMatchRules) {
 			explain(level+1, ((HasPlatformMatchRules) finder).rules());
@@ -88,14 +91,28 @@ public final class ExplainRules {
 		return String.valueOf(s);
 	}
 
-	interface HasOptionalResult<S, T> extends Function<S, Optional<T>> {
+	public static <S> HasOptionalBuilder<S> forType(Class<S> sourceType) {
+		return new HasOptionalBuilder<>();
+	}
 
-		default HasOptionalResult<S, T> or(HasOptionalResult<S, T> other) {
-			HasOptionalResult<S, T> that = this;
+	static class HasOptionalBuilder<S> {
+		<T extends S,V> HasOptionalResult<S, V> mapIfInstance(Class<T> type, Function<T, V> mapIfTypeMatches) {
+			return ExplainRules.mapIfInstance(type, mapIfTypeMatches);
+		}
+	}
+
+	interface HasOptionalResult<S, V> extends Function<S, Optional<V>> {
+
+		default HasOptionalResult<S, V> or(HasOptionalResult<S, V> other) {
+			HasOptionalResult<S, V> that = this;
 			return s -> {
-				Optional<T> first = that.apply(s);
+				Optional<V> first = that.apply(s);
 				return first.isPresent() ? first : other.apply(s);
 			};
+		}
+
+		default <T extends S> HasOptionalResult<S, V> orMapIfInstance(Class<T> type, Function<T, V> mapIfTypeMatches) {
+			return or(ExplainRules.mapIfInstance(type, mapIfTypeMatches));
 		}
 	}
 

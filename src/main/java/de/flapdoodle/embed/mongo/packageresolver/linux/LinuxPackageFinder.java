@@ -173,24 +173,7 @@ public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules 
 
 		PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux))
-			.finder(distribution -> {
-				if (distribution.platform().distribution().isPresent()) {
-					// only fallback if no linux dist is detected
-					return Optional.empty();
-				}
-
-				Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
-					ImmutablePlatform.copyOf(distribution.platform())
-						.withVersion(UbuntuVersion.Ubuntu_20_04));
-
-				LOGGER.warn("because there is no package for "+distribution+" we fall back to "+ubuntuLTSFallback);
-
-				Optional<DistributionPackage> resolvedPackage = ubuntuPackageResolver.packageFor(ubuntuLTSFallback);
-				if (!resolvedPackage.isPresent()) {
-					throw new IllegalArgumentException("linux distribution not supported: "+distribution+"(with fallback to "+ubuntuLTSFallback+")");
-				}
-				return resolvedPackage;
-			})
+			.finder(new FallbackToUbuntuOrFailPackageFinder(ubuntuPackageResolver))
 			.build();
 
 		return PlatformMatchRules.empty()
@@ -208,4 +191,31 @@ public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules 
 			);
 	}
 
+	static class FallbackToUbuntuOrFailPackageFinder implements PackageFinder {
+		private final UbuntuPackageResolver ubuntuPackageResolver;
+
+		public FallbackToUbuntuOrFailPackageFinder(UbuntuPackageResolver ubuntuPackageResolver) {
+			this.ubuntuPackageResolver = ubuntuPackageResolver;
+		}
+
+		@Override
+		public Optional<DistributionPackage> packageFor(Distribution distribution) {
+			if (distribution.platform().distribution().isPresent()) {
+				// only fallback if no linux dist is detected
+				return Optional.empty();
+			}
+
+			Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
+				ImmutablePlatform.copyOf(distribution.platform())
+					.withVersion(UbuntuVersion.Ubuntu_20_04));
+
+			LOGGER.warn("because there is no package for " + distribution + " we fall back to " + ubuntuLTSFallback);
+
+			Optional<DistributionPackage> resolvedPackage = ubuntuPackageResolver.packageFor(ubuntuLTSFallback);
+			if (!resolvedPackage.isPresent()) {
+				throw new IllegalArgumentException("linux distribution not supported: " + distribution + "(with fallback to " + ubuntuLTSFallback + ")");
+			}
+			return resolvedPackage;
+		}
+	}
 }

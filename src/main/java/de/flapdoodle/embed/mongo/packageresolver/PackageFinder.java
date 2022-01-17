@@ -25,7 +25,6 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public interface PackageFinder {
   Optional<DistributionPackage> packageFor(Distribution distribution);

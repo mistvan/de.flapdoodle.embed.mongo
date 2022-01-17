@@ -34,7 +34,6 @@ import de.flapdoodle.os.OS;
 import de.flapdoodle.os.linux.CentosVersion;
 import de.flapdoodle.os.linux.OracleVersion;
 import de.flapdoodle.os.linux.RedhatVersion;
-import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.Optional;
 

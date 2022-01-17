@@ -20,7 +20,6 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver;
 
-import de.flapdoodle.embed.process.config.store.PackageResolver;
 import org.immutables.value.Value;
 
 @Value.Immutable
