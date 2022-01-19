@@ -202,6 +202,8 @@
 						<exclude>src/etc/**</exclude>
 						<exclude>target/**</exclude>
 						<exclude>.clover/**</exclude>
+						<exclude>src/test/resources/versions/react/*.html</exclude>
+						<exclude>src/test/resources/versions/*.html</exclude>
 					</excludes>
 					<useDefaultExcludes>true</useDefaultExcludes>
 					<!-- <mapping> <jwc>XML_STYLE</jwc> <application>XML_STYLE</application>
