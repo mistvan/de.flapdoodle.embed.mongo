@@ -62,7 +62,7 @@ public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules 
 	public Optional<DistributionPackage> packageFor(Distribution distribution) {
 		return rules.packageFor(distribution);
 	}
-
+	
 	private static ImmutablePlatformMatchRules rules(Command command) {
 		ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 

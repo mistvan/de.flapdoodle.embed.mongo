@@ -82,6 +82,14 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
       List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
       compressedVersionAndUrl(filtered);
     });
+
+    asPlatformRules(versions);
+  }
+
+  private static void asPlatformRules(List<ParsedVersion> versions) {
+    System.out.println("---------------------------");
+    System.out.println("TODO");
+    System.out.println("---------------------------");
   }
 
   private static List<ParsedVersion> mergeAll(List<List<ParsedVersion>> allVersions) {

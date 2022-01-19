@@ -57,6 +57,10 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
             .build();
   }
 
+  private static PlatformMatch match(BitSize bitSize) {
+    return PlatformMatch.withOs(OS.OS_X).withBitSize(bitSize);
+  }
+
   private static ImmutablePlatformMatchRules rules(Command command) {
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.TGZ;
@@ -66,11 +70,10 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
       4.0.26 - 4.0.0, 3.6.22 - 3.6.0
      */
     ImmutablePlatformMatchRule firstRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("4.0.0", "4.0.26"),
                             VersionRange.of("3.6.0", "3.6.22")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -83,13 +86,12 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
       3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.4
      */
     ImmutablePlatformMatchRule secondRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.4.9", "3.4.23"),
                             VersionRange.of("3.4.0", "3.4.7"),
                             VersionRange.of("3.2.0", "3.2.21"),
                             VersionRange.of("3.0.4", "3.0.14")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -102,11 +104,10 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
       3.0.3 - 3.0.0, 2.6.12 - 2.6.0
      */
     ImmutablePlatformMatchRule thirdRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.0.0", "3.0.3"),
                             VersionRange.of("2.6.0", "2.6.12")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -115,11 +116,10 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
             .build();
 
     ImmutablePlatformMatchRule hiddenLegacyRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.3.1", "3.3.1"),
                             VersionRange.of("3.5.5", "3.5.5")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -131,13 +131,12 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
       5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
     */
     ImmutablePlatformMatchRule fourthRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("5.0.0", "5.0.2"),
                             VersionRange.of("4.4.0", "4.4.9"),
                             VersionRange.of("4.2.5", "4.2.16"),
                             VersionRange.of("4.2.0", "4.2.3")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -146,11 +145,10 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
             .build();
 
       ImmutablePlatformMatchRule toolsRule = PlatformMatchRule.builder()
-          .match(DistributionMatch.any(
+          .match(match(BitSize.B64).andThen(DistributionMatch.any(
                   VersionRange.of("5.0.0", "5.0.2"),
                   VersionRange.of("4.4.0", "4.4.9")
-              )
-              .andThen(PlatformMatch.withOs(OS.OS_X).withBitSize(BitSize.B64)))
+              )))
           .finder(UrlTemplatePackageResolver.builder()
               .fileSet(fileSet)
               .archiveType(archiveType)

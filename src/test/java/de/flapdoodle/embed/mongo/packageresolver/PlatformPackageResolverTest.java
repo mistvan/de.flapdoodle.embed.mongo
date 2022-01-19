@@ -20,13 +20,18 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver;
 
+import com.google.common.io.Resources;
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.TestUtils;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.os.CommonArchitecture;
 import de.flapdoodle.os.OS;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.util.URLs;
 import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,9 +58,9 @@ class PlatformPackageResolverTest {
   }
 
   @Test
-  public void explain() {
-    String explained = testee.explain();
-    System.out.println(explained);
+  public void explainSnapshotMustNotChangeWithoutNotice() {
+    Assertions.assertThat(testee.explain())
+      .isEqualToIgnoringNewLines(URLs.contentOf(Resources.getResource(PlatformPackageResolverTest.class,"explainedSnapshot.txt"), StandardCharsets.UTF_8));
   }
 
   private WithDistributionPackage assertThatDistributionPackageFor(Version version, OS os, CommonArchitecture architecture) {

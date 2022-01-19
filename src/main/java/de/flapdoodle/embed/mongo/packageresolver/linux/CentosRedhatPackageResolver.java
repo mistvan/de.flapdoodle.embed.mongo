@@ -31,6 +31,7 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.Version;
 import de.flapdoodle.os.linux.CentosVersion;
 import de.flapdoodle.os.linux.OracleVersion;
 import de.flapdoodle.os.linux.RedhatVersion;
@@ -57,10 +58,11 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
     return rules.packageFor(distribution);
   }
 
-  /*
-  -----------------------------------
+	private static PlatformMatch match(BitSize bitSize, CPUType cpuType, Version... versions) {
+		return PlatformMatch.withOs(OS.Linux).withBitSize(bitSize).withCpuType(cpuType)
+			.withVersion(versions);
+	}
 
-     */
   private static ImmutablePlatformMatchRules rules(Command command) {
     ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
@@ -72,7 +74,8 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
     */
 		PlatformMatchRule centos6 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(match(BitSize.B64, CPUType.X86,
+				CentosVersion.CentOS_6, RedhatVersion.Redhat_6, OracleVersion.Oracle_6).andThen(DistributionMatch.any(
 						VersionRange.of("4.4.0", "4.4.9"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
@@ -82,16 +85,7 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 						VersionRange.of("3.4.0", "3.4.7"),
 						VersionRange.of("3.2.0", "3.2.21"),
 						VersionRange.of("3.0.0", "3.0.14")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(
-							CentosVersion.CentOS_6, RedhatVersion.Redhat_6, OracleVersion.Oracle_6
-						)
-					)
-			)
+					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -100,7 +94,9 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			.build();
 
 		PlatformMatchRule tools_centos6 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(match(BitSize.B64, CPUType.X86,
+					CentosVersion.CentOS_6, RedhatVersion.Redhat_6, OracleVersion.Oracle_6
+				).andThen(DistributionMatch.any(
 						VersionRange.of("4.4.0", "4.4.9"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
@@ -110,16 +106,7 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 						VersionRange.of("3.4.0", "3.4.7"),
 						VersionRange.of("3.2.0", "3.2.21"),
 						VersionRange.of("3.0.0", "3.0.14")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(
-							CentosVersion.CentOS_6, RedhatVersion.Redhat_6, OracleVersion.Oracle_6
-						)
-					)
-			)
+					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -136,7 +123,9 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
     */
 		PlatformMatchRule centos7 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(match(BitSize.B64, CPUType.X86,
+					CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
+				).andThen(DistributionMatch.any(
 						VersionRange.of("5.0.0", "5.0.2"),
 						VersionRange.of("4.4.0", "4.4.9"),
 						VersionRange.of("4.2.5", "4.2.16"),
@@ -147,16 +136,7 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 						VersionRange.of("3.4.0", "3.4.7"),
 						VersionRange.of("3.2.0", "3.2.21"),
 						VersionRange.of("3.0.0", "3.0.14")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(
-							CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
-						)
-					)
-			)
+					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -165,7 +145,9 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			.build();
 
 		PlatformMatchRule tools_centos7 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(match(BitSize.B64, CPUType.X86,
+					CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
+				).andThen(DistributionMatch.any(
 						VersionRange.of("5.0.0", "5.0.2"),
 						VersionRange.of("4.4.0", "4.4.9"),
 						VersionRange.of("4.2.5", "4.2.16"),
@@ -176,16 +158,7 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 						VersionRange.of("3.4.0", "3.4.7"),
 						VersionRange.of("3.2.0", "3.2.21"),
 						VersionRange.of("3.0.0", "3.0.14")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(
-							CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
-						)
-					)
-			)
+					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -202,23 +175,16 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.1, 4.0.26 - 4.0.14, 3.6.22 - 3.6.17
     */
 		PlatformMatchRule centos8 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(match(BitSize.B64, CPUType.X86,
+					CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
+				).andThen(DistributionMatch.any(
 						VersionRange.of("5.0.0", "5.0.2"),
 						VersionRange.of("4.4.0", "4.4.9"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.1", "4.2.3"),
 						VersionRange.of("4.0.14", "4.0.26"),
 						VersionRange.of("3.6.17", "3.6.22")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(
-							CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
-						)
-					)
-			)
+					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -227,23 +193,16 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			.build();
 
 		PlatformMatchRule tools_centos8 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(match(BitSize.B64, CPUType.X86,
+					CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
+				).andThen(DistributionMatch.any(
 						VersionRange.of("5.0.0", "5.0.2"),
 						VersionRange.of("4.4.0", "4.4.9"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.1", "4.2.3"),
 						VersionRange.of("4.0.14", "4.0.26"),
 						VersionRange.of("3.6.17", "3.6.22")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(
-							CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
-						)
-					)
-			)
+					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -260,19 +219,12 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			5.0.2 - 5.0.0, 4.4.9 - 4.4.4
     */
 			PlatformMatchRule centos8arm = PlatformMatchRule.builder()
-					.match(DistributionMatch.any(
+					.match(match(BitSize.B64, CPUType.ARM,
+							CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
+						).andThen(DistributionMatch.any(
 											VersionRange.of("5.0.0", "5.0.2"),
 											VersionRange.of("4.4.0", "4.4.9")
-									)
-									.andThen(PlatformMatch
-											.withOs(OS.Linux)
-											.withBitSize(BitSize.B64)
-											.withCpuType(CPUType.ARM)
-											.withVersion(
-													CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
-											)
-									)
-					)
+									)))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
@@ -281,19 +233,12 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 					.build();
 
 			PlatformMatchRule tools_centos8arm = PlatformMatchRule.builder()
-					.match(DistributionMatch.any(
+					.match(match(BitSize.B64, CPUType.ARM,
+							CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
+						).andThen(DistributionMatch.any(
 											VersionRange.of("5.0.0", "5.0.2"),
 											VersionRange.of("4.4.0", "4.4.9")
-									)
-									.andThen(PlatformMatch
-											.withOs(OS.Linux)
-											.withBitSize(BitSize.B64)
-											.withCpuType(CPUType.ARM)
-											.withVersion(
-												CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
-											)
-									)
-					)
+									)))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)

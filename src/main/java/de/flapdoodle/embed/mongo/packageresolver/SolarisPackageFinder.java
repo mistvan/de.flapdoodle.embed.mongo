@@ -57,6 +57,10 @@ public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRule
             .build();
   }
 
+  private static PlatformMatch match(BitSize bitSize) {
+    return PlatformMatch.withOs(OS.Solaris).withBitSize(bitSize);
+  }
+
   private static PlatformMatchRules rules(Command command) {
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.TGZ;
@@ -67,13 +71,12 @@ public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRule
       3.4.5 - 3.4.0, 3.2.14 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
      */
     ImmutablePlatformMatchRule firstRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.4.0", "3.4.5"),
                             VersionRange.of("3.2.0", "3.2.14"),
                             VersionRange.of("3.0.0", "3.0.14"),
                             VersionRange.of("2.6.0", "2.6.12")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Solaris).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -82,11 +85,10 @@ public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRule
             .build();
 
     ImmutablePlatformMatchRule hiddenLegacyRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.3.1", "3.3.1"),
                             VersionRange.of("3.5.5", "3.5.5")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Solaris).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)

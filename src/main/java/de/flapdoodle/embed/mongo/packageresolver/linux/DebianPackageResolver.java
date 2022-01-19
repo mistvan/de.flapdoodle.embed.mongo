@@ -53,7 +53,12 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
         return rules.packageFor(distribution);
     }
 
-    private static ImmutablePlatformMatchRules rules(final Command command) {
+  private static PlatformMatch match(BitSize bitSize, CPUType cpuType, DebianVersion... versions) {
+    return PlatformMatch.withOs(OS.Linux).withBitSize(bitSize).withCpuType(cpuType)
+      .withVersion(versions);
+  }
+
+  private static ImmutablePlatformMatchRules rules(final Command command) {
         final ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
     /*
@@ -62,14 +67,8 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
       3.6.23 - 5.0.4
      */
         final PlatformMatchRule debian9 = PlatformMatchRule.builder()
-                .match(DistributionMatch.any(VersionRange.of("3.6.23", "5.0.4"))
-                        .andThen(PlatformMatch
-                                .withOs(OS.Linux)
-                                .withBitSize(BitSize.B64)
-                                .withCpuType(CPUType.X86)
-                                .withVersion(DebianVersion.DEBIAN_9)
-                        )
-                )
+                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_9)
+                  .andThen(DistributionMatch.any(VersionRange.of("3.6.23", "5.0.4")))                )
                 .finder(UrlTemplatePackageResolver.builder()
                         .fileSet(fileSet)
                         .archiveType(ArchiveType.TGZ)
@@ -78,12 +77,7 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
                 .build();
 
         final PlatformMatchRule debian9tools = PlatformMatchRule.builder()
-                .match(DistributionMatch.any(VersionRange.of("3.6.23", "5.0.4"))
-                        .andThen(PlatformMatch
-                                .withOs(OS.Linux)
-                                .withBitSize(BitSize.B64)
-                                .withCpuType(CPUType.X86)
-                                .withVersion(DebianVersion.DEBIAN_9)
+                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_9).andThen(DistributionMatch.any(VersionRange.of("3.6.23", "5.0.4"))
                         )
                 )
                 .finder(UrlTemplatePackageResolver.builder()
@@ -99,12 +93,7 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
       4.2.13 - 5.0.4
      */
         final PlatformMatchRule debian10 = PlatformMatchRule.builder()
-                .match(DistributionMatch.any(VersionRange.of("4.2.13", "5.0.4"))
-                        .andThen(PlatformMatch
-                                .withOs(OS.Linux)
-                                .withBitSize(BitSize.B64)
-                                .withCpuType(CPUType.X86)
-                                .withVersion(DebianVersion.DEBIAN_10)
+                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10).andThen(DistributionMatch.any(VersionRange.of("4.2.13", "5.0.4"))
                         )
                 )
                 .finder(UrlTemplatePackageResolver.builder()
@@ -115,12 +104,7 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
                 .build();
 
         final PlatformMatchRule debian10tools = PlatformMatchRule.builder()
-                .match(DistributionMatch.any(VersionRange.of("4.2.13", "5.0.4"))
-                        .andThen(PlatformMatch
-                                .withOs(OS.Linux)
-                                .withBitSize(BitSize.B64)
-                                .withCpuType(CPUType.X86)
-                                .withVersion(DebianVersion.DEBIAN_10)
+                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10).andThen(DistributionMatch.any(VersionRange.of("4.2.13", "5.0.4"))
                         )
                 )
                 .finder(UrlTemplatePackageResolver.builder()
