@@ -29,7 +29,7 @@ import java.util.function.Function;
 public interface PackageFinder {
   Optional<DistributionPackage> packageFor(Distribution distribution);
 
-  class FailWithMessage implements PackageFinder {
+  class FailWithMessage implements PackageFinder, HasExplanation {
 
     private final Function<Distribution, String> messageFactory;
 
@@ -39,6 +39,11 @@ public interface PackageFinder {
 
     @Override public Optional<DistributionPackage> packageFor(Distribution distribution) {
       throw new IllegalArgumentException(messageFactory.apply(distribution));
+    }
+
+    @Override
+    public String explain() {
+      return "fail";
     }
   }
 

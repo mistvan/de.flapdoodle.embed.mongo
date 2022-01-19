@@ -66,7 +66,7 @@ public class PlatformPackageResolver implements PackageResolver, HasPlatformMatc
     return rules;
   }
 
-  public void explain() {
-    ExplainRules.explain(this.rules);
+  public String explain() {
+    return ExplainRules.explain(this.rules);
   }
 }

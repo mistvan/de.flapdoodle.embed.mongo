@@ -31,7 +31,7 @@ import org.immutables.value.Value;
 import java.util.Optional;
 
 @Value.Immutable
-public abstract class UrlTemplatePackageResolver implements PackageFinder {
+public abstract class UrlTemplatePackageResolver implements PackageFinder, HasExplanation {
 
   protected abstract ArchiveType archiveType();
   protected abstract FileSet fileSet();
@@ -41,6 +41,12 @@ public abstract class UrlTemplatePackageResolver implements PackageFinder {
   public Optional<DistributionPackage> packageFor(Distribution distribution) {
     String path=render(urlTemplate(), distribution);
     return Optional.of(DistributionPackage.of(archiveType(), fileSet(), path));
+  }
+
+  @Value.Auxiliary
+  @Override
+  public String explain() {
+    return "url="+urlTemplate();
   }
 
   private static String render(String urlTemplate, Distribution distribution) {

@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver.linux;
 
+import de.flapdoodle.embed.mongo.packageresolver.HasExplanation;
 import de.flapdoodle.embed.mongo.packageresolver.PackageFinder;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformMatch;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
@@ -28,10 +29,14 @@ import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Version;
 import de.flapdoodle.os.linux.LinuxMintVersion;
+import de.flapdoodle.os.linux.UbuntuVersion;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class LinuxMintPackageResolver implements PackageFinder {
+public class LinuxMintPackageResolver implements PackageFinder, HasExplanation {
 
 	private final UbuntuPackageResolver ubuntuPackageResolver;
 
@@ -54,5 +59,19 @@ public class LinuxMintPackageResolver implements PackageFinder {
 		}
 
 		return Optional.empty();
+	}
+
+	@Override
+	public String explain() {
+		List<UbuntuVersion> ubuntuVersions = Arrays.stream(LinuxMintVersion.values()).map(LinuxMintVersion::matchingUbuntuVersion)
+			.distinct()
+			.collect(Collectors.toList());
+
+		return ubuntuVersions.stream()
+			.map(uv -> Arrays.stream(LinuxMintVersion.values())
+				.filter(v -> v.matchingUbuntuVersion() == uv)
+				.map(LinuxMintVersion::name)
+				.collect(Collectors.joining(", ", "" + uv.name() + " for ", "")))
+			.collect(Collectors.joining(" and ", "use ", ""));
 	}
 }

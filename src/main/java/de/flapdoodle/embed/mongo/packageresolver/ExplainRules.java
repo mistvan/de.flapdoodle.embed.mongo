@@ -1,8 +1,13 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.distribution.NumericVersion;
+import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxMintPackageResolver;
+import de.flapdoodle.embed.mongo.packageresolver.linux.LinuxPackageFinder;
+import de.flapdoodle.os.linux.LinuxMintVersion;
+import de.flapdoodle.os.linux.UbuntuVersion;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -13,18 +18,63 @@ public final class ExplainRules {
 		// no instance
 	}
 
-	public static void explain(PlatformMatchRules rules) {
-		explain(0, rules);
+	private static class Output {
+		private final StringBuilder sb=new StringBuilder();
+		private final String NEW_LINE=System.lineSeparator();
+
+		public String asString() {
+			return sb.toString();
+		}
+
+		public Context root() {
+			return new Context(0);
+		}
+
+		class Context {
+
+			private final int level;
+
+			public Context(int level) {
+				this.level = level;
+			}
+
+			public Context oneDeeper() {
+				return new Context(level+1);
+			}
+
+			public void matching(String explainMatch) {
+				sb.append(indent(level)).append(explainMatch).append(NEW_LINE);
+			}
+
+			public void finder(String finderExplained) {
+				sb.append(indent(level+1)).append(finderExplained).append(NEW_LINE);
+			}
+		}
 	}
 
-	static void explain(int level, PlatformMatchRules rules) {
-		String indent=indent(level);
+	static String explain(PlatformMatchRules rules) {
+		Output output = new Output();
+		explain(output.root(), rules);
+		return output.asString();
+	}
+
+	static void explain(Output.Context context, PlatformMatchRules rules) {
 		rules.rules().forEach(rule -> {
-			String explained = explainMatch(rule.match());
-			System.out.print(indent);
-			System.out.println("matching "+explained);
-			explainFinder(level, rule.finder());
+			context.matching(explainMatch(rule.match()));
+			PackageFinder finder = rule.finder();
+
+			if (finder instanceof HasPlatformMatchRules) {
+				explain(context.oneDeeper(), ((HasPlatformMatchRules) finder).rules());
+			} else {
+				context.finder(packageFinderName(finder));
+			}
 		});
+	}
+
+	private static String packageFinderName(PackageFinder packageFinder) {
+		return packageFinder instanceof HasExplanation
+			? ((HasExplanation) packageFinder).explain()
+			: packageFinder.getClass().getSimpleName();
 	}
 
 	static String explainMatch(DistributionMatch match) {
@@ -45,7 +95,7 @@ public final class ExplainRules {
 
 		if (!match.version().isEmpty()) {
 			parts.add(match.version().stream().map(version -> ""+version)
-				.collect(Collectors.joining(",", "(version is any of", ")")));
+				.collect(Collectors.joining(", ", "(version is any of ", ")")));
 		}
 
 		return !parts.isEmpty()
@@ -59,24 +109,6 @@ public final class ExplainRules {
 
 	private static String asHumanReadable(NumericVersion version) {
 		return version.major()+"."+version.minor()+"."+version.patch();
-	}
-
-	private static void explainFinder(int level, PackageFinder finder) {
-
-		String finderExplained = forType(PackageFinder.class)
-			.mapIfInstance(UrlTemplatePackageResolver.class, it -> "-> "+it.urlTemplate())
-			.orMapIfInstance(PackageFinder.class, it -> it.getClass().getSimpleName())
-			.apply(finder)
-			.get();
-
-		String indent=indent(level);
-		System.out.print(indent);
-		System.out.println(finderExplained);
-
-		if (finder instanceof HasPlatformMatchRules) {
-			explain(level+1, ((HasPlatformMatchRules) finder).rules());
-		} else {
-		}
 	}
 
 	private static String indent(int level) {

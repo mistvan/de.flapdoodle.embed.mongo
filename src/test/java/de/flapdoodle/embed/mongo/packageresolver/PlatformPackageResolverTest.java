@@ -54,7 +54,8 @@ class PlatformPackageResolverTest {
 
   @Test
   public void explain() {
-    testee.explain();
+    String explained = testee.explain();
+    System.out.println(explained);
   }
 
   private WithDistributionPackage assertThatDistributionPackageFor(Version version, OS os, CommonArchitecture architecture) {
