@@ -204,6 +204,7 @@
 						<exclude>.clover/**</exclude>
 						<exclude>src/test/resources/versions/react/*.html</exclude>
 						<exclude>src/test/resources/versions/*.html</exclude>
+						<exclude>src/test/resources/**/explainedSnapshot.txt</exclude>
 					</excludes>
 					<useDefaultExcludes>true</useDefaultExcludes>
 					<!-- <mapping> <jwc>XML_STYLE</jwc> <application>XML_STYLE</application>
