@@ -51,14 +51,20 @@ public class PlatformPackageResolver implements PackageResolver, HasPlatformMatc
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Windows), new WindowsPackageFinder(command)))
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.OS_X), new OSXPackageFinder(command)))
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Linux), new LinuxPackageFinder(command)))
-        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Solaris), new SolarisPackageFinder(command)))
-        .with(PlatformMatchRule.of(PlatformMatch.any(), PackageFinder.failWithMessage(distribution -> "could not resolve package for " + distribution)));
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Solaris), new SolarisPackageFinder(command)));
   }
 
   @Override
   public DistributionPackage packageFor(Distribution distribution) {
     Optional<DistributionPackage> result = rules.packageFor(distribution);
-    return result.orElseThrow(() -> new IllegalArgumentException("could not resolve package for "+distribution));
+    return result.orElseThrow(() -> {
+
+      String message = "could not resolve package for " + distribution + System.lineSeparator() +
+        "--------------" + System.lineSeparator() +
+        explain();
+      
+      return new IllegalArgumentException(message);
+    });
   }
 
   @Override
