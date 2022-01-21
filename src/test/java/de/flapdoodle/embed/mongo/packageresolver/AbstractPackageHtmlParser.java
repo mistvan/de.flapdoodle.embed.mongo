@@ -22,16 +22,21 @@ package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.distribution.NumericVersion;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class AbstractPackageHtmlParser {
 
 	static Set<String> namesOf(List<ParsedVersion> versions) {
-		return versions.stream().flatMap(it -> it.dists.stream().map(dist -> dist.name)).collect(Collectors.toSet());
+		return versions.stream()
+			.flatMap(it -> it.dists.stream().map(dist -> dist.name))
+			.sorted(Comparator.naturalOrder())
+			.collect(Collectors.toCollection(LinkedHashSet::new));
+	}
+
+	static List<ParsedVersion> filterByName(List<ParsedVersion> versions, String name) {
+		return filter(versions, it -> it.name.equals(name));
 	}
 
 	static void versionAndUrl(List<ParsedVersion> versions) {
@@ -51,6 +56,36 @@ public abstract class AbstractPackageHtmlParser {
 	}
 
 	static void compressedVersionAndUrl(List<ParsedVersion> versions) {
+		Map<String, List<ParsedVersion>> groupedByVersionLessUrl = groupByVersionLessUrl(
+			versions);
+
+		groupedByVersionLessUrl.forEach((url, versionList) -> {
+			System.out.println(url.isEmpty() ? "--" : url);
+			//String versionNumbers = versionList.stream().map(it -> it.version).collect(Collectors.joining(", "));
+			List<String> versionNumbers = versionNumbers(versionList);
+
+			String compressedVersions = compressedVersionAsString(versionNumbers);
+
+			System.out.println(compressedVersions);
+		});
+	}
+
+	private static String compressedVersionAsString(List<String> versionNumbers) {
+		String compressedVersions = compressedVersionsList(versionNumbers)
+			.stream()
+			.sorted(Comparator.comparing(VersionRange::min).reversed())
+			.map(r -> r.min().equals(r.max())
+				? asString(r.min())
+				: asString(r.max()) + " - " + asString(r.min()))
+			.collect(Collectors.joining(", "));
+		return compressedVersions;
+	}
+
+	static List<String> versionNumbers(List<ParsedVersion> versions) {
+		return versions.stream().map(it -> it.version).collect(Collectors.toList());
+	}
+
+	static Map<String, List<ParsedVersion>> groupByVersionLessUrl(List<ParsedVersion> versions) {
 		Map<String, List<ParsedVersion>> groupedByVersionLessUrl = versions.stream()
 			.sorted()
 			.collect(Collectors.groupingBy(version -> {
@@ -64,35 +99,33 @@ public abstract class AbstractPackageHtmlParser {
 
 				return versionLessUrl;
 			}));
-
-		groupedByVersionLessUrl.forEach((url, versionList) -> {
-			System.out.println(url.isEmpty() ? "--" : url);
-			//String versionNumbers = versionList.stream().map(it -> it.version).collect(Collectors.joining(", "));
-			List<String> versionNumbers = versionList.stream().map(it -> it.version).collect(Collectors.toList());
-			System.out.println(compressedVersions(versionNumbers));
-		});
+		return groupedByVersionLessUrl;
 	}
 
-	static String compressedVersions(List<String> numericVersions) {
-		List<NumericVersion> versions = numericVersions.stream().map(it -> NumericVersion.of(it)).collect(Collectors.toList());
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0, versionsSize = versions.size(); i < versionsSize; i++) {
-			NumericVersion version = versions.get(i);
-			if (i > 0) {
-				NumericVersion prev = versions.get(i - 1);
-				boolean isLast = (i + 1) == versionsSize;
-				if (version.isNextOrPrevPatch(prev)) {
-					if (isLast) {
-						sb.append(" - ").append(asString(version));
+	static List<VersionRange> compressedVersionsList(List<String> numericVersions) {
+		List<NumericVersion> versions = numericVersions.stream().map(NumericVersion::of)
+			.sorted()
+			.collect(Collectors.toList());
+
+		List<VersionRange> ranges = new ArrayList<>();
+		if (!versions.isEmpty()) {
+			int start=0;
+			while (start<versions.size()) {
+				NumericVersion min=versions.get(start);
+				NumericVersion max=min;
+				int maxFoundAt=start;
+				for (int i=start+1;i<versions.size();i++) {
+					NumericVersion current=versions.get(i);
+					if (current.isNextOrPrevPatch(max)) {
+						max=current;
+						maxFoundAt=i;
 					}
-				} else {
-					sb.append(" - ").append(asString(prev)).append(", ").append(asString(version));
 				}
-			} else {
-				sb.append(asString(version));
+				ranges.add(VersionRange.of(min, max));
+				start=maxFoundAt+1;
 			}
 		}
-		return sb.toString();
+		return ranges;
 	}
 
 	static String asString(NumericVersion version) {

@@ -21,6 +21,9 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import com.google.common.io.Resources;
+import de.flapdoodle.embed.process.config.store.DistributionPackage;
+import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.os.OS;
 import de.flapdoodle.types.ThrowingSupplier;
 import de.flapdoodle.types.Try;
 import org.jsoup.Jsoup;
@@ -57,16 +60,12 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
 //    List<ParsedVersion> versions = parse(Jsoup.parse(Resources.toString(Resources.getResource("versions/react/mongo-db-versions-2021-10-28.html"), StandardCharsets.UTF_8)));
 
 //    dump(versions);
-    List<String> names = namesOf(versions)
-            .stream()
-//            .filter(name -> supported(name))
-            .sorted(Comparator.naturalOrder())
-            .collect(Collectors.toList());
+    Set<String> names = namesOf(versions);
 //    List<ParsedVersion> filtered = filter(versions, it -> it.name.contains("indows"));
     names.forEach(name -> {
       System.out.println("-----------------------------------");
       System.out.println(name);
-      List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
+      List<ParsedVersion> filtered = filterByName(versions, name);
       versionAndUrl(filtered);
     });
 
@@ -79,7 +78,7 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
     names.forEach(name -> {
       System.out.println("-----------------------------------");
       System.out.println(name);
-      List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
+      List<ParsedVersion> filtered = filterByName(versions, name);
       compressedVersionAndUrl(filtered);
     });
 
@@ -87,9 +86,100 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
   }
 
   private static void asPlatformRules(List<ParsedVersion> versions) {
-    System.out.println("---------------------------");
-    System.out.println("TODO");
-    System.out.println("---------------------------");
+    if (true) {
+      PlatformMatchRules rules = asRules(versions);
+      String explainedRules = ExplainRules.explain(rules);
+      System.out.println("---------------------------");
+      System.out.println(explainedRules);
+      System.out.println("---------------------------");
+    }
+  }
+
+  private static PlatformMatchRules asRules(List<ParsedVersion> versions) {
+    Arrays.stream(OS.values()).forEach(os -> {
+      System.out.println("os -> "+os);
+      os.distributions().forEach(dist -> {
+        System.out.println(" -> "+dist);
+        dist.versions().forEach(version -> {
+          System.out.println("  -> "+version);
+        });
+      });
+    });
+    //Arrays.stream(OS.values()).map(PlatformMatchRule.)
+    ImmutablePlatformMatchRules.Builder builder = PlatformMatchRules.builder();
+    for (OS os : OS.values()) {
+      builder.addRules(PlatformMatchRule.of(PlatformMatch.withOs(os), packageFinderForOs(os, versions)));
+    }
+    return builder.build();
+  }
+
+  private static PackageFinder packageFinderForOs(OS os, List<ParsedVersion> versions) {
+//    versions.forEach(v -> v.dists.forEach(d -> System.out.println(" dist "+d.name)));
+
+    List<ParsedVersion> versionsForOs = versions.stream()
+      .filter(v -> v.dists.stream().anyMatch(dist -> distMatchesOs(dist, os)))
+      .collect(Collectors.toList());
+
+    List<VersionRange> ranges = compressedVersionsList(versionNumbers(versionsForOs));
+
+    if (os.distributions().isEmpty()) {
+      return new NestedRulesPackageFinderHack(groupByPlatformAndBitSize(os, versionsForOs));
+    } else {
+
+    }
+    
+    return new PackageFinder() {
+      @Override public Optional<DistributionPackage> packageFor(Distribution distribution) {
+        return Optional.empty();
+      }
+    };
+  }
+
+  private static PlatformMatchRules groupByPlatformAndBitSize(OS os, List<ParsedVersion> versions) {
+    Map<String, List<ParsedVersion>> groupedByUrl = groupByVersionLessUrl(versions);
+
+    groupedByUrl.forEach((url, list) -> System.out.println("url: "+url));
+
+    ImmutablePlatformMatchRules.Builder builder = PlatformMatchRules.builder();
+    versions.forEach(v -> {
+
+//      builder.addRules(PlatformMatchRule.of(PlatformMatch.withOs(os)
+//        .andThen(VersionRange.of(v.version, v.version)), UrlTemplatePackageResolver.builder()
+//          .urlTemplate(v.)
+//        .build()));
+    });
+    return builder.build();
+  }
+
+  private static boolean distMatchesOs(ParsedDist dist, OS os) {
+    switch (os) {
+      case Windows:
+        return dist.name.contains("indows");
+      case OS_X:
+        return dist.name.contains("maxOS");
+      case Linux:
+        return dist.name.contains("Debian");
+    }
+    return false;
+  }
+
+  static class NestedRulesPackageFinderHack implements PackageFinder, HasPlatformMatchRules {
+
+    private final PlatformMatchRules rules;
+
+    public NestedRulesPackageFinderHack(PlatformMatchRules rules) {
+      this.rules = rules;
+    }
+
+    @Override
+    public Optional<DistributionPackage> packageFor(Distribution distribution) {
+      return rules.packageFor(distribution);
+    }
+
+    @Override
+    public PlatformMatchRules rules() {
+      return rules;
+    }
   }
 
   private static List<ParsedVersion> mergeAll(List<List<ParsedVersion>> allVersions) {
@@ -176,23 +266,5 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
       }
     }
     return versions;
-  }
-
-  private static boolean supported(String name) {
-    switch (name) {
-      case "Amazon Linux 2 ARM 64":
-      case "Amazon Linux 2 x64":
-      case "Amazon Linux x64":
-        return false;
-        
-      case "Debian 10.0 x64":
-      case "Debian 7.1 x64":
-      case "Debian 8.1 x64":
-      case "Debian 9.2 x64":
-        return false;
-    }
-    if (name.startsWith("RedHat")) return false;
-    if (name.startsWith("SUSE")) return false;
-    return true;
   }
 }

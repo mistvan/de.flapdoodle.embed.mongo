@@ -28,7 +28,7 @@ public interface PlatformMatchRule {
   DistributionMatch match();
   PackageFinder finder();
 
-  static PlatformMatchRule of(PlatformMatch match, PackageFinder finder) {
+  static PlatformMatchRule of(DistributionMatch match, PackageFinder finder) {
     return builder()
             .match(match)
             .finder(finder)

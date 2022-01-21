@@ -32,7 +32,10 @@ public abstract class PlatformMatchRules {
   abstract List<PlatformMatchRule> rules();
 
   public ImmutablePlatformMatchRules with(PlatformMatchRule rule) {
-    return ImmutablePlatformMatchRules.builder().rules(rules()).addRules(rule).build();
+    return builder()
+      .rules(rules())
+      .addRules(rule)
+      .build();
   }
 
   @Value.Auxiliary
@@ -50,6 +53,10 @@ public abstract class PlatformMatchRules {
 
 
   public static ImmutablePlatformMatchRules empty() {
-    return ImmutablePlatformMatchRules.builder().build();
+    return builder().build();
+  }
+
+  public static ImmutablePlatformMatchRules.Builder builder() {
+    return ImmutablePlatformMatchRules.builder();
   }
 }
