@@ -20,10 +20,19 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.io.Resources;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.os.BitSize;
+import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.Version;
+import de.flapdoodle.os.linux.AmazonVersion;
+import de.flapdoodle.os.linux.CentosVersion;
+import de.flapdoodle.os.linux.DebianVersion;
+import de.flapdoodle.os.linux.UbuntuVersion;
 import de.flapdoodle.types.ThrowingSupplier;
 import de.flapdoodle.types.Try;
 import org.jsoup.Jsoup;
@@ -35,6 +44,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,17 +65,19 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
       .map(MongoPackageHtmlPageParser::parse)
       .collect(Collectors.toList());
 
-    List<ParsedVersion> versions = mergeAll(allVersions);
+    //List<ParsedVersion> versions = mergeAll(allVersions);
+
+    ParsedVersions versions = new ParsedVersions(mergeAll(allVersions));
 
 //    List<ParsedVersion> versions = parse(Jsoup.parse(Resources.toString(Resources.getResource("versions/react/mongo-db-versions-2021-10-28.html"), StandardCharsets.UTF_8)));
 
 //    dump(versions);
-    Set<String> names = namesOf(versions);
+    Set<String> names = versions.names();
 //    List<ParsedVersion> filtered = filter(versions, it -> it.name.contains("indows"));
     names.forEach(name -> {
       System.out.println("-----------------------------------");
       System.out.println(name);
-      List<ParsedVersion> filtered = filterByName(versions, name);
+      ParsedVersions filtered = versions.filterByName(name);
       versionAndUrl(filtered);
     });
 
@@ -78,150 +90,161 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
     names.forEach(name -> {
       System.out.println("-----------------------------------");
       System.out.println(name);
-      List<ParsedVersion> filtered = filterByName(versions, name);
+      ParsedVersions filtered = versions.filterByName(name);
       compressedVersionAndUrl(filtered);
     });
 
     asPlatformRules(versions);
   }
 
-  private static void asPlatformRules(List<ParsedVersion> versions) {
-    if (true) {
-      PlatformMatchRules rules = asRules(versions);
-      String explainedRules = ExplainRules.explain(rules);
-      System.out.println("---------------------------");
-      System.out.println(explainedRules);
-      System.out.println("---------------------------");
-    }
-  }
+  private static void asPlatformRules(ParsedVersions versions) {
+    System.out.println();
+    System.out.println();
+    System.out.println("- - - 8<- - - - - - - - ");
+    List<PlatformVersions> byPlatform = versions.groupedByPlatform();
 
-  private static PlatformMatchRules asRules(List<ParsedVersion> versions) {
-    Arrays.stream(OS.values()).forEach(os -> {
-      System.out.println("os -> "+os);
-      os.distributions().forEach(dist -> {
-        System.out.println(" -> "+dist);
-        dist.versions().forEach(version -> {
-          System.out.println("  -> "+version);
-        });
+//    byPlatform.forEach(platformVersions -> {
+//      System.out.println("----------------------------");
+//      System.out.println(platformVersions.name());
+//      platformVersions.urlAndVersions().forEach(urlAndVersions -> {
+//        System.out.println("--");
+//        System.out.println(urlAndVersions.url());
+//        urlAndVersions.versions().forEach(v -> System.out.print(v+", "));
+//        System.out.println();
+//      });
+//    });
+    ImmutableListMultimap<PlatformMatch, List<UrlAndVersions>> asPlatformMatchMap = byPlatform.stream()
+      .map(entry -> new Tuple<>(asPlatformMatch(entry.name()), entry.urlAndVersions()))
+      .filter(tuple -> tuple.a().isPresent())
+      .collect(ImmutableListMultimap.toImmutableListMultimap(tuple -> tuple.a().get(), tuple -> tuple.b()));
+
+    asPlatformMatchMap.forEach((match, urlAndVersions) -> {
+      System.out.println(ExplainRules.explainPlatformMatch(match));
+      urlAndVersions.forEach(urlAndVersion -> {
+        System.out.println(urlAndVersion.url()+": "+urlAndVersion.versions());
       });
     });
-    //Arrays.stream(OS.values()).map(PlatformMatchRule.)
-    ImmutablePlatformMatchRules.Builder builder = PlatformMatchRules.builder();
-    for (OS os : OS.values()) {
-      builder.addRules(PlatformMatchRule.of(PlatformMatch.withOs(os), packageFinderForOs(os, versions)));
+
+  }
+  private static Optional<PlatformMatch> asPlatformMatch(String name) {
+    Optional<OS> os=Optional.empty();
+    Optional<BitSize> bitsize=Optional.empty();
+    Optional<CPUType> cpuType=Optional.empty();
+    Optional<Version> versions=Optional.empty();
+
+    if (name.contains("ARM")) {
+      cpuType=Optional.of(CPUType.ARM);
     }
-    return builder.build();
-  }
-
-  private static PackageFinder packageFinderForOs(OS os, List<ParsedVersion> versions) {
-//    versions.forEach(v -> v.dists.forEach(d -> System.out.println(" dist "+d.name)));
-
-    List<ParsedVersion> versionsForOs = versions.stream()
-      .filter(v -> v.dists.stream().anyMatch(dist -> distMatchesOs(dist, os)))
-      .collect(Collectors.toList());
-
-    List<VersionRange> ranges = compressedVersionsList(versionNumbers(versionsForOs));
-
-    if (os.distributions().isEmpty()) {
-      return new NestedRulesPackageFinderHack(groupByPlatformAndBitSize(os, versionsForOs));
-    } else {
-
+    if (name.contains("64")) {
+      bitsize=Optional.of(BitSize.B64);
     }
-    
-    return new PackageFinder() {
-      @Override public Optional<DistributionPackage> packageFor(Distribution distribution) {
-        return Optional.empty();
-      }
-    };
-  }
-
-  private static PlatformMatchRules groupByPlatformAndBitSize(OS os, List<ParsedVersion> versions) {
-    Map<String, List<ParsedVersion>> groupedByUrl = groupByVersionLessUrl(versions);
-
-    groupedByUrl.forEach((url, list) -> System.out.println("url: "+url));
-
-    ImmutablePlatformMatchRules.Builder builder = PlatformMatchRules.builder();
-    versions.forEach(v -> {
-
-//      builder.addRules(PlatformMatchRule.of(PlatformMatch.withOs(os)
-//        .andThen(VersionRange.of(v.version, v.version)), UrlTemplatePackageResolver.builder()
-//          .urlTemplate(v.)
-//        .build()));
-    });
-    return builder.build();
-  }
-
-  private static boolean distMatchesOs(ParsedDist dist, OS os) {
-    switch (os) {
-      case Windows:
-        return dist.name.contains("indows");
-      case OS_X:
-        return dist.name.contains("maxOS");
-      case Linux:
-        return dist.name.contains("Debian");
+    if (name.contains("x64")) {
+      cpuType=Optional.of(CPUType.X86);
+      bitsize=Optional.of(BitSize.B64);
     }
-    return false;
-  }
-
-  static class NestedRulesPackageFinderHack implements PackageFinder, HasPlatformMatchRules {
-
-    private final PlatformMatchRules rules;
-
-    public NestedRulesPackageFinderHack(PlatformMatchRules rules) {
-      this.rules = rules;
+    if (name.contains("s390x")) {
+      return Optional.empty();
     }
 
-    @Override
-    public Optional<DistributionPackage> packageFor(Distribution distribution) {
-      return rules.packageFor(distribution);
+    if (name.contains("indows")) {
+      os=Optional.of(OS.Windows);
+    }
+    if (name.contains("Amazon Linux")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(AmazonVersion.AmazonLinux);
+    }
+    if (name.contains("Amazon Linux 2")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(AmazonVersion.AmazonLinux2);
     }
 
-    @Override
-    public PlatformMatchRules rules() {
-      return rules;
+    if (name.contains("Debian 7.1") || name.contains("Debian 8.1") || name.contains("CentOS 5.5")) {
+      return Optional.empty();
+    }
+    if (name.contains("Debian 10.0")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(DebianVersion.DEBIAN_10);
+    }
+    if (name.contains("Debian 9.2")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(DebianVersion.DEBIAN_9);
+    }
+
+    if (name.contains("CentOS 6.2") || name.contains("CentOS 6.7")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(CentosVersion.CentOS_6);
+    }
+    if (name.contains("CentOS 7.0")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(CentosVersion.CentOS_7);
+    }
+    if (name.contains("CentOS 8.0") || name.contains("CentOS 8.2")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(CentosVersion.CentOS_8);
+    }
+
+    if (name.contains("SUSE")) {
+      return Optional.empty();
+    }
+
+    if (name.contains("Ubuntu 12.04") || name.contains("Ubuntu 14.04") || name.contains("Ubuntu 16.04") || name.contains("ubuntu1410-clang")) {
+      return Optional.empty();
+    }
+
+    if (name.contains("Ubuntu 18.04")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(UbuntuVersion.Ubuntu_18_04);
+    }
+    if (name.contains("Ubuntu 20.04")) {
+      os=Optional.of(OS.Linux);
+      versions=Optional.of(UbuntuVersion.Ubuntu_20_04);
+    }
+
+    if (name.contains("Linux (legacy)")) {
+      os=Optional.of(OS.Linux);
+    }
+    if (name.contains("Linux (legacy) undefined")) {
+      os=Optional.of(OS.Linux);
+      cpuType=Optional.of(CPUType.X86);
+      bitsize=Optional.of(BitSize.B32);
+    }
+
+    if (name.contains("macOS")) {
+      os=Optional.of(OS.OS_X);
+    }
+
+    if (name.contains("sunos5")) {
+      os=Optional.of(OS.Solaris);
+    }
+
+    ImmutablePlatformMatch ret = PlatformMatch.builder()
+      .os(os)
+      .bitSize(bitsize)
+      .cpuType(cpuType)
+      .version(versions.map(Arrays::asList).orElse(Collections.emptyList()))
+      .build();
+
+    Preconditions.checkArgument(os.isPresent(),"no os for %s (%s)", name, ret);
+    Preconditions.checkArgument(!ret.equals(PlatformMatch.any()), "could not detect %s", name);
+
+    return Optional.of(ret);
+  }
+
+  static class Tuple<A, B> {
+    private final A a;
+    private final B b;
+    public Tuple(A a, B b) {
+      this.a = a;
+      this.b = b;
+    }
+    public A a() {
+      return a;
+    }
+
+    public B b() {
+      return b;
     }
   }
-
-  private static List<ParsedVersion> mergeAll(List<List<ParsedVersion>> allVersions) {
-    List<ParsedVersion> flatmapped = allVersions.stream().flatMap(it -> it.stream()).collect(Collectors.toList());
-
-    Set<String> versions = flatmapped.stream()
-      .map(it -> it.version)
-      .collect(Collectors.toSet());
-
-    return versions.stream().map(v -> new ParsedVersion(v, mergeDists(v, flatmapped)))
-      .collect(Collectors.toList());
-  }
-
-  private static List<ParsedDist> mergeDists(String v, List<ParsedVersion> src) {
-    List<ParsedDist> matchingDists = src.stream()
-      .filter(pv -> v.equals(pv.version))
-      .flatMap(pv -> pv.dists.stream())
-      .collect(Collectors.toList());
-
-    return groupByName(matchingDists);
-  }
-
-  private static List<ParsedDist> groupByName(List<ParsedDist> matchingDists) {
-    Map<String, List<ParsedDist>> groupedByName = matchingDists.stream()
-      .collect(Collectors.groupingBy(pd -> pd.name));
-    
-    return groupedByName.entrySet().stream()
-      .map(entry -> new ParsedDist(entry.getKey(), entry.getValue().stream()
-        .flatMap(it -> it.urls.stream())
-        .collect(Collectors.toList())))
-      .collect(Collectors.toList());
-  }
-
-//  private static List<ParsedDist> mergeDists(String v, List<List<ParsedVersion>> allVersions) {
-//    matching = allVersions.stream()
-//      .flatMap(all -> all.stream()
-//        .filter(pv -> v.equals(pv.version))
-//        .flatMap(pv -> pv.dists))
-//      .collect(Collectors.toList());
-//
-//    return null;
-//  }
 
   static List<ParsedVersion> parse(Document document) {
     List<ParsedVersion> versions=new ArrayList<>();

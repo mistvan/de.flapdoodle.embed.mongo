@@ -108,7 +108,7 @@ public final class ExplainRules {
 			.get();
 	}
 
-	private static String explainPlatformMatch(PlatformMatch match) {
+	static String explainPlatformMatch(PlatformMatch match) {
 		List<String> parts=new ArrayList<>();
 		match.os().ifPresent(os -> parts.add("os="+os));
 		match.bitSize().ifPresent(bitSize -> parts.add("bitSize="+bitSize));

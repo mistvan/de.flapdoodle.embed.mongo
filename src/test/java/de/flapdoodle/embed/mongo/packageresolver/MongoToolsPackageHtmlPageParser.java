@@ -41,14 +41,14 @@ public class MongoToolsPackageHtmlPageParser extends AbstractPackageHtmlParser {
 				System.out.println("-> " + url);
 				Document document = Jsoup.parse(Resources.toString(url, StandardCharsets.UTF_8));
 
-				List<ParsedVersion> versions = parse(document);
+				ParsedVersions versions = new ParsedVersions(parse(document));
 //    dump(versions);
-				Set<String> names = namesOf(versions);
+				Set<String> names = versions.names();
 //    List<ParsedVersion> filtered = filter(versions, it -> it.name.contains("indows"));
 				names.forEach(name -> {
 						System.out.println("-----------------------------------");
 						System.out.println(name);
-						List<ParsedVersion> filtered = filterByName(versions, name);
+						ParsedVersions filtered = versions.filterByName(name);
 						versionAndUrl(filtered);
 				});
 
@@ -61,7 +61,7 @@ public class MongoToolsPackageHtmlPageParser extends AbstractPackageHtmlParser {
 				names.forEach(name -> {
 						System.out.println("-----------------------------------");
 						System.out.println(name);
-						List<ParsedVersion> filtered = filterByName(versions, name);
+						ParsedVersions filtered = versions.filterByName(name);
 						compressedVersionAndUrl(filtered);
 				});
 		}
