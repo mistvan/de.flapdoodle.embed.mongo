@@ -129,27 +129,27 @@ public abstract class AbstractPackageHtmlParser {
 		return groupedByVersionLessUrl;
 	}
 
-	static List<VersionRange> compressedVersionsList(List<String> numericVersions) {
+	static List<VersionRange> compressedVersionsList(Collection<String> numericVersions) {
 		List<NumericVersion> versions = numericVersions.stream().map(NumericVersion::of)
-			.sorted()
+			.sorted(Comparator.reverseOrder())
 			.collect(Collectors.toList());
 
 		List<VersionRange> ranges = new ArrayList<>();
 		if (!versions.isEmpty()) {
 			int start=0;
 			while (start<versions.size()) {
-				NumericVersion min=versions.get(start);
-				NumericVersion max=min;
-				int maxFoundAt=start;
+				NumericVersion max=versions.get(start);
+				NumericVersion min=max;
+				int minFoundAt=start;
 				for (int i=start+1;i<versions.size();i++) {
 					NumericVersion current=versions.get(i);
-					if (current.isNextOrPrevPatch(max)) {
-						max=current;
-						maxFoundAt=i;
+					if (current.isNextOrPrevPatch(min)) {
+						min=current;
+						minFoundAt=i;
 					}
 				}
 				ranges.add(VersionRange.of(min, max));
-				start=maxFoundAt+1;
+				start=minFoundAt+1;
 			}
 		}
 		return ranges;

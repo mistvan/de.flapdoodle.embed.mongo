@@ -46,7 +46,7 @@ public abstract class UrlTemplatePackageResolver implements PackageFinder, HasEx
   @Value.Auxiliary
   @Override
   public String explain() {
-    return "url="+urlTemplate();
+    return "url="+urlTemplate()+" ("+archiveType().name()+")";
   }
 
   private static String render(String urlTemplate, Distribution distribution) {

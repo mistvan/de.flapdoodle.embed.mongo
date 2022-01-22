@@ -22,8 +22,13 @@ package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.process.distribution.Distribution;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public interface DistributionMatch {
 	boolean match(de.flapdoodle.embed.process.distribution.Distribution distribution);
@@ -37,6 +42,10 @@ public interface DistributionMatch {
 	}
 
 	static DistributionMatch any(DistributionMatch... matcher) {
+		return new Any(matcher);
+	}
+
+	static DistributionMatch any(List<? extends DistributionMatch> matcher) {
 		return new Any(matcher);
 	}
 
@@ -71,18 +80,22 @@ public interface DistributionMatch {
 	}
 
 	class Any implements DistributionMatch {
-		private final DistributionMatch[] matcher;
+		private final List<DistributionMatch> matcher;
 
 		public Any(DistributionMatch... matcher) {
-			this.matcher = matcher;
+			this(Arrays.asList(matcher));
+		}
+
+		public Any(List<? extends DistributionMatch> matcher) {
+			this.matcher = Collections.unmodifiableList(new ArrayList<>(matcher));
 		}
 
 		public List<DistributionMatch> matcher() {
-			return Arrays.asList(matcher);
+			return matcher;
 		}
 		@Override
 		public boolean match(Distribution distribution) {
-			return Arrays.stream(matcher).anyMatch(m -> m.match(distribution));
+			return matcher.stream().anyMatch(m -> m.match(distribution));
 		}
 	}
 }

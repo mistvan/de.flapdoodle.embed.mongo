@@ -5262,3 +5262,95 @@ windows_x86_64 x64
 5.0.5, 5.0.2 - 5.0.0, 4.4.11, 4.4.9 - 4.4.0, 4.2.18, 4.2.16 - 4.2.0, 4.0.27 - 4.0.0, 3.6.23 - 3.6.0, 3.4.8
 https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{}.zip
 3.4.24 - 3.4.9, 3.4.7 - 3.4.0, 3.2.22 - 3.2.0, 3.0.15 - 3.0.0, 2.6.12 - 2.6.0
+
+
+- - - 8<- - - - - - - - 
+(os=Windows)
+  (os=Windows and bitSize=B64)
+    3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.0-3.0.15 or 2.6.0-2.6.12
+      url=https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-{}.zip (ZIP)
+    4.0.0-4.0.27 or 3.6.0-3.6.23 or 3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.0-3.0.15
+      url=https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-{}.zip (ZIP)
+    4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3
+      url=https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-{}.zip (ZIP)
+    5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9
+      url=https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{}.zip (ZIP)
+    3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.0-3.0.15 or 2.6.0-2.6.12
+      url=https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{}.zip (ZIP)
+  (os=Windows)
+    3.2.0-3.2.22 or 3.0.0-3.0.15 or 2.6.0-2.6.12
+      url=https://fastdl.mongodb.org/win32/mongodb-win32-i386-{}.zip (ZIP)
+(os=OS_X)
+  4.0.0-4.0.27 or 3.6.0-3.6.23 or 3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.4-3.0.15
+    url=https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{}.tgz (ZIP)
+  3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.0-3.0.15 or 2.6.0-2.6.12
+    url=https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-{}.tgz (ZIP)
+  5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3
+    url=https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-{}.tgz (ZIP)
+(os=Linux)
+  (os=Linux and (version is any of Ubuntu_18_04, Ubuntu_18_10, Ubuntu_19_04, Ubuntu_19_10, Ubuntu_20_04, Ubuntu_20_10))
+    (os=Linux and (version is any of Ubuntu_18_04))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-{}.tgz (ZIP)
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3 or 4.0.1-4.0.27 or 3.6.20-3.6.23
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-{}.tgz (ZIP)
+    (os=Linux and (version is any of Ubuntu_18_10))
+    (os=Linux and (version is any of Ubuntu_19_04))
+    (os=Linux and (version is any of Ubuntu_19_10))
+    (os=Linux and (version is any of Ubuntu_20_04))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-{}.tgz (ZIP)
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-{}.tgz (ZIP)
+    (os=Linux and (version is any of Ubuntu_20_10))
+  (os=Linux and (version is any of CentOS_6, CentOS_7, CentOS_8))
+    (os=Linux and (version is any of CentOS_6))
+      4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3 or 4.0.0-4.0.27 or 3.6.0-3.6.23 or 3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.0-3.0.15
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel62-{}.tgz (ZIP)
+    (os=Linux and (version is any of CentOS_7))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3 or 4.0.0-4.0.27 or 3.6.0-3.6.23 or 3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.0-3.0.15
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-{}.tgz (ZIP)
+    (os=Linux and (version is any of CentOS_8))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.1-4.2.3 or 4.0.14-4.0.27 or 3.6.17-3.6.23 or 3.4.24-3.4.24
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel80-{}.tgz (ZIP)
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.4-4.4.9
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-rhel82-{}.tgz (ZIP)
+  (os=Linux and (version is any of Redhat_6, Redhat_7, Redhat_8))
+    (os=Linux and (version is any of Redhat_6))
+    (os=Linux and (version is any of Redhat_7))
+    (os=Linux and (version is any of Redhat_8))
+  (os=Linux and (version is any of Oracle_6, Oracle_7, Oracle_8))
+    (os=Linux and (version is any of Oracle_6))
+    (os=Linux and (version is any of Oracle_7))
+    (os=Linux and (version is any of Oracle_8))
+  (os=Linux and (version is any of Tumbleweed))
+    (os=Linux and (version is any of Tumbleweed))
+  (os=Linux and (version is any of LINUX_MINT_19_0, LINUX_MINT_19_1, LINUX_MINT_19_2, LINUX_MINT_19_3, LINUX_MINT_20_0, LINUX_MINT_20_1, LINUX_MINT_20_2, LINUX_MINT_20_3))
+    (os=Linux and (version is any of LINUX_MINT_19_0))
+    (os=Linux and (version is any of LINUX_MINT_19_1))
+    (os=Linux and (version is any of LINUX_MINT_19_2))
+    (os=Linux and (version is any of LINUX_MINT_19_3))
+    (os=Linux and (version is any of LINUX_MINT_20_0))
+    (os=Linux and (version is any of LINUX_MINT_20_1))
+    (os=Linux and (version is any of LINUX_MINT_20_2))
+    (os=Linux and (version is any of LINUX_MINT_20_3))
+  (os=Linux and (version is any of DEBIAN_10, DEBIAN_9))
+    (os=Linux and (version is any of DEBIAN_10))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.1-4.2.3
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-{}.tgz (ZIP)
+    (os=Linux and (version is any of DEBIAN_9))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3 or 4.0.0-4.0.27 or 3.6.5-3.6.23
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-{}.tgz (ZIP)
+  (os=Linux and (version is any of AmazonLinux, AmazonLinux2))
+    (os=Linux and (version is any of AmazonLinux))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3 or 4.0.0-4.0.27 or 3.6.0-3.6.23 or 3.4.9-3.4.24 or 3.4.0-3.4.7 or 3.2.0-3.2.22 or 3.0.0-3.0.15
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-{}.tgz (ZIP)
+    (os=Linux and (version is any of AmazonLinux2))
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.4-4.4.9 or 4.2.18-4.2.18 or 4.2.13-4.2.16
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-{}.tgz (ZIP)
+      5.0.5-5.0.5 or 5.0.0-5.0.2 or 4.4.11-4.4.11 or 4.4.0-4.4.9 or 4.2.18-4.2.18 or 4.2.5-4.2.16 or 4.2.0-4.2.3 or 4.0.0-4.0.27 or 3.6.22-3.6.23
+        url=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-{}.tgz (ZIP)
+(os=Solaris)
+  3.4.0-3.4.5 or 3.2.0-3.2.14 or 3.0.0-3.0.15 or 2.6.0-2.6.12
+    url=https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-{}.tgz (ZIP)
+(os=FreeBSD)

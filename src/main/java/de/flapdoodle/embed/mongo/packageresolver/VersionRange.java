@@ -32,6 +32,11 @@ public abstract class VersionRange implements DistributionMatch {
   @Value.Parameter
   abstract NumericVersion max();
 
+  @Value.Check
+  protected void check() {
+    if (min().compareTo(max())>0) throw new IllegalArgumentException(min()+" > "+max());
+  }
+
   @Override
   public boolean match(Distribution distribution) {
     Version version = distribution.version();
