@@ -21,29 +21,32 @@
 package de.flapdoodle.embed.mongo.packageresolver;
 
 import de.flapdoodle.embed.mongo.distribution.HasMongotoolsPackage;
-import de.flapdoodle.embed.mongo.distribution.MongotoolsVersion;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.FileSet;
-import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.distribution.Version;
 import org.immutables.value.Value;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 @Value.Immutable
-public abstract class UrlTemplatePackageResolver implements PackageFinder {
+public abstract class UrlTemplatePackageResolver implements PackageFinder, HasExplanation {
 
   protected abstract ArchiveType archiveType();
   protected abstract FileSet fileSet();
-  protected abstract String urlTemplate();
+  abstract String urlTemplate();
 
   @Override
   public Optional<DistributionPackage> packageFor(Distribution distribution) {
     String path=render(urlTemplate(), distribution);
     return Optional.of(DistributionPackage.of(archiveType(), fileSet(), path));
+  }
+
+  @Value.Auxiliary
+  @Override
+  public String explain() {
+    return "url="+urlTemplate()+" ("+archiveType().name()+")";
   }
 
   private static String render(String urlTemplate, Distribution distribution) {

@@ -32,13 +32,18 @@ import de.flapdoodle.os.OS;
 import java.util.Optional;
 
 
-public class WindowsPackageFinder implements PackageFinder {
+public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRules {
   private final Command command;
   private final ImmutablePlatformMatchRules rules;
 
   public WindowsPackageFinder(Command command) {
     this.command = command;
     this.rules = rules(command);
+  }
+
+  @Override
+  public PlatformMatchRules rules() {
+    return rules;
   }
 
   @Override
@@ -52,24 +57,22 @@ public class WindowsPackageFinder implements PackageFinder {
             .build();
   }
 
+  private static PlatformMatch match(BitSize bitSize) {
+    return PlatformMatch.withOs(OS.Windows).withBitSize(bitSize);
+  }
+
   private static ImmutablePlatformMatchRules rules(Command command) {
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.ZIP;
 
-    /*
-      Windows Server 2008 R2+, without SSL x64
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-{}.zip
-      3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-    */
     ImmutablePlatformMatchRule windowsServer_2008_rule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                    VersionRange.of("3.4.9", "3.4.23"),
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
+                    VersionRange.of("3.4.9", "3.4.24"),
                     VersionRange.of("3.4.0", "3.4.7"),
-                    VersionRange.of("3.2.0", "3.2.21"),
-                    VersionRange.of("3.0.0", "3.0.14"),
+                    VersionRange.of("3.2.0", "3.2.22"),
+                    VersionRange.of("3.0.0", "3.0.15"),
                     VersionRange.of("2.6.0", "2.6.12")
-            ).andThen(PlatformMatch.withOs(OS.Windows)
-                    .withBitSize(BitSize.B64)))
+            )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -77,21 +80,14 @@ public class WindowsPackageFinder implements PackageFinder {
                     .build())
             .build();
 
-    /*
-      Windows x64
-      https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{}.zip
-      5.0.2 - 5.0.0, 4.4.9 - 4.4.0
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-{}.zip
-      4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-{}.zip
-      4.2.16 - 4.2.5, 4.2.3 - 4.2.0
-     */
+    DistributionMatch windows64MongoVersions = DistributionMatch.any(
+      VersionRange.of("5.0.5", "5.0.5"),
+      VersionRange.of("5.0.0", "5.0.2"),
+      VersionRange.of("4.4.11", "4.4.11"),
+      VersionRange.of("4.4.0", "4.4.9")
+    );
     ImmutablePlatformMatchRule windows_x64_rule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                    VersionRange.of("5.0.0", "5.0.2"),
-                    VersionRange.of("4.4.0","4.4.9")
-            ).andThen(PlatformMatch.withOs(OS.Windows)
-                    .withBitSize(BitSize.B64)))
+            .match(match(BitSize.B64).andThen(windows64MongoVersions))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -100,11 +96,7 @@ public class WindowsPackageFinder implements PackageFinder {
             .build();
 
       ImmutablePlatformMatchRule tools_windows_x64_rule = PlatformMatchRule.builder()
-          .match(DistributionMatch.any(
-              VersionRange.of("5.0.0", "5.0.2"),
-              VersionRange.of("4.4.0","4.4.9")
-          ).andThen(PlatformMatch.withOs(OS.Windows)
-              .withBitSize(BitSize.B64)))
+          .match(match(BitSize.B64).andThen(windows64MongoVersions))
           .finder(UrlTemplatePackageResolver.builder()
               .fileSet(fileSet)
               .archiveType(archiveType)
@@ -113,15 +105,14 @@ public class WindowsPackageFinder implements PackageFinder {
           .build();
 
       ImmutablePlatformMatchRule windows_x64_2008ssl_rule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                    VersionRange.of("4.0.0", "4.0.26"),
-                    VersionRange.of("3.6.0", "3.6.22"),
-                    VersionRange.of("3.4.9", "3.4.23"),
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
+                    VersionRange.of("4.0.0", "4.0.27"),
+                    VersionRange.of("3.6.0", "3.6.23"),
+                    VersionRange.of("3.4.9", "3.4.24"),
                     VersionRange.of("3.4.0", "3.4.7"),
-                    VersionRange.of("3.2.0", "3.2.21"),
-                    VersionRange.of("3.0.0", "3.0.14")
-            ).andThen(PlatformMatch.withOs(OS.Windows)
-                    .withBitSize(BitSize.B64)))
+                    VersionRange.of("3.2.0", "3.2.22"),
+                    VersionRange.of("3.0.0", "3.0.15")
+            )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -130,30 +121,24 @@ public class WindowsPackageFinder implements PackageFinder {
             .build();
 
     ImmutablePlatformMatchRule windows_x64_2012ssl_rule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
+                    VersionRange.of("4.2.18", "4.2.18"),
                     VersionRange.of("4.2.5", "4.2.16"),
                     VersionRange.of("4.2.0", "4.2.3")
-            ).andThen(PlatformMatch.withOs(OS.Windows)
-                    .withBitSize(BitSize.B64)))
+            )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
                     .urlTemplate("/win32/mongodb-win32-x86_64-2012plus-{version}.zip")
                     .build())
             .build();
-    /*
-      windows_i686 undefined
-      https://fastdl.mongodb.org/win32/mongodb-win32-i386-{}.zip
-      3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-     */
+
     ImmutablePlatformMatchRule win32rule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                            VersionRange.of("3.2.0", "3.2.21"),
-                            VersionRange.of("3.0.0", "3.0.14"),
+            .match(match(BitSize.B32).andThen(DistributionMatch.any(
+                            VersionRange.of("3.2.0", "3.2.22"),
+                            VersionRange.of("3.0.0", "3.0.15"),
                             VersionRange.of("2.6.0", "2.6.12")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Windows)
-                            .withBitSize(BitSize.B32)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -162,12 +147,10 @@ public class WindowsPackageFinder implements PackageFinder {
             .build();
 
     ImmutablePlatformMatchRule hiddenLegacyWin32rule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B32).andThen(DistributionMatch.any(
                             VersionRange.of("3.3.1", "3.3.1"),
                             VersionRange.of("3.5.5", "3.5.5")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Windows)
-                            .withBitSize(BitSize.B32)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -175,21 +158,14 @@ public class WindowsPackageFinder implements PackageFinder {
                     .build())
             .build();
 
-    /*
-      windows_x86_64 x64
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{}.zip
-      3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-     */
-
     ImmutablePlatformMatchRule win_x86_64 = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
-                    VersionRange.of("3.4.9", "3.4.23"),
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
+                    VersionRange.of("3.4.9", "3.4.24"),
                     VersionRange.of("3.4.0", "3.4.7"),
-                    VersionRange.of("3.2.0", "3.2.21"),
-                    VersionRange.of("3.0.0", "3.0.14"),
+                    VersionRange.of("3.2.0", "3.2.22"),
+                    VersionRange.of("3.0.0", "3.0.15"),
                     VersionRange.of("2.6.0", "2.6.12")
-            ).andThen(PlatformMatch.withOs(OS.Windows)
-                    .withBitSize(BitSize.B64)))
+            )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -198,11 +174,10 @@ public class WindowsPackageFinder implements PackageFinder {
             .build();
 
     ImmutablePlatformMatchRule hiddenLegacyWin_x86_64 = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                     VersionRange.of("3.3.1", "3.3.1"),
                     VersionRange.of("3.5.5", "3.5.5")
-            ).andThen(PlatformMatch.withOs(OS.Windows)
-                    .withBitSize(BitSize.B64)))
+            )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -212,9 +187,7 @@ public class WindowsPackageFinder implements PackageFinder {
 
     ImmutablePlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.Windows))
-            .finder(distribution -> {
-              throw new IllegalArgumentException("windows distribution not supported: " + distribution);
-            })
+            .finder(PackageFinder.failWithMessage(distribution -> "windows distribution not supported: " + distribution))
             .build();
 
       switch (command) {

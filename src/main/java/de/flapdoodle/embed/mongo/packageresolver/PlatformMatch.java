@@ -20,7 +20,10 @@
  */
 package de.flapdoodle.embed.mongo.packageresolver;
 
-import de.flapdoodle.os.*;
+import de.flapdoodle.os.BitSize;
+import de.flapdoodle.os.CPUType;
+import de.flapdoodle.os.OS;
+import de.flapdoodle.os.Version;
 import org.immutables.value.Value;
 
 import java.util.Optional;

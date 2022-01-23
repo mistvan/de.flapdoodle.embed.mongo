@@ -35,7 +35,7 @@ import de.flapdoodle.os.linux.AmazonVersion;
 
 import java.util.Optional;
 
-public class AmazonPackageResolver implements PackageFinder {
+public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRules {
 
 	private final ImmutablePlatformMatchRules rules;
 
@@ -44,6 +44,11 @@ public class AmazonPackageResolver implements PackageFinder {
 	}
 
 	@Override
+	public PlatformMatchRules rules() {
+		return rules;
+	}
+	
+	@Override
 	public Optional<DistributionPackage> packageFor(final Distribution distribution) {
 		return rules.packageFor(distribution);
 	}
@@ -51,26 +56,17 @@ public class AmazonPackageResolver implements PackageFinder {
 	private static ImmutablePlatformMatchRules rules(final Command command) {
 		final ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
-		/*
-		 * Amazon Linux 2 ARM 64
-		 * --
-		 * 4.4.3 - 4.4.0, 4.2.12 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-		 * https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-amazon2-{}.tgz
-		 * 5.0.2 - 5.0.0, 4.4.9 - 4.4.4, 4.2.16 - 4.2.13
-		 */
+		DistributionMatch amazon2ArmMongoVersions = DistributionMatch.any(
+			VersionRange.of("5.0.5", "5.0.5"),
+			VersionRange.of("5.0.0", "5.0.2"),
+			VersionRange.of("4.4.11", "4.4.11"),
+			VersionRange.of("4.4.4", "4.4.9"),
+			VersionRange.of("4.2.18", "4.2.18"),
+			VersionRange.of("4.2.13", "4.2.16")
+		);
+
 		final PlatformMatchRule amazon2Arm = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
-						VersionRange.of("5.0.0", "5.0.2"),
-						VersionRange.of("4.4.4", "4.4.9"),
-						VersionRange.of("4.2.13", "4.2.16")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.ARM)
-						.withVersion(AmazonVersion.AmazonLinux2)
-					)
-			)
+			.match(match(BitSize.B64,CPUType.ARM,AmazonVersion.AmazonLinux2).andThen(amazon2ArmMongoVersions))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -79,18 +75,7 @@ public class AmazonPackageResolver implements PackageFinder {
 			.build();
 
 		final PlatformMatchRule amazon2ArmTools = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
-						VersionRange.of("5.0.0", "5.0.2"),
-						VersionRange.of("4.4.4", "4.4.9"),
-						VersionRange.of("4.2.13", "4.2.16")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.ARM)
-						.withVersion(AmazonVersion.AmazonLinux2)
-					)
-			)
+			.match(match(BitSize.B64,CPUType.ARM,AmazonVersion.AmazonLinux2).andThen(amazon2ArmMongoVersions))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -98,29 +83,19 @@ public class AmazonPackageResolver implements PackageFinder {
 				.build())
 			.build();
 
-		/*
-		 * Amazon Linux 2 x64
-		 * --
-		 * 4.2.4 - 4.2.4, 3.6.21 - 3.6.0, 3.4.23 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-		 * https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon2-{}.tgz
-		 * 5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22
-		 */
+		DistributionMatch amazon2MongoVersions = DistributionMatch.any(
+			VersionRange.of("5.0.5", "5.0.5"),
+			VersionRange.of("5.0.0", "5.0.2"),
+			VersionRange.of("4.4.11", "4.4.11"),
+			VersionRange.of("4.4.0", "4.4.9"),
+			VersionRange.of("4.2.18", "4.2.18"),
+			VersionRange.of("4.2.5", "4.2.16"),
+			VersionRange.of("4.2.0", "4.2.3"),
+			VersionRange.of("4.0.0", "4.0.27"),
+			VersionRange.of("3.6.22", "3.6.23")
+		);
 		final PlatformMatchRule amazon2 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
-						VersionRange.of("5.0.0", "5.0.2"),
-						VersionRange.of("4.4.0", "4.4.9"),
-						VersionRange.of("4.2.5", "4.2.16"),
-						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.22", "3.6.22")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(AmazonVersion.AmazonLinux2)
-					)
-			)
+			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux2).andThen(amazon2MongoVersions))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -129,21 +104,7 @@ public class AmazonPackageResolver implements PackageFinder {
 			.build();
 
 		final PlatformMatchRule amazon2tools = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
-						VersionRange.of("5.0.0", "5.0.2"),
-						VersionRange.of("4.4.0", "4.4.9"),
-						VersionRange.of("4.2.5", "4.2.16"),
-						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.22", "3.6.22")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(AmazonVersion.AmazonLinux2)
-					)
-			)
+			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux2).andThen(amazon2MongoVersions))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -152,33 +113,24 @@ public class AmazonPackageResolver implements PackageFinder {
 			.build();
 
 
-		/*
-		 * Amazon Linux x64
-		 * --
-		 * 4.2.4 - 4.2.4, 3.4.8 - 3.4.8, 2.6.12 - 2.6.0
-		 * https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-amazon-{}.tgz
-		 * 5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
-		 */
+		DistributionMatch amazonMongoVersions = DistributionMatch.any(
+			VersionRange.of("5.0.5", "5.0.5"),
+			VersionRange.of("5.0.0", "5.0.2"),
+			VersionRange.of("4.4.11", "4.4.11"),
+			VersionRange.of("4.4.0", "4.4.9"),
+			VersionRange.of("4.2.18", "4.2.18"),
+			VersionRange.of("4.2.5", "4.2.16"),
+			VersionRange.of("4.2.0", "4.2.3"),
+			VersionRange.of("4.0.0", "4.0.27"),
+			VersionRange.of("3.6.0", "3.6.23"),
+			VersionRange.of("3.4.9", "3.4.24"),
+			VersionRange.of("3.4.0", "3.4.7"),
+			VersionRange.of("3.2.0", "3.2.22"),
+			VersionRange.of("3.0.0", "3.0.15")
+		);
+
 		final PlatformMatchRule amazon = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
-						VersionRange.of("5.0.0", "5.0.2"),
-						VersionRange.of("4.4.0", "4.4.9"),
-						VersionRange.of("4.2.5", "4.2.16"),
-						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.0", "3.6.22"),
-						VersionRange.of("3.4.9", "3.4.23"),
-						VersionRange.of("3.4.0", "3.4.7"),
-						VersionRange.of("3.2.0", "3.2.21"),
-						VersionRange.of("3.0.0", "3.0.14")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(AmazonVersion.AmazonLinux)
-					)
-			)
+			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux).andThen(amazonMongoVersions))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -187,25 +139,7 @@ public class AmazonPackageResolver implements PackageFinder {
 			.build();
 
 		final PlatformMatchRule amazontools = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
-						VersionRange.of("5.0.0", "5.0.2"),
-						VersionRange.of("4.4.0", "4.4.9"),
-						VersionRange.of("4.2.5", "4.2.16"),
-						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.0", "3.6.22"),
-						VersionRange.of("3.4.9", "3.4.23"),
-						VersionRange.of("3.4.0", "3.4.7"),
-						VersionRange.of("3.2.0", "3.2.21"),
-						VersionRange.of("3.0.0", "3.0.14")
-					)
-					.andThen(PlatformMatch
-						.withOs(OS.Linux)
-						.withBitSize(BitSize.B64)
-						.withCpuType(CPUType.X86)
-						.withVersion(AmazonVersion.AmazonLinux)
-					)
-			)
+			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux).andThen(amazonMongoVersions))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -231,5 +165,13 @@ public class AmazonPackageResolver implements PackageFinder {
 						amazon
 					);
 		}
+	}
+
+	private static ImmutablePlatformMatch match(BitSize bitSize, CPUType cpuType, AmazonVersion version) {
+		return PlatformMatch
+			.withOs(OS.Linux)
+			.withVersion(version)
+			.withBitSize(bitSize)
+			.withCpuType(cpuType);
 	}
 }

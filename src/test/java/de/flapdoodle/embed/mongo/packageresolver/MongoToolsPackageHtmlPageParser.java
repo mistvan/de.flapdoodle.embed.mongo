@@ -32,26 +32,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MongoToolsPackageHtmlPageParser extends AbstractPackageHtmlParser {
 		public static void main(String[] args) throws IOException {
-				URL url = Resources.getResource("mongotools-versions.html");
+				URL url = Resources.getResource("versions/react/mongotools-versions-2021-10-28.html");
 				System.out.println("-> " + url);
 				Document document = Jsoup.parse(Resources.toString(url, StandardCharsets.UTF_8));
 
-				List<ParsedVersion> versions = parse(document);
+				ParsedVersions versions = new ParsedVersions(parse(document));
 //    dump(versions);
-				List<String> names = namesOf(versions)
-						.stream()
-//            .filter(name -> supported(name))
-						.sorted(Comparator.naturalOrder())
-						.collect(Collectors.toList());
+				Set<String> names = versions.names();
 //    List<ParsedVersion> filtered = filter(versions, it -> it.name.contains("indows"));
 				names.forEach(name -> {
 						System.out.println("-----------------------------------");
 						System.out.println(name);
-						List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
+						ParsedVersions filtered = versions.filterByName(name);
 						versionAndUrl(filtered);
 				});
 
@@ -64,7 +61,7 @@ public class MongoToolsPackageHtmlPageParser extends AbstractPackageHtmlParser {
 				names.forEach(name -> {
 						System.out.println("-----------------------------------");
 						System.out.println(name);
-						List<ParsedVersion> filtered = filter(versions, it -> it.name.equals(name));
+						ParsedVersions filtered = versions.filterByName(name);
 						compressedVersionAndUrl(filtered);
 				});
 		}

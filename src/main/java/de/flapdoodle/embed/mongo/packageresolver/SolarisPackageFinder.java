@@ -32,13 +32,18 @@ import de.flapdoodle.os.OS;
 import java.util.Optional;
 
 
-public class SolarisPackageFinder implements PackageFinder {
+public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRules {
   private final Command command;
   private final PlatformMatchRules rules;
 
   public SolarisPackageFinder(Command command) {
     this.command = command;
     this.rules = rules(command);
+  }
+
+  @Override
+  public PlatformMatchRules rules() {
+    return rules;
   }
 
   @Override
@@ -52,23 +57,21 @@ public class SolarisPackageFinder implements PackageFinder {
             .build();
   }
 
+  private static PlatformMatch match(BitSize bitSize) {
+    return PlatformMatch.withOs(OS.Solaris).withBitSize(bitSize);
+  }
+
   private static PlatformMatchRules rules(Command command) {
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.TGZ;
 
-    /*
-      sunos5 x64
-      https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-{}.tgz
-      3.4.5 - 3.4.0, 3.2.14 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-     */
     ImmutablePlatformMatchRule firstRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.4.0", "3.4.5"),
                             VersionRange.of("3.2.0", "3.2.14"),
-                            VersionRange.of("3.0.0", "3.0.14"),
+                            VersionRange.of("3.0.0", "3.0.15"),
                             VersionRange.of("2.6.0", "2.6.12")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Solaris).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -77,11 +80,10 @@ public class SolarisPackageFinder implements PackageFinder {
             .build();
 
     ImmutablePlatformMatchRule hiddenLegacyRule = PlatformMatchRule.builder()
-            .match(DistributionMatch.any(
+            .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.3.1", "3.3.1"),
                             VersionRange.of("3.5.5", "3.5.5")
-                    )
-                    .andThen(PlatformMatch.withOs(OS.Solaris).withBitSize(BitSize.B64)))
+                    )))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -91,9 +93,7 @@ public class SolarisPackageFinder implements PackageFinder {
 
     PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
             .match(PlatformMatch.withOs(OS.Solaris))
-            .finder(distribution -> {
-              throw new IllegalArgumentException("osx distribution not supported: " + distribution);
-            })
+            .finder(PackageFinder.failWithMessage(distribution -> "solaris distribution not supported: " + distribution))
             .build();
 
 

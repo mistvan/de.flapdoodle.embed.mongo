@@ -33,7 +33,7 @@ import java.util.Optional;
  * bc mongodb decided to reinvent their artifact naming which is some kind of complex
  * we have to deal with that somehow
  */
-public class PlatformPackageResolver implements PackageResolver {
+public class PlatformPackageResolver implements PackageResolver, HasPlatformMatchRules {
 
   private final Command command;
   private final PlatformMatchRules rules;
@@ -51,15 +51,28 @@ public class PlatformPackageResolver implements PackageResolver {
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Windows), new WindowsPackageFinder(command)))
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.OS_X), new OSXPackageFinder(command)))
         .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Linux), new LinuxPackageFinder(command)))
-        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Solaris), new SolarisPackageFinder(command)))
-        .with(PlatformMatchRule.of(PlatformMatch.any(), distribution -> {
-          throw new IllegalArgumentException("could not resolve package for " + distribution);
-        }));
+        .with(PlatformMatchRule.of(PlatformMatch.withOs(OS.Solaris), new SolarisPackageFinder(command)));
   }
 
   @Override
   public DistributionPackage packageFor(Distribution distribution) {
     Optional<DistributionPackage> result = rules.packageFor(distribution);
-    return result.orElseThrow(() -> new IllegalArgumentException("could not resolve package for "+distribution));
+    return result.orElseThrow(() -> {
+
+      String message = "could not resolve package for " + distribution + System.lineSeparator() +
+        "--------------" + System.lineSeparator() +
+        explain();
+      
+      return new IllegalArgumentException(message);
+    });
+  }
+
+  @Override
+  public PlatformMatchRules rules() {
+    return rules;
+  }
+
+  public String explain() {
+    return ExplainRules.explain(this.rules);
   }
 }

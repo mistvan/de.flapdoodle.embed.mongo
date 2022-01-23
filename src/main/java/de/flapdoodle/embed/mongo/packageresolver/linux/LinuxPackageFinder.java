@@ -31,13 +31,17 @@ import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.BitSize;
 import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.Version;
 import de.flapdoodle.os.linux.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class LinuxPackageFinder implements PackageFinder {
+public class LinuxPackageFinder implements PackageFinder, HasPlatformMatchRules {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LinuxPackageFinder.class);
 
@@ -50,10 +54,15 @@ public class LinuxPackageFinder implements PackageFinder {
 	}
 
 	@Override
+	public PlatformMatchRules rules() {
+		return rules;
+	}
+
+	@Override
 	public Optional<DistributionPackage> packageFor(Distribution distribution) {
 		return rules.packageFor(distribution);
 	}
-
+	
 	private static ImmutablePlatformMatchRules rules(Command command) {
 		ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
@@ -76,10 +85,16 @@ public class LinuxPackageFinder implements PackageFinder {
 			.finder(new DebianPackageResolver(command))
 			.build();
 
-		ImmutablePlatformMatchRule centosRule = PlatformMatchRule.builder()
+		CentosRedhatPackageResolver centosRedhatPackageResolver = new CentosRedhatPackageResolver(command);
+
+		List<Version> centosRedhatAndOracleVersions = Stream.of(Stream.of(CentosVersion.values()), Stream.of(RedhatVersion.values()),
+				Stream.of(OracleVersion.values()))
+			.flatMap(it -> it).collect(Collectors.toList());
+
+		ImmutablePlatformMatchRule centosRedhatOracleRule = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux)
-				.withVersion(CentosVersion.values()))
-			.finder(new CentosPackageResolver(command))
+				.withVersion(centosRedhatAndOracleVersions))
+			.finder(centosRedhatPackageResolver)
 			.build();
 
 		ImmutablePlatformMatchRule amazonRule = PlatformMatchRule.builder()
@@ -94,12 +109,11 @@ public class LinuxPackageFinder implements PackageFinder {
       3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
     */
 		PlatformMatchRule legacy32 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32).andThen(DistributionMatch.any(
 					VersionRange.of("3.2.0", "3.2.21"),
 					VersionRange.of("3.0.0", "3.0.14"),
 					VersionRange.of("2.6.0", "2.6.12")
-				)
-				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
+				)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -113,7 +127,8 @@ public class LinuxPackageFinder implements PackageFinder {
     4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
    */
 		PlatformMatchRule legacy64 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)
+				.andThen(DistributionMatch.any(
 					VersionRange.of("4.0.0", "4.0.26"),
 					VersionRange.of("3.6.0", "3.6.22"),
 					VersionRange.of("3.4.9", "3.4.23"),
@@ -121,8 +136,7 @@ public class LinuxPackageFinder implements PackageFinder {
 					VersionRange.of("3.2.0", "3.2.21"),
 					VersionRange.of("3.0.0", "3.0.14"),
 					VersionRange.of("2.6.0", "2.6.12")
-				)
-				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
+				)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -131,11 +145,11 @@ public class LinuxPackageFinder implements PackageFinder {
 			.build();
 
 		PlatformMatchRule hiddenLegacy64 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)
+				.andThen(DistributionMatch.any(
 					VersionRange.of("3.3.1", "3.3.1"),
 					VersionRange.of("3.5.5", "3.5.5")
-				)
-				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B64)))
+				)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -144,11 +158,11 @@ public class LinuxPackageFinder implements PackageFinder {
 			.build();
 
 		PlatformMatchRule hiddenLegacy32 = PlatformMatchRule.builder()
-			.match(DistributionMatch.any(
+			.match(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)
+				.andThen(DistributionMatch.any(
 					VersionRange.of("3.3.1", "3.3.1"),
 					VersionRange.of("3.5.5", "3.5.5")
-				)
-				.andThen(PlatformMatch.withOs(OS.Linux).withBitSize(BitSize.B32)))
+				)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
 				.archiveType(ArchiveType.TGZ)
@@ -158,19 +172,7 @@ public class LinuxPackageFinder implements PackageFinder {
 
 		PlatformMatchRule failIfNothingMatches = PlatformMatchRule.builder()
 			.match(PlatformMatch.withOs(OS.Linux))
-			.finder(distribution -> {
-				Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
-					ImmutablePlatform.copyOf(distribution.platform())
-						.withVersion(UbuntuVersion.Ubuntu_20_04));
-
-				LOGGER.warn("because there is no package for "+distribution+" we fall back to "+ubuntuLTSFallback);
-
-				Optional<DistributionPackage> resolvedPackage = ubuntuPackageResolver.packageFor(ubuntuLTSFallback);
-				if (!resolvedPackage.isPresent()) {
-					throw new IllegalArgumentException("linux distribution not supported: "+distribution+"(with fallback to "+ubuntuLTSFallback+")");
-				}
-				return resolvedPackage;
-			})
+			.finder(new FallbackToUbuntuOrFailPackageFinder(ubuntuPackageResolver))
 			.build();
 
 		return PlatformMatchRules.empty()
@@ -178,14 +180,46 @@ public class LinuxPackageFinder implements PackageFinder {
 				ubuntuRule,
 				linuxMintRule,
 				debianRule,
-				centosRule,
+				centosRedhatOracleRule,
 				amazonRule,
-				legacy32,
 				legacy64,
+				legacy32,
 				hiddenLegacy64,
 				hiddenLegacy32,
 				failIfNothingMatches
 			);
 	}
 
+	static class FallbackToUbuntuOrFailPackageFinder implements PackageFinder, HasExplanation {
+		private final UbuntuPackageResolver ubuntuPackageResolver;
+		private final UbuntuVersion fallbackUbuntuVersion = UbuntuVersion.Ubuntu_20_04;
+
+		public FallbackToUbuntuOrFailPackageFinder(UbuntuPackageResolver ubuntuPackageResolver) {
+			this.ubuntuPackageResolver = ubuntuPackageResolver;
+		}
+
+		@Override
+		public Optional<DistributionPackage> packageFor(Distribution distribution) {
+			if (distribution.platform().distribution().isPresent()) {
+				// only fallback if no linux dist is detected
+				return Optional.empty();
+			}
+
+			Distribution ubuntuLTSFallback = Distribution.of(distribution.version(),
+				ImmutablePlatform.copyOf(distribution.platform())
+					.withVersion(fallbackUbuntuVersion));
+
+			LOGGER.warn("because there is no package for " + distribution + " we fall back to " + ubuntuLTSFallback);
+
+			Optional<DistributionPackage> resolvedPackage = ubuntuPackageResolver.packageFor(ubuntuLTSFallback);
+			if (!resolvedPackage.isPresent()) {
+				throw new IllegalArgumentException("linux distribution not supported: " + distribution + "(with fallback to " + ubuntuLTSFallback + ")");
+			}
+			return resolvedPackage;
+		}
+
+		@Override public String explain() {
+			return "fallback to "+fallbackUbuntuVersion;
+		}
+	}
 }

@@ -28,10 +28,7 @@ import de.flapdoodle.os.CommonArchitecture;
 import de.flapdoodle.os.ImmutablePlatform;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
-import de.flapdoodle.os.linux.CentosVersion;
-import de.flapdoodle.os.linux.DebianVersion;
-import de.flapdoodle.os.linux.LinuxMintVersion;
-import de.flapdoodle.os.linux.UbuntuVersion;
+import de.flapdoodle.os.linux.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -60,6 +57,21 @@ class LinuxPackageFinderTest {
   public void  legacy64Bit(String version) {
     assertThat(linuxWith(CommonArchitecture.X86_64), version)
             .resolvesTo("/linux/mongodb-linux-x86_64-{}.tgz");
+  }
+
+  @Test
+  public void resolveRedhatPackage() {
+    assertThat(linuxWith(CommonArchitecture.X86_64)
+            .withVersion(RedhatVersion.Redhat_7), "5.0.2")
+            .resolvesTo("/linux/mongodb-linux-x86_64-rhel70-{}.tgz");
+  }
+
+  @Test
+  public void resolveOraclePackage() {
+    assertThat(linuxWith(CommonArchitecture.X86_64)
+      .withDistribution(LinuxDistribution.Oracle)
+            .withVersion(OracleVersion.Oracle_6), "4.4.9")
+            .resolvesTo("/linux/mongodb-linux-x86_64-rhel62-{}.tgz");
   }
 
   @Test
