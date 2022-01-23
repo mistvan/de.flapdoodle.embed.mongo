@@ -73,8 +73,11 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 						UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 						.andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9"),
+											VersionRange.of("4.2.18", "4.2.18"),
 											VersionRange.of("4.2.5", "4.2.16"),
 											VersionRange.of("4.2.0", "4.2.3")
 									)
@@ -92,7 +95,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
 						).andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9"),
 											VersionRange.of("4.2.5", "4.2.16"),
 											VersionRange.of("4.2.0", "4.2.3")
@@ -114,12 +119,15 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
 						).andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9"),
+											VersionRange.of("4.2.18", "4.2.18"),
 											VersionRange.of("4.2.5", "4.2.16"),
 											VersionRange.of("4.2.0", "4.2.3"),
-											VersionRange.of("4.0.1", "4.0.26"),
-											VersionRange.of("3.6.20", "3.6.22")
+											VersionRange.of("4.0.1", "4.0.27"),
+											VersionRange.of("3.6.20", "3.6.23")
 									)))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
@@ -133,7 +141,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
 						).andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9"),
 											VersionRange.of("4.2.5", "4.2.16"),
 											VersionRange.of("4.2.0", "4.2.3"),
@@ -154,7 +164,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
     */
 			PlatformMatchRule ubuntu2004arm = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10).andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9")
 									)))
 					.finder(UrlTemplatePackageResolver.builder()
@@ -167,7 +179,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 			PlatformMatchRule tools_ubuntu2004arm = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 						.andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9")
 									)))
 					.finder(UrlTemplatePackageResolver.builder()
@@ -184,7 +198,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 			PlatformMatchRule ubuntu2004x64 = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.X86, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 						.andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9")
 									)))
 					.finder(UrlTemplatePackageResolver.builder()
@@ -197,7 +213,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 			PlatformMatchRule tools_ubuntu2004x64 = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.X86, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
 						.andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
+											VersionRange.of("4.4.11", "4.4.11"),
 											VersionRange.of("4.4.0", "4.4.9")
 									)))
 					.finder(UrlTemplatePackageResolver.builder()

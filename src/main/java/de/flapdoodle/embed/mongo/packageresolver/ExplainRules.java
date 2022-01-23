@@ -101,7 +101,7 @@ public final class ExplainRules {
 		return forType(DistributionMatch.class)
 			.mapIfInstance(PlatformMatch.class, ExplainRules::explainPlatformMatch)
 			.orMapIfInstance(DistributionMatch.AndThen.class, andThen -> "" + explainMatch(andThen.first()) + " and " + explainMatch(andThen.second()))
-			.orMapIfInstance(DistributionMatch.Any.class, any -> any.matcher().stream().map(ExplainRules::explainMatch).collect(Collectors.joining(" or ")))
+			.orMapIfInstance(DistributionMatch.Any.class, any -> any.matcher().stream().map(ExplainRules::explainMatch).collect(Collectors.joining(" or ","(",")")))
 			.orMapIfInstance(VersionRange.class, ExplainRules::explainVersionRange)
 			.orMapIfInstance(DistributionMatch.class, it -> it.getClass().getSimpleName())
 			.apply(match)

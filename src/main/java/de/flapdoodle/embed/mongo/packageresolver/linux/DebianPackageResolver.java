@@ -68,7 +68,17 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
      */
         final PlatformMatchRule debian9 = PlatformMatchRule.builder()
                 .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_9)
-                  .andThen(DistributionMatch.any(VersionRange.of("3.6.23", "5.0.4")))                )
+                  .andThen(DistributionMatch.any(
+                    VersionRange.of("5.0.5", "5.0.5"),
+                    VersionRange.of("5.0.0", "5.0.2"),
+                    VersionRange.of("4.4.11", "4.4.11"),
+                    VersionRange.of("4.4.0", "4.4.9"),
+                    VersionRange.of("4.2.18", "4.2.18"),
+                    VersionRange.of("4.2.5", "4.2.16"),
+                    VersionRange.of("4.2.0", "4.2.3"),
+                    VersionRange.of("4.0.0", "4.0.27"),
+                    VersionRange.of("3.6.5", "3.6.23")
+                )))
                 .finder(UrlTemplatePackageResolver.builder()
                         .fileSet(fileSet)
                         .archiveType(ArchiveType.TGZ)
@@ -93,9 +103,15 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
       4.2.13 - 5.0.4
      */
         final PlatformMatchRule debian10 = PlatformMatchRule.builder()
-                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10).andThen(DistributionMatch.any(VersionRange.of("4.2.13", "5.0.4"))
-                        )
-                )
+                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10).andThen(DistributionMatch.any(
+                  VersionRange.of("5.0.5", "5.0.5"),
+                  VersionRange.of("5.0.0", "5.0.2"),
+                  VersionRange.of("4.4.11", "4.4.11"),
+                  VersionRange.of("4.4.0", "4.4.9"),
+                  VersionRange.of("4.2.18", "4.2.18"),
+                  VersionRange.of("4.2.5", "4.2.16"),
+                  VersionRange.of("4.2.1", "4.2.3")
+                    )))
                 .finder(UrlTemplatePackageResolver.builder()
                         .fileSet(fileSet)
                         .archiveType(ArchiveType.TGZ)

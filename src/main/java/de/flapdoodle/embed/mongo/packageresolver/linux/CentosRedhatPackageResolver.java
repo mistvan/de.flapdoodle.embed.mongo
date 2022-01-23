@@ -76,15 +76,17 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 		PlatformMatchRule centos6 = PlatformMatchRule.builder()
 			.match(match(BitSize.B64, CPUType.X86,
 				CentosVersion.CentOS_6, RedhatVersion.Redhat_6, OracleVersion.Oracle_6).andThen(DistributionMatch.any(
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.0", "3.6.22"),
-						VersionRange.of("3.4.9", "3.4.23"),
+						VersionRange.of("4.0.0", "4.0.27"),
+						VersionRange.of("3.6.0", "3.6.23"),
+						VersionRange.of("3.4.9", "3.4.24"),
 						VersionRange.of("3.4.0", "3.4.7"),
-						VersionRange.of("3.2.0", "3.2.21"),
-						VersionRange.of("3.0.0", "3.0.14")
+						VersionRange.of("3.2.0", "3.2.22"),
+						VersionRange.of("3.0.0", "3.0.15")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
@@ -126,16 +128,19 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			.match(match(BitSize.B64, CPUType.X86,
 					CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
 				).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.0", "3.6.22"),
-						VersionRange.of("3.4.9", "3.4.23"),
+						VersionRange.of("4.0.0", "4.0.27"),
+						VersionRange.of("3.6.0", "3.6.23"),
+						VersionRange.of("3.4.9", "3.4.24"),
 						VersionRange.of("3.4.0", "3.4.7"),
-						VersionRange.of("3.2.0", "3.2.21"),
-						VersionRange.of("3.0.0", "3.0.14")
+						VersionRange.of("3.2.0", "3.2.22"),
+						VersionRange.of("3.0.0", "3.0.15")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
@@ -148,8 +153,11 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			.match(match(BitSize.B64, CPUType.X86,
 					CentosVersion.CentOS_7, RedhatVersion.Redhat_7, OracleVersion.Oracle_7
 				).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
 						VersionRange.of("4.0.0", "4.0.26"),
@@ -178,12 +186,16 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			.match(match(BitSize.B64, CPUType.X86,
 					CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
 				).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.1", "4.2.3"),
-						VersionRange.of("4.0.14", "4.0.26"),
-						VersionRange.of("3.6.17", "3.6.22")
+						VersionRange.of("4.0.14", "4.0.27"),
+						VersionRange.of("3.6.17", "3.6.23"),
+						VersionRange.of("3.4.24", "3.4.24")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
@@ -196,7 +208,9 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 			.match(match(BitSize.B64, CPUType.X86,
 					CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
 				).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.1", "4.2.3"),
@@ -222,8 +236,10 @@ public class CentosRedhatPackageResolver implements PackageFinder, HasPlatformMa
 					.match(match(BitSize.B64, CPUType.ARM,
 							CentosVersion.CentOS_8, RedhatVersion.Redhat_8, OracleVersion.Oracle_8
 						).andThen(DistributionMatch.any(
+											VersionRange.of("5.0.5", "5.0.5"),
 											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.0", "4.4.9")
+											VersionRange.of("4.4.11", "4.4.11"),
+											VersionRange.of("4.4.4", "4.4.9")
 									)))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)

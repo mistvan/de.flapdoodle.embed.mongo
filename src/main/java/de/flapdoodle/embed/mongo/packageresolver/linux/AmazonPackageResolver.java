@@ -65,8 +65,11 @@ public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRul
 		 */
 		final PlatformMatchRule amazon2Arm = PlatformMatchRule.builder()
 			.match(match(BitSize.B64,CPUType.ARM,AmazonVersion.AmazonLinux2).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.4", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.13", "4.2.16")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
@@ -78,8 +81,11 @@ public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRul
 
 		final PlatformMatchRule amazon2ArmTools = PlatformMatchRule.builder()
 			.match(match(BitSize.B64,CPUType.ARM,AmazonVersion.AmazonLinux2).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.4", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.13", "4.2.16")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
@@ -98,12 +104,15 @@ public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRul
 		 */
 		final PlatformMatchRule amazon2 = PlatformMatchRule.builder()
 			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux2).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.22", "3.6.22")
+						VersionRange.of("4.0.0", "4.0.27"),
+						VersionRange.of("3.6.22", "3.6.23")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
@@ -114,12 +123,15 @@ public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRul
 
 		final PlatformMatchRule amazon2tools = PlatformMatchRule.builder()
 			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux2).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.22", "3.6.22")
+						VersionRange.of("4.0.0", "4.0.27"),
+						VersionRange.of("3.6.22", "3.6.23")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
@@ -138,16 +150,19 @@ public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRul
 		 */
 		final PlatformMatchRule amazon = PlatformMatchRule.builder()
 			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.0", "3.6.22"),
-						VersionRange.of("3.4.9", "3.4.23"),
+						VersionRange.of("4.0.0", "4.0.27"),
+						VersionRange.of("3.6.0", "3.6.23"),
+						VersionRange.of("3.4.9", "3.4.24"),
 						VersionRange.of("3.4.0", "3.4.7"),
-						VersionRange.of("3.2.0", "3.2.21"),
-						VersionRange.of("3.0.0", "3.0.14")
+						VersionRange.of("3.2.0", "3.2.22"),
+						VersionRange.of("3.0.0", "3.0.15")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)
@@ -158,16 +173,19 @@ public class AmazonPackageResolver implements PackageFinder, HasPlatformMatchRul
 
 		final PlatformMatchRule amazontools = PlatformMatchRule.builder()
 			.match(match(BitSize.B64,CPUType.X86,AmazonVersion.AmazonLinux).andThen(DistributionMatch.any(
+						VersionRange.of("5.0.5", "5.0.5"),
 						VersionRange.of("5.0.0", "5.0.2"),
+						VersionRange.of("4.4.11", "4.4.11"),
 						VersionRange.of("4.4.0", "4.4.9"),
+						VersionRange.of("4.2.18", "4.2.18"),
 						VersionRange.of("4.2.5", "4.2.16"),
 						VersionRange.of("4.2.0", "4.2.3"),
-						VersionRange.of("4.0.0", "4.0.26"),
-						VersionRange.of("3.6.0", "3.6.22"),
-						VersionRange.of("3.4.9", "3.4.23"),
+						VersionRange.of("4.0.0", "4.0.27"),
+						VersionRange.of("3.6.0", "3.6.23"),
+						VersionRange.of("3.4.9", "3.4.24"),
 						VersionRange.of("3.4.0", "3.4.7"),
-						VersionRange.of("3.2.0", "3.2.21"),
-						VersionRange.of("3.0.0", "3.0.14")
+						VersionRange.of("3.2.0", "3.2.22"),
+						VersionRange.of("3.0.0", "3.0.15")
 					)))
 			.finder(UrlTemplatePackageResolver.builder()
 				.fileSet(fileSet)

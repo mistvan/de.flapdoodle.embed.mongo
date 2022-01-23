@@ -98,14 +98,16 @@ public abstract class AbstractPackageHtmlParser {
 	}
 
 	private static String compressedVersionAsString(List<String> versionNumbers) {
-		String compressedVersions = compressedVersionsList(versionNumbers)
-			.stream()
+		return rangesAsString(compressedVersionsList(versionNumbers));
+	}
+
+	private static String rangesAsString(List<VersionRange> ranges) {
+		return ranges.stream()
 			.sorted(Comparator.comparing(VersionRange::min).reversed())
 			.map(r -> r.min().equals(r.max())
 				? asString(r.min())
 				: asString(r.max()) + " - " + asString(r.min()))
 			.collect(Collectors.joining(", "));
-		return compressedVersions;
 	}
 
 	static List<String> versionNumbers(List<ParsedVersion> versions) {
@@ -256,7 +258,7 @@ public abstract class AbstractPackageHtmlParser {
 						.map(parsedUrl -> parsedUrl.url))
 					.collect(Collectors.toMap(Function.identity(), entry -> parsedVersion.version))
 					.entrySet().stream())
-				.collect(ImmutableSetMultimap.toImmutableSetMultimap(entry -> entry.getKey().replace(entry.getValue(),"{}"), Map.Entry::getValue));
+				.collect(ImmutableSetMultimap.toImmutableSetMultimap(entry -> entry.getKey().replace(entry.getValue(),"{version}"), Map.Entry::getValue));
 
 			return x.asMap().entrySet().stream()
 				.map(entry -> new UrlAndVersions(entry.getKey(), ImmutableSet.copyOf(entry.getValue())))

@@ -142,24 +142,24 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
     List<Tuple<PlatformMatch, List<UrlAndVersions>>> matchingOs = platformAndVersions.stream()
       .filter(it -> it.a().os().equals(osMatch))
       .collect(Collectors.toList());
-    if (matchingOs.size()==1) {
-      // got it
-      return PlatformMatchRule.of(PlatformMatch.withOs(os), new JustRulesPackageFinder(
-        asVersionDetectionRules(matchingOs.get(0).b())));
-
-    } else {
+//    if (matchingOs.size()==1) {
+//      // got it
+//      return PlatformMatchRule.of(PlatformMatch.withOs(os), new JustRulesPackageFinder(
+//        asVersionDetectionRules(PlatformMatch.withOs(os), matchingOs.get(0).b())));
+//
+//    } else {
       // more than one
 			if (os.distributions().isEmpty()) {
 				// no dist
 				return PlatformMatchRule.of(PlatformMatch.withOs(os), new JustRulesPackageFinder(
 					PlatformMatchRules.empty().withRules(matchingOs.stream()
-						.map(entry -> PlatformMatchRule.of(entry.a(), new JustRulesPackageFinder(asVersionDetectionRules(entry.b()))))
+						.map(entry -> PlatformMatchRule.of(entry.a(), new JustRulesPackageFinder(asVersionDetectionRules(entry.a(), entry.b()))))
 						.collect(Collectors.toList()))));
 
 			} else {
 				return groupedByDist(os, matchingOs);
 			}
-    }
+//    }
 	}
 
 	private static PlatformMatchRule groupedByDist(OS os, List<Tuple<PlatformMatch, List<UrlAndVersions>>> matchingOs) {
@@ -177,7 +177,7 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
 
 	private static PlatformMatchRules groupedByVersion(OS os, de.flapdoodle.os.Distribution dist, List<Tuple<PlatformMatch, List<UrlAndVersions>>> matching) {
 		List<PlatformMatchRule> rules = dist.versions().stream()
-			.map(version -> tuple(version, asVersionDetectionRules(matching.stream()
+			.map(version -> tuple(version, asVersionDetectionRules(PlatformMatch.withOs(os).withVersion(version), matching.stream()
 				.filter(entry -> entry.a().version().contains(version))
 				.flatMap(tuple -> tuple.b().stream())
 				.collect(Collectors.toList()))))
@@ -187,15 +187,17 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
 		return PlatformMatchRules.empty().withRules(rules);
 	}
 
-	private static PlatformMatchRules asVersionDetectionRules(List<UrlAndVersions> urlAndVersions) {
+	private static PlatformMatchRules asVersionDetectionRules(PlatformMatch parent, List<UrlAndVersions> urlAndVersions) {
     List<PlatformMatchRule> list = urlAndVersions.stream().map(entry -> {
         DistributionMatch match = DistributionMatch.any(compressedVersionsList(entry.versions()));
-        return PlatformMatchRule.of(match, UrlTemplatePackageResolver.builder()
-          .urlTemplate(entry.url())
+				String url = entry.url();
+				url=url.replace("https://fastdl.mongodb.org","");
+        return PlatformMatchRule.of(parent.andThen(match), UrlTemplatePackageResolver.builder()
+          .urlTemplate(url)
           .fileSet(FileSet.builder()
             .addEntry(FileType.Executable,"mongod")
             .build())
-          .archiveType(ArchiveType.ZIP)
+          .archiveType(archiveTypeFromUrl(url))
           .build());
       })
       .collect(Collectors.toList());
@@ -204,7 +206,17 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
       .withRules(list);
   }
 
-  static class JustRulesPackageFinder implements PackageFinder, HasPlatformMatchRules {
+	private static ArchiveType archiveTypeFromUrl(String url) {
+		if (url.endsWith(".zip")) {
+			return ArchiveType.ZIP;
+		}
+		if (url.endsWith(".tgz")) {
+			return ArchiveType.TGZ;
+		}
+		throw new IllegalArgumentException("not supported: "+url);
+	}
+
+	static class JustRulesPackageFinder implements PackageFinder, HasPlatformMatchRules {
 
 		private final PlatformMatchRules rules;
 
@@ -245,6 +257,9 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
 
 		if (name.contains("indows")) {
 			os = Optional.of(OS.Windows);
+			if (!bitsize.isPresent()) {
+				bitsize=Optional.of(BitSize.B32);
+			}
 		}
 		if (name.contains("Amazon Linux")) {
 			os = Optional.of(OS.Linux);
@@ -312,6 +327,10 @@ public class MongoPackageHtmlPageParser extends AbstractPackageHtmlParser {
 
 		if (name.contains("sunos5")) {
 			os = Optional.of(OS.Solaris);
+		}
+
+		if (!bitsize.isPresent()) {
+			bitsize=Optional.of(BitSize.B64);
 		}
 
 		ImmutablePlatformMatch ret = PlatformMatch.builder()

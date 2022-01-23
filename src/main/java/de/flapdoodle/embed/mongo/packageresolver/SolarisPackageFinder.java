@@ -74,7 +74,7 @@ public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRule
             .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.4.0", "3.4.5"),
                             VersionRange.of("3.2.0", "3.2.14"),
-                            VersionRange.of("3.0.0", "3.0.14"),
+                            VersionRange.of("3.0.0", "3.0.15"),
                             VersionRange.of("2.6.0", "2.6.12")
                     )))
             .finder(UrlTemplatePackageResolver.builder()
