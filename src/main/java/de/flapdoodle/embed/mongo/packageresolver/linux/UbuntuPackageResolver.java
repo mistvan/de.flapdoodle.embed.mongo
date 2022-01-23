@@ -63,24 +63,20 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
   private static ImmutablePlatformMatchRules rules(Command command) {
     ImmutableFileSet fileSet = FileSet.builder().addEntry(FileType.Executable, command.commandName()).build();
 
-    /*
-      Ubuntu 18.04 ARM 64
-      https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu1804-{}.tgz
-      5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
-      -----------------------------------
-    */
-			PlatformMatchRule ubuntu1804arm = PlatformMatchRule.builder()
+		DistributionMatch ubuntu18xxArmMongoVersions = DistributionMatch.any(
+			VersionRange.of("5.0.5", "5.0.5"),
+			VersionRange.of("5.0.0", "5.0.2"),
+			VersionRange.of("4.4.11", "4.4.11"),
+			VersionRange.of("4.4.0", "4.4.9"),
+			VersionRange.of("4.2.18", "4.2.18"),
+			VersionRange.of("4.2.5", "4.2.16"),
+			VersionRange.of("4.2.0", "4.2.3")
+		);
+
+		PlatformMatchRule ubuntu1804arm = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 						UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
-						.andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9"),
-											VersionRange.of("4.2.18", "4.2.18"),
-											VersionRange.of("4.2.5", "4.2.16"),
-											VersionRange.of("4.2.0", "4.2.3")
-									)
+						.andThen(ubuntu18xxArmMongoVersions
 						)
 					)
 					.finder(UrlTemplatePackageResolver.builder()
@@ -94,14 +90,7 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 					.match(match(BitSize.B64, CPUType.ARM,
 							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
-						).andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9"),
-											VersionRange.of("4.2.5", "4.2.16"),
-											VersionRange.of("4.2.0", "4.2.3")
-									)))
+						).andThen(ubuntu18xxArmMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
@@ -109,26 +98,22 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							.build())
 					.build();
 
-    /*
-      Ubuntu 18.04 x64
-      https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-{}.tgz
-      5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0, 4.0.26 - 4.0.1, 3.6.22 - 3.6.20
-     */
-			PlatformMatchRule ubuntu1804x64 = PlatformMatchRule.builder()
+		DistributionMatch ubuntu18xxMongoVersions = DistributionMatch.any(
+			VersionRange.of("5.0.5", "5.0.5"),
+			VersionRange.of("5.0.0", "5.0.2"),
+			VersionRange.of("4.4.11", "4.4.11"),
+			VersionRange.of("4.4.0", "4.4.9"),
+			VersionRange.of("4.2.18", "4.2.18"),
+			VersionRange.of("4.2.5", "4.2.16"),
+			VersionRange.of("4.2.0", "4.2.3"),
+			VersionRange.of("4.0.1", "4.0.27"),
+			VersionRange.of("3.6.20", "3.6.23")
+		);
+		PlatformMatchRule ubuntu1804x64 = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.X86,
 							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
-						).andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9"),
-											VersionRange.of("4.2.18", "4.2.18"),
-											VersionRange.of("4.2.5", "4.2.16"),
-											VersionRange.of("4.2.0", "4.2.3"),
-											VersionRange.of("4.0.1", "4.0.27"),
-											VersionRange.of("3.6.20", "3.6.23")
-									)))
+						).andThen(ubuntu18xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
@@ -140,16 +125,7 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 					.match(match(BitSize.B64, CPUType.X86,
 							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
 							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
-						).andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9"),
-											VersionRange.of("4.2.5", "4.2.16"),
-											VersionRange.of("4.2.0", "4.2.3"),
-											VersionRange.of("4.0.1", "4.0.26"),
-											VersionRange.of("3.6.20", "3.6.22")
-									)))
+						).andThen(ubuntu18xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
@@ -157,18 +133,15 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							.build())
 					.build();
 
-    /*
-      Ubuntu 20.04 ARM 64
-      https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2004-{}.tgz
-      5.0.2 - 5.0.0, 4.4.9 - 4.4.0
-    */
-			PlatformMatchRule ubuntu2004arm = PlatformMatchRule.builder()
-					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10).andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9")
-									)))
+		DistributionMatch ubuntu20xxMongoVersions = DistributionMatch.any(
+			VersionRange.of("5.0.5", "5.0.5"),
+			VersionRange.of("5.0.0", "5.0.2"),
+			VersionRange.of("4.4.11", "4.4.11"),
+			VersionRange.of("4.4.0", "4.4.9")
+		);
+		
+		PlatformMatchRule ubuntu2004arm = PlatformMatchRule.builder()
+					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10).andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
@@ -178,31 +151,17 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 
 			PlatformMatchRule tools_ubuntu2004arm = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
-						.andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9")
-									)))
+						.andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
 							.urlTemplate("/tools/db/mongodb-database-tools-ubuntu2004-arm64-{tools.version}.tgz")
 							.build())
 					.build();
-    /*
-      Ubuntu 20.04 x64
-      https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-{}.tgz
-      5.0.2 - 5.0.0, 4.4.9 - 4.4.0
-     */
+
 			PlatformMatchRule ubuntu2004x64 = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.X86, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
-						.andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9")
-									)))
+						.andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
@@ -212,12 +171,7 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 
 			PlatformMatchRule tools_ubuntu2004x64 = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.X86, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
-						.andThen(DistributionMatch.any(
-											VersionRange.of("5.0.5", "5.0.5"),
-											VersionRange.of("5.0.0", "5.0.2"),
-											VersionRange.of("4.4.11", "4.4.11"),
-											VersionRange.of("4.4.0", "4.4.9")
-									)))
+						.andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)

@@ -65,11 +65,6 @@ public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRule
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.ZIP;
 
-    /*
-      Windows Server 2008 R2+, without SSL x64
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-{}.zip
-      3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-    */
     ImmutablePlatformMatchRule windowsServer_2008_rule = PlatformMatchRule.builder()
             .match(match(BitSize.B64).andThen(DistributionMatch.any(
                     VersionRange.of("3.4.9", "3.4.24"),
@@ -85,22 +80,14 @@ public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRule
                     .build())
             .build();
 
-    /*
-      Windows x64
-      https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-{}.zip
-      5.0.2 - 5.0.0, 4.4.9 - 4.4.0
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-{}.zip
-      4.0.26 - 4.0.0, 3.6.22 - 3.6.0, 3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-{}.zip
-      4.2.16 - 4.2.5, 4.2.3 - 4.2.0
-     */
+    DistributionMatch windows64MongoVersions = DistributionMatch.any(
+      VersionRange.of("5.0.5", "5.0.5"),
+      VersionRange.of("5.0.0", "5.0.2"),
+      VersionRange.of("4.4.11", "4.4.11"),
+      VersionRange.of("4.4.0", "4.4.9")
+    );
     ImmutablePlatformMatchRule windows_x64_rule = PlatformMatchRule.builder()
-            .match(match(BitSize.B64).andThen(DistributionMatch.any(
-                    VersionRange.of("5.0.5", "5.0.5"),
-                    VersionRange.of("5.0.0", "5.0.2"),
-                    VersionRange.of("4.4.11", "4.4.11"),
-                    VersionRange.of("4.4.0","4.4.9")
-            )))
+            .match(match(BitSize.B64).andThen(windows64MongoVersions))
             .finder(UrlTemplatePackageResolver.builder()
                     .fileSet(fileSet)
                     .archiveType(archiveType)
@@ -109,10 +96,7 @@ public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRule
             .build();
 
       ImmutablePlatformMatchRule tools_windows_x64_rule = PlatformMatchRule.builder()
-          .match(match(BitSize.B64).andThen(DistributionMatch.any(
-              VersionRange.of("5.0.0", "5.0.2"),
-              VersionRange.of("4.4.0","4.4.9")
-          )))
+          .match(match(BitSize.B64).andThen(windows64MongoVersions))
           .finder(UrlTemplatePackageResolver.builder()
               .fileSet(fileSet)
               .archiveType(archiveType)
@@ -148,11 +132,7 @@ public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRule
                     .urlTemplate("/win32/mongodb-win32-x86_64-2012plus-{version}.zip")
                     .build())
             .build();
-    /*
-      windows_i686 undefined
-      https://fastdl.mongodb.org/win32/mongodb-win32-i386-{}.zip
-      3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-     */
+
     ImmutablePlatformMatchRule win32rule = PlatformMatchRule.builder()
             .match(match(BitSize.B32).andThen(DistributionMatch.any(
                             VersionRange.of("3.2.0", "3.2.22"),
@@ -177,12 +157,6 @@ public class WindowsPackageFinder implements PackageFinder, HasPlatformMatchRule
                     .urlTemplate("/win32/mongodb-win32-i386-{version}.zip")
                     .build())
             .build();
-
-    /*
-      windows_x86_64 x64
-      https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-{}.zip
-      3.4.23 - 3.4.9, 3.4.7 - 3.4.0, 3.2.21 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-     */
 
     ImmutablePlatformMatchRule win_x86_64 = PlatformMatchRule.builder()
             .match(match(BitSize.B64).andThen(DistributionMatch.any(

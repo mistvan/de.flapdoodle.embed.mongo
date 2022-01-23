@@ -65,10 +65,6 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.TGZ;
 
-    /*
-      https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-{}.tgz
-      4.0.26 - 4.0.0, 3.6.22 - 3.6.0
-     */
     ImmutablePlatformMatchRule firstRule = PlatformMatchRule.builder()
             .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("4.0.0", "4.0.27"),
@@ -85,10 +81,6 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
                     .build())
             .build();
 
-    /*
-      https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-{}.tgz
-      3.0.3 - 3.0.0, 2.6.12 - 2.6.0
-     */
     ImmutablePlatformMatchRule thirdRule = PlatformMatchRule.builder()
             .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.5.5", "3.5.5"), // missing in overview
@@ -106,10 +98,6 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
                     .build())
             .build();
 
-    /*
-      https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-{}.tgz
-      5.0.2 - 5.0.0, 4.4.9 - 4.4.0, 4.2.16 - 4.2.5, 4.2.3 - 4.2.0
-    */
     ImmutablePlatformMatchRule fourthRule = PlatformMatchRule.builder()
             .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("5.0.5", "5.0.5"),
@@ -129,7 +117,9 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
 
       ImmutablePlatformMatchRule toolsRule = PlatformMatchRule.builder()
           .match(match(BitSize.B64).andThen(DistributionMatch.any(
+                  VersionRange.of("5.0.5", "5.0.5"),
                   VersionRange.of("5.0.0", "5.0.2"),
+                  VersionRange.of("4.4.11", "4.4.11"),
                   VersionRange.of("4.4.0", "4.4.9")
               )))
           .finder(UrlTemplatePackageResolver.builder()

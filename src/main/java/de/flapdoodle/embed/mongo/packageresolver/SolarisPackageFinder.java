@@ -65,11 +65,6 @@ public class SolarisPackageFinder implements PackageFinder, HasPlatformMatchRule
     FileSet fileSet = fileSetOf(command);
     ArchiveType archiveType = ArchiveType.TGZ;
 
-    /*
-      sunos5 x64
-      https://fastdl.mongodb.org/sunos5/mongodb-sunos5-x86_64-{}.tgz
-      3.4.5 - 3.4.0, 3.2.14 - 3.2.0, 3.0.14 - 3.0.0, 2.6.12 - 2.6.0
-     */
     ImmutablePlatformMatchRule firstRule = PlatformMatchRule.builder()
             .match(match(BitSize.B64).andThen(DistributionMatch.any(
                             VersionRange.of("3.4.0", "3.4.5"),
