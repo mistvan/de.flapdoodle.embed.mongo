@@ -93,7 +93,7 @@ class CentosRedhatPackageResolverTest {
 			5.0.2 - 5.0.0, 4.4.9 - 4.4.4
 	*/
 	@ParameterizedTest
-	@ValueSource(strings = { "5.0.2 - 5.0.0", "4.4.9 - 4.4.0" })
+	@ValueSource(strings = { "5.0.5", "5.0.2 - 5.0.0", "4.4.11", "4.4.9 - 4.4.4" })
 	public void centos8arm(String version) {
 		assertThat(linuxWith(CommonArchitecture.ARM_64, CentosVersion.CentOS_8), version)
 			.resolvesTo("/linux/mongodb-linux-aarch64-rhel82-{}.tgz");

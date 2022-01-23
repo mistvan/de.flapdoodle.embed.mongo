@@ -39,7 +39,7 @@ class DebianPackageResolverTest {
     3.6.23 - 5.0.4
   */
   @ParameterizedTest
-  @ValueSource(strings = {"5.0.4 - 3.6.23"})
+  @ValueSource(strings = {"5.0.5", "5.0.2 - 5.0.0", "4.4.11", "4.4.9 - 4.4.0", "4.2.18", "4.2.16 - 4.2.5", "4.2.3 - 4.2.0", "4.0.27 - 4.0.0", "3.6.23 - 3.6.5"})
   public void debian9x64(String version) {
     assertThat(linuxWith(CommonArchitecture.X86_64, DebianVersion.DEBIAN_9), version)
             .resolvesTo("/linux/mongodb-linux-x86_64-debian92-{}.tgz");
@@ -51,7 +51,7 @@ class DebianPackageResolverTest {
     4.2.13 - 5.0.4
   */
   @ParameterizedTest
-  @ValueSource(strings = {"5.0.4 - 4.2.13"})
+  @ValueSource(strings = {"5.0.5", "5.0.2 - 5.0.0", "4.4.11", "4.4.9 - 4.4.0", "4.2.18", "4.2.16 - 4.2.5", "4.2.3 - 4.2.1"})
   public void debian10x64(String version) {
     assertThat(linuxWith(CommonArchitecture.X86_64, DebianVersion.DEBIAN_10), version)
             .resolvesTo("/linux/mongodb-linux-x86_64-debian10-{}.tgz");
