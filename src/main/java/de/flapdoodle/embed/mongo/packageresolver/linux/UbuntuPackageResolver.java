@@ -111,8 +111,10 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 		);
 		PlatformMatchRule ubuntu1804x64 = PlatformMatchRule.builder()
 					.match(match(BitSize.B64, CPUType.X86,
-							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10, UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
-							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10
+							UbuntuVersion.Ubuntu_18_04, UbuntuVersion.Ubuntu_18_10,
+							UbuntuVersion.Ubuntu_19_04, UbuntuVersion.Ubuntu_19_10,
+							UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10,
+							UbuntuVersion.Ubuntu_21_10
 						).andThen(ubuntu18xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
@@ -140,8 +142,10 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 			VersionRange.of("4.4.0", "4.4.9")
 		);
 		
-		PlatformMatchRule ubuntu2004arm = PlatformMatchRule.builder()
-					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10).andThen(ubuntu20xxMongoVersions))
+		PlatformMatchRule ubuntu20And21arm = PlatformMatchRule.builder()
+					.match(match(BitSize.B64, CPUType.ARM,
+						UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10, UbuntuVersion.Ubuntu_21_10)
+						.andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
 							.archiveType(ArchiveType.TGZ)
@@ -149,8 +153,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							.build())
 					.build();
 
-			PlatformMatchRule tools_ubuntu2004arm = PlatformMatchRule.builder()
-					.match(match(BitSize.B64, CPUType.ARM, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
+			PlatformMatchRule tools_ubuntu20And21arm = PlatformMatchRule.builder()
+					.match(match(BitSize.B64, CPUType.ARM,
+						UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10, UbuntuVersion.Ubuntu_21_10)
 						.andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
@@ -159,8 +164,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							.build())
 					.build();
 
-			PlatformMatchRule ubuntu2004x64 = PlatformMatchRule.builder()
-					.match(match(BitSize.B64, CPUType.X86, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
+			PlatformMatchRule ubuntu20And21x64 = PlatformMatchRule.builder()
+					.match(match(BitSize.B64, CPUType.X86,
+						UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10, UbuntuVersion.Ubuntu_21_10)
 						.andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
@@ -169,8 +175,9 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 							.build())
 					.build();
 
-			PlatformMatchRule tools_ubuntu2004x64 = PlatformMatchRule.builder()
-					.match(match(BitSize.B64, CPUType.X86, UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10)
+			PlatformMatchRule tools_ubuntu20And21x64 = PlatformMatchRule.builder()
+					.match(match(BitSize.B64, CPUType.X86,
+						UbuntuVersion.Ubuntu_20_04, UbuntuVersion.Ubuntu_20_10, UbuntuVersion.Ubuntu_21_10)
 						.andThen(ubuntu20xxMongoVersions))
 					.finder(UrlTemplatePackageResolver.builder()
 							.fileSet(fileSet)
@@ -185,14 +192,14 @@ public class UbuntuPackageResolver implements PackageFinder, HasPlatformMatchRul
 					case MongoRestore:
 							return PlatformMatchRules.empty()
 									.withRules(
-											tools_ubuntu2004arm, tools_ubuntu2004x64,
+											tools_ubuntu20And21arm, tools_ubuntu20And21x64,
 											tools_ubuntu1804arm, tools_ubuntu1804x64
 									);
 			}
 
     return PlatformMatchRules.empty()
             .withRules(
-                    ubuntu2004arm, ubuntu2004x64,
+                    ubuntu20And21arm, ubuntu20And21x64,
                     ubuntu1804arm, ubuntu1804x64
             );
   }
