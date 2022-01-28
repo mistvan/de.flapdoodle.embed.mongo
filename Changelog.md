@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.3.1
+
+- ubuntu 21.x support
+
 ### 3.3.0
 
 - mongodb version updates
