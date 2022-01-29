@@ -1,5 +1,13 @@
 ### Changelog
 
+### 3.3.1
+
+- ubuntu 21.x support
+
+### 3.3.0
+
+- mongodb version updates
+
 ### 3.2.8
 
 - redhat support fixed thanks to @infoShare
