@@ -124,7 +124,7 @@ public class OSXPackageFinder implements PackageFinder, HasPlatformMatchRules {
               )))
           .finder(UrlTemplatePackageResolver.builder()
               .fileSet(fileSet)
-              .archiveType(archiveType)
+              .archiveType(ArchiveType.ZIP)
               .urlTemplate("/tools/db/mongodb-database-tools-macos-x86_64-{tools.version}.zip")
               .build())
           .build();
