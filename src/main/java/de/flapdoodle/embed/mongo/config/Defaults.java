@@ -186,6 +186,21 @@ public abstract class Defaults {
 			);
 	}
 
+	public static Transitions transitionsForMongoShell(de.flapdoodle.embed.process.distribution.Version version) {
+		return workspaceDefaults()
+			.addAll(versionAndPlatform())
+			.addAll(processDefaults())
+			.addAll(commandName())
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(
+				Start.to(Command.class).initializedWith(Command.Mongo).withTransitionLabel("provide Command"),
+				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
+				Start.to(MongoShellArguments.class).initializedWith(MongoShellArguments.defaults()),
+				MongoShellProcessArguments.withDefaults(),
+				ExecutedMongoShellProcess.withDefaults()
+			);
+	}
+
 	public static Transitions transitionsForMongod(de.flapdoodle.embed.process.distribution.Version version) {
 		return workspaceDefaults()
 			.addAll(versionAndPlatform())

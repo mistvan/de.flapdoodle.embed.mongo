@@ -22,13 +22,31 @@ package de.flapdoodle.embed.mongo.examples;
 
 import com.google.common.collect.Lists;
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 import de.flapdoodle.embed.mongo.*;
+import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
+import de.flapdoodle.embed.mongo.commands.MongoShellArguments;
+import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.config.MongoShellConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.ExecutedMongoDumpProcess;
+import de.flapdoodle.embed.mongo.transitions.ExecutedMongoShellProcess;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.embed.process.io.progress.ProgressListeners;
+import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.TransitionMapping;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.Transitions;
+import de.flapdoodle.reverse.transitions.Derive;
+import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.types.Try;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -38,12 +56,43 @@ import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 public class StartMongoDBServerAndMongoShellClientTest {
 
+	@org.junit.jupiter.api.Test
+	public void startMongoShell() {
+		Version.Main version= Version.Main.PRODUCTION;
+		MongoShellArguments mongoShellArguments=MongoShellArguments.builder()
+			.addScriptParameters("var hight=3","var width=2","function multip() { print('area ' + hight * width); }","multip()")
+			.build();
+
+		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+			Transitions transitions = Defaults.transitionsForMongoShell(version)
+				.replace(Start.to(MongoShellArguments.class).initializedWith(mongoShellArguments))
+				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+				.addAll(Defaults.transitionsForMongod(version).walker()
+					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+						.build()));
+
+			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
+				.initState(StateID.of(RunningMongodProcess.class))) {
+
+				try (TransitionWalker.ReachedState<ExecutedMongoShellProcess> executedDump = runningMongoD.initState(
+					StateID.of(ExecutedMongoShellProcess.class))) {
+
+					System.out.println("-------------------");
+					System.out.println("shell executed: "+executedDump.current().returnCode());
+					System.out.println("-------------------");
+				}
+			}
+		}
+	}
+
+
 	/*
 	 // ->
 	 this is an very easy example to use mongos and mongod
 	 // <- 
 	 */
-	@Test
+//	@Test
 	public void startAndStopMongoDBAndMongoShell() throws IOException {
 			// ->
 		int port = Network.getFreeServerPort();

@@ -20,16 +20,15 @@
  */
 package de.flapdoodle.embed.mongo;
 
-
 public enum Command {
-	MongoD("mongod"),MongoS("mongos"),Mongo("mongo"),MongoImport("mongoimport"),MongoRestore("mongorestore"),MongoDump("mongodump");
-	
+	MongoD("mongod"), MongoS("mongos"), Mongo("mongo"), MongoImport("mongoimport"), MongoRestore("mongorestore"), MongoDump("mongodump");
+
 	private final String commandName;
 
 	Command(String commandName) {
 		this.commandName = commandName;
 	}
-	
+
 	public String commandName() {
 		return commandName;
 	}
