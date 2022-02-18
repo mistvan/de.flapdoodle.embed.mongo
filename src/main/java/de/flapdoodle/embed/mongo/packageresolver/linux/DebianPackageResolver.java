@@ -102,7 +102,7 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
       VersionRange.of("4.2.1", "4.2.3")
     );
     final PlatformMatchRule debian10 = PlatformMatchRule.builder()
-                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10).andThen(debian10MongoVersions))
+                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10, DebianVersion.DEBIAN_11).andThen(debian10MongoVersions))
                 .finder(UrlTemplatePackageResolver.builder()
                         .fileSet(fileSet)
                         .archiveType(ArchiveType.TGZ)
@@ -111,7 +111,7 @@ public class DebianPackageResolver implements PackageFinder, HasPlatformMatchRul
                 .build();
 
         final PlatformMatchRule debian10tools = PlatformMatchRule.builder()
-                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10).andThen(debian10MongoVersions))
+                .match(match(BitSize.B64, CPUType.X86, DebianVersion.DEBIAN_10, DebianVersion.DEBIAN_11).andThen(debian10MongoVersions))
                 .finder(UrlTemplatePackageResolver.builder()
                         .fileSet(fileSet)
                         .archiveType(ArchiveType.TGZ)
