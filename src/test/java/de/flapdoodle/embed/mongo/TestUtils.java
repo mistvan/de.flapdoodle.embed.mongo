@@ -24,11 +24,8 @@ import de.flapdoodle.embed.mongo.config.ImmutableMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
 import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
-import de.flapdoodle.embed.mongo.distribution.NumericVersion;
-import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.*;
-import junit.framework.TestCase;
 
 /**
  * A base class for all tests which create Mongod.
