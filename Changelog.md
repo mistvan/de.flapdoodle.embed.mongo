@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.4.1
+
+- moved feature detection to packageresolver repo
+
 ### 3.4.0
 
 - moved packageresolver to extra repo
