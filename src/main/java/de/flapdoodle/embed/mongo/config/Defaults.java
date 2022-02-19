@@ -147,63 +147,19 @@ public abstract class Defaults {
 	}
 
 	public static Transitions transitionsForMongoImport(de.flapdoodle.embed.process.distribution.Version version) {
-		return workspaceDefaults()
-			.addAll(versionAndPlatform())
-			.addAll(processDefaults())
-			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
-			.addAll(
-				Start.to(Command.class).initializedWith(Command.MongoImport).withTransitionLabel("provide Command"),
-				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-				Start.to(MongoImportArguments.class).initializedWith(MongoImportArguments.defaults()),
-				MongoImportProcessArguments.withDefaults(),
-				ExecutedMongoImportProcess.withDefaults()
-			);
+		return MongoImport.instance().transitions(version);
 	}
 
 	public static Transitions transitionsForMongoDump(de.flapdoodle.embed.process.distribution.Version version) {
-		return workspaceDefaults()
-			.addAll(versionAndPlatform())
-			.addAll(processDefaults())
-			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
-			.addAll(
-				Start.to(Command.class).initializedWith(Command.MongoDump).withTransitionLabel("provide Command"),
-				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-				Start.to(MongoDumpArguments.class).initializedWith(MongoDumpArguments.defaults()),
-				MongoDumpProcessArguments.withDefaults(),
-				ExecutedMongoDumpProcess.withDefaults()
-			);
+		return MongoDump.instance().transitions(version);
 	}
 
 	public static Transitions transitionsForMongoRestore(de.flapdoodle.embed.process.distribution.Version version) {
-		return workspaceDefaults()
-			.addAll(versionAndPlatform())
-			.addAll(processDefaults())
-			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
-			.addAll(
-				Start.to(Command.class).initializedWith(Command.MongoRestore).withTransitionLabel("provide Command"),
-				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-				Start.to(MongoRestoreArguments.class).initializedWith(MongoRestoreArguments.defaults()),
-				MongoRestoreProcessArguments.withDefaults(),
-				ExecutedMongoRestoreProcess.withDefaults()
-			);
+		return MongoRestore.instance().transitions(version);
 	}
 
 	public static Transitions transitionsForMongoShell(de.flapdoodle.embed.process.distribution.Version version) {
-		return workspaceDefaults()
-			.addAll(versionAndPlatform())
-			.addAll(processDefaults())
-			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
-			.addAll(
-				Start.to(Command.class).initializedWith(Command.Mongo).withTransitionLabel("provide Command"),
-				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-				Start.to(MongoShellArguments.class).initializedWith(MongoShellArguments.defaults()),
-				MongoShellProcessArguments.withDefaults(),
-				ExecutedMongoShellProcess.withDefaults()
-			);
+		return MongoShell.instance().transitions(version);
 	}
 
 	public static Transitions transitionsForMongod(de.flapdoodle.embed.process.distribution.Version version) {
@@ -211,20 +167,7 @@ public abstract class Defaults {
 	}
 
 	public static Transitions transitionsForMongos(de.flapdoodle.embed.process.distribution.Version version) {
-		return workspaceDefaults()
-			.addAll(versionAndPlatform())
-			.addAll(processDefaults())
-			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
-			.addAll(
-				Start.to(Command.class).initializedWith(Command.MongoS).withTransitionLabel("provide Command"),
-				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-				Start.to(Net.class).providedBy(Net::defaults),
-
-				Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()),
-				MongosProcessArguments.withDefaults(),
-				MongosStarter.withDefaults()
-			);
+		return Mongos.instance().transitions(version);
 	}
 
 	public static ImmutableExtractedArtifactStore extractedArtifactStoreFor(Command command) {
