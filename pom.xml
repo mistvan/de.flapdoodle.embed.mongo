@@ -17,7 +17,7 @@
     <packaging>bundle</packaging>
 
 	<description>A embedded mongodb ...</description>
-	<url>http://github.com/flapdoodle-oss/embedmongo.flapdoodle.de</url>
+	<url>http://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo</url>
 
 	<licenses>
 		<license>
@@ -37,9 +37,9 @@
 
 
 	<scm>
-		<connection>scm:git:git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</connection>
-		<developerConnection>scm:git:git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</developerConnection>
-		<url>git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</url>
+		<connection>scm:git:git@github.com:flapdoodle-oss/de.flapdoodle.embed.mongo.git</connection>
+		<developerConnection>scm:git:git@github.com:flapdoodle-oss/de.flapdoodle.embed.mongo.git</developerConnection>
+		<url>git@github.com:flapdoodle-oss/de.flapdoodle.embed.mongo.git</url>
 	  <tag>HEAD</tag>
   </scm>
 
@@ -479,9 +479,9 @@
 			<version>4.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>de.flapdoodle</groupId>
-			<artifactId>de.flapdoodle.os</artifactId>
-			<version>1.1.5</version>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo.packageresolver</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>de.flapdoodle.java8</groupId>
@@ -520,14 +520,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.7.30</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<!-- jsoup HTML parser library @ https://jsoup.org/ -->
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.14.3</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

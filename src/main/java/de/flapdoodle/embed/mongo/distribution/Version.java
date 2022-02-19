@@ -20,6 +20,10 @@
  */
 package de.flapdoodle.embed.mongo.distribution;
 
+import de.flapdoodle.embed.mongo.packageresolver.HasMongotoolsPackage;
+import de.flapdoodle.embed.mongo.packageresolver.MongotoolsVersion;
+import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
+
 import java.util.EnumSet;
 import java.util.Optional;
 

@@ -22,7 +22,7 @@ package de.flapdoodle.embed.mongo.config;
 
 import org.slf4j.Logger;
 
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 
 /**

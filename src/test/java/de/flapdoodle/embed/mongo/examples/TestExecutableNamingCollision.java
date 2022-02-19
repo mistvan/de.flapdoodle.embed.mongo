@@ -22,7 +22,7 @@ package de.flapdoodle.embed.mongo.examples;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;

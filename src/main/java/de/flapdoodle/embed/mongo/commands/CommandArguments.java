@@ -20,7 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.commands;
 
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 
 public interface CommandArguments {
 	Command command();

@@ -24,7 +24,7 @@ package de.flapdoodle.embed.mongo.config;
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
 
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.config.SupportConfig;
 
 /**

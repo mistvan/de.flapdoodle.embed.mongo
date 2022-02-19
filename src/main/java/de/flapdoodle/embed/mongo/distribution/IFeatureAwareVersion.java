@@ -22,6 +22,7 @@ package de.flapdoodle.embed.mongo.distribution;
 
 import java.util.EnumSet;
 
+import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
 import de.flapdoodle.embed.process.distribution.Version;
 
 

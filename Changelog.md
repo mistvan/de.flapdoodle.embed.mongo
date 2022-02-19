@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.4.0
+
+- moved packageresolver to extra repo
+
 ### 3.3.1
 
 - ubuntu 21.x support

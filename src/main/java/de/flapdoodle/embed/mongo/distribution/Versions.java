@@ -20,6 +20,8 @@
  */
 package de.flapdoodle.embed.mongo.distribution;
 
+import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
+
 import java.util.EnumSet;
 
 public class Versions {
