@@ -20,8 +20,18 @@
  */
 package de.flapdoodle.embed.mongo.runtime;
 
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
+import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
+import de.flapdoodle.embed.mongo.config.Storage;
+import de.flapdoodle.embed.mongo.config.SupportConfig;
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
+import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
+import de.flapdoodle.embed.process.io.file.Files;
+import de.flapdoodle.embed.process.runtime.NUMA;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,19 +46,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.flapdoodle.embed.mongo.packageresolver.Command;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Storage;
-import de.flapdoodle.embed.mongo.config.SupportConfig;
-import de.flapdoodle.embed.mongo.distribution.Feature;
-import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.ExtractedFileSet;
-import de.flapdoodle.embed.process.io.file.Files;
-import de.flapdoodle.embed.process.runtime.NUMA;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
 
 /**
  *

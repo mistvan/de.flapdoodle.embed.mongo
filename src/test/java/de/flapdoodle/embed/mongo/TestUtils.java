@@ -22,8 +22,8 @@ package de.flapdoodle.embed.mongo;
 
 import de.flapdoodle.embed.mongo.config.ImmutableMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.*;
 

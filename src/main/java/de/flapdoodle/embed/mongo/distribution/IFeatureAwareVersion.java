@@ -20,18 +20,18 @@
  */
 package de.flapdoodle.embed.mongo.distribution;
 
-import java.util.EnumSet;
-
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
+import de.flapdoodle.embed.mongo.packageresolver.FeatureSet;
 import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
 import de.flapdoodle.embed.process.distribution.Version;
 
 
 public interface IFeatureAwareVersion extends Version {
 	default boolean enabled(Feature feature) {
-		return getFeatures().contains(feature);
+		return getFeatures().enabled(feature);
 	}
 
-	EnumSet<Feature> getFeatures();
+	FeatureSet getFeatures();
 
 	@Deprecated
 	NumericVersion numericVersion();

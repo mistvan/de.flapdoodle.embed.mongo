@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import de.flapdoodle.embed.mongo.config.ImmutableMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.distribution.Feature;
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
