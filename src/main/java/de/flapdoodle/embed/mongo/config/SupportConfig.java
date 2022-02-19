@@ -20,7 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 
 public class SupportConfig extends AbstractSupportConfig {
 	private final Command command;

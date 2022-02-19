@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.Date;
 
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

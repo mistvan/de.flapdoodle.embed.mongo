@@ -26,7 +26,7 @@ import java.util.Optional;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import org.slf4j.Logger;
 
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.config.ImmutableRuntimeConfig;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.config.store.DistributionDownloadPath;

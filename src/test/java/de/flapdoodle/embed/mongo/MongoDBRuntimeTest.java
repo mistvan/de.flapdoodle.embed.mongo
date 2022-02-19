@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.os.*;
 import org.junit.Test;
 

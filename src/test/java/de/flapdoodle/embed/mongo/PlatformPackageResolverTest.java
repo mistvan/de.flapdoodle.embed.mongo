@@ -18,12 +18,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.embed.mongo.packageresolver;
+package de.flapdoodle.embed.mongo;
 
 import com.google.common.io.Resources;
-import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.TestUtils;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
+import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.os.CommonArchitecture;
 import de.flapdoodle.os.OS;
@@ -55,12 +56,6 @@ class PlatformPackageResolverTest {
 
     assertThatDistributionPackageFor(Version.V3_4_5, OS.Solaris, CommonArchitecture.X86_64)
         .matchesPath("/sunos5/mongodb-sunos5-x86_64-3.4.5.tgz");
-  }
-
-  @Test
-  public void explainSnapshotMustNotChangeWithoutNotice() {
-    Assertions.assertThat(testee.explain())
-      .isEqualToIgnoringNewLines(URLs.contentOf(Resources.getResource(PlatformPackageResolverTest.class,"explainedSnapshot.txt"), StandardCharsets.UTF_8));
   }
 
   private WithDistributionPackage assertThatDistributionPackageFor(Version version, OS os, CommonArchitecture architecture) {

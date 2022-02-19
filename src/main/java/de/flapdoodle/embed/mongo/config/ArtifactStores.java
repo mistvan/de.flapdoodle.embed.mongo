@@ -20,7 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.extract.UUIDTempNaming;
 import de.flapdoodle.embed.process.io.directories.PropertyOrPlatformTempDir;
 import de.flapdoodle.embed.process.store.ArtifactStore;

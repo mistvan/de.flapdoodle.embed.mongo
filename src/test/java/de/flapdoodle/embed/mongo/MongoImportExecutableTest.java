@@ -27,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import org.junit.Assert;
 import org.junit.Test;
 

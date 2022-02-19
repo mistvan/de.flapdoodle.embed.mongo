@@ -42,7 +42,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
-import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.MongoImportExecutable;
 import de.flapdoodle.embed.mongo.MongoImportProcess;
 import de.flapdoodle.embed.mongo.MongoImportStarter;

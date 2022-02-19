@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Arrays;
 
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;

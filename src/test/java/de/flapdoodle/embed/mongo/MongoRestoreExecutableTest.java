@@ -24,6 +24,7 @@ import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 import java.io.IOException;
 
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
