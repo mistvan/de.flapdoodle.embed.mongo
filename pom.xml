@@ -17,7 +17,7 @@
     <packaging>bundle</packaging>
 
 	<description>A embedded mongodb ...</description>
-	<url>http://github.com/flapdoodle-oss/embedmongo.flapdoodle.de</url>
+	<url>http://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo</url>
 
 	<licenses>
 		<license>
@@ -37,9 +37,9 @@
 
 
 	<scm>
-		<connection>scm:git:git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</connection>
-		<developerConnection>scm:git:git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</developerConnection>
-		<url>git@github.com:flapdoodle-oss/embedmongo.flapdoodle.de.git</url>
+		<connection>scm:git:git@github.com:flapdoodle-oss/de.flapdoodle.embed.mongo.git</connection>
+		<developerConnection>scm:git:git@github.com:flapdoodle-oss/de.flapdoodle.embed.mongo.git</developerConnection>
+		<url>git@github.com:flapdoodle-oss/de.flapdoodle.embed.mongo.git</url>
 	  <tag>HEAD</tag>
   </scm>
 
