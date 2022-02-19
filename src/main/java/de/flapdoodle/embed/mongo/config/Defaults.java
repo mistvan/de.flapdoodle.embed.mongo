@@ -207,26 +207,7 @@ public abstract class Defaults {
 	}
 
 	public static Transitions transitionsForMongod(de.flapdoodle.embed.process.distribution.Version version) {
-		return workspaceDefaults()
-			.addAll(versionAndPlatform())
-			.addAll(processDefaults())
-			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
-			.addAll(
-				Start.to(Command.class).initializedWith(Command.MongoD).withTransitionLabel("provide Command"),
-				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-				Start.to(Net.class).providedBy(Net::defaults),
-
-				Derive.given(TempDir.class).state(DatabaseDir.class)
-					.with(tempDir -> {
-						DatabaseDir databaseDir = Try.get(() -> DatabaseDir.of(tempDir.createDirectory("mongod-database")));
-						return State.of(databaseDir, dir -> Try.run(() -> Directories.deleteAll(dir.value())));
-					}),
-
-				Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()),
-				MongodProcessArguments.withDefaults(),
-				MongodStarter.withDefaults()
-			);
+		return Mongod.instance().transitions(version);
 	}
 
 	public static Transitions transitionsForMongos(de.flapdoodle.embed.process.distribution.Version version) {
@@ -244,53 +225,6 @@ public abstract class Defaults {
 				MongosProcessArguments.withDefaults(),
 				MongosStarter.withDefaults()
 			);
-	}
-
-	public static <C extends CommandArguments, T extends CommandProcessArguments<C>> Transitions transitionsFor(
-		T processArguments,
-		C arguments, Version.Main version
-	) {
-
-		Command command = arguments.command();
-
-		// TODO use same legacy directory?
-
-		return workspaceDefaults()
-			.addAll(versionAndPlatform())
-			.addAll(processDefaults())
-			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
-			.addAll(
-				Start.to(Command.class).initializedWith(command).withTransitionLabel("provide Command"),
-				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
-				Start.to(Net.class).providedBy(Net::defaults),
-
-				Derive.given(TempDir.class).state(DatabaseDir.class)
-					.with(tempDir -> {
-						DatabaseDir databaseDir = Try.get(() -> DatabaseDir.of(tempDir.createDirectory("mongod-database")));
-						return State.of(databaseDir, dir -> Try.run(() -> Directories.deleteAll(dir.value())));
-					}),
-
-				Start.to(processArguments.arguments()).initializedWith(arguments),
-				processArguments,
-				MongodStarter.withDefaults()
-			);
-	}
-
-	private static ArchiveType archiveTypeOfLegacy(de.flapdoodle.embed.process.distribution.ArchiveType archiveType) {
-		switch (archiveType) {
-			case EXE:
-				return ArchiveType.EXE;
-			case TBZ2:
-				return ArchiveType.TBZ2;
-			case TGZ:
-				return ArchiveType.TGZ;
-			case ZIP:
-				return ArchiveType.ZIP;
-			case TXZ:
-				return ArchiveType.TXZ;
-		}
-		throw new IllegalArgumentException("Could not map: " + archiveType);
 	}
 
 	public static ImmutableExtractedArtifactStore extractedArtifactStoreFor(Command command) {

@@ -30,10 +30,11 @@ import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.shortcuts.Mongod;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
+import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.mongo.util.FileUtils;
 import de.flapdoodle.embed.process.io.Processors;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -55,6 +56,7 @@ import java.nio.file.Path;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class HowToDocTest {
 
@@ -65,7 +67,7 @@ public class HowToDocTest {
 	public void testStandard() throws IOException {
 		recording.begin();
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.start(Version.Main.PRODUCTION)) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().start(Version.Main.PRODUCTION)) {
 			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
@@ -94,9 +96,6 @@ public class HowToDocTest {
 	public void testMongodForTests() throws IOException {
 		recording.begin();
 		// TODO REMOVE
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.start(Version.Main.PRODUCTION)) {
-
-		}
 		recording.end();
 	}
 
@@ -104,6 +103,18 @@ public class HowToDocTest {
 	public void testCustomizeDownloadURL() {
 		recording.begin();
 		// TODO change download server to "http://my.custom.download.domain/"
+
+		Mongod mongod = new Mongod() {
+			@Override
+			public Transition<DistributionBaseUrl> distributionBaseUrl() {
+				return Start.to(DistributionBaseUrl.class)
+					.initializedWith(DistributionBaseUrl.of("http://my.custom.download.domain"));
+			}
+		};
+
+		assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
+			.isInstanceOf(RuntimeException.class);
+
 		recording.end();
 	}
 
