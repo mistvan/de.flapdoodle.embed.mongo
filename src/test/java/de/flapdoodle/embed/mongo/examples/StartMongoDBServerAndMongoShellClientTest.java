@@ -20,23 +20,14 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import com.google.common.collect.Lists;
-import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
-import de.flapdoodle.embed.mongo.*;
-import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoShellArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.MongoShellConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.ExecutedMongoDumpProcess;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoShellProcess;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
-import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -44,19 +35,14 @@ import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class StartMongoDBServerAndMongoShellClientTest {
 
-	@org.junit.jupiter.api.Test
+	@Test
 	public void startMongoShell() {
 		Version.Main version= Version.Main.PRODUCTION;
 		MongoShellArguments mongoShellArguments=MongoShellArguments.builder()
@@ -75,74 +61,12 @@ public class StartMongoDBServerAndMongoShellClientTest {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (TransitionWalker.ReachedState<ExecutedMongoShellProcess> executedDump = runningMongoD.initState(
+				try (TransitionWalker.ReachedState<ExecutedMongoShellProcess> executedShell = runningMongoD.initState(
 					StateID.of(ExecutedMongoShellProcess.class))) {
 
-					System.out.println("-------------------");
-					System.out.println("shell executed: "+executedDump.current().returnCode());
-					System.out.println("-------------------");
+					assertThat(executedShell.current().returnCode()).isEqualTo(0);
 				}
 			}
 		}
 	}
-
-
-	/*
-	 // ->
-	 this is an very easy example to use mongos and mongod
-	 // <- 
-	 */
-//	@Test
-	public void startAndStopMongoDBAndMongoShell() throws IOException {
-			// ->
-		int port = Network.getFreeServerPort();
-		String defaultHost = "localhost";
-
-		MongodProcess mongod = startMongod(port);
-
-		try {
-			Thread.sleep(1000);
-			MongoShellProcess mongoShell = startMongoShell(port, defaultHost);
-			Thread.sleep(1000);
-			try {
-				MongoClient mongoClient = new MongoClient(defaultHost, port);
-				System.out.println("DB Names: " + mongoClient.getDatabaseNames());
-			} finally {
-				mongoShell.stop();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			mongod.stop();
-		}
-			// <-
-	}
-	
-	// ->
-	private MongoShellProcess startMongoShell(int defaultConfigPort, String defaultHost) throws UnknownHostException,
-			IOException {
-		MongoShellConfig mongoShellConfig = MongoShellConfig.builder()
-			.version(Version.Main.PRODUCTION)
-			.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
-			.scriptParameters(Lists.newArrayList("var hight=3","var width=2","function multip() { print('area ' + hight * width); }","multip()"))
-			.build();
-
-		MongoShellExecutable mongosExecutable = MongoShellStarter.getDefaultInstance().prepare(mongoShellConfig);
-		MongoShellProcess mongos = mongosExecutable.start();
-		return mongos;
-	}
-
-	private MongodProcess startMongod(int defaultConfigPort) throws IOException {
-		final Version.Main version = Version.Main.PRODUCTION;
-		MongodConfig mongoConfigConfig = MongodConfig.builder()
-			.version(version)
-			.cmdOptions(getCmdOptions(version))
-			.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
-			.build();
-
-		MongodExecutable mongodExecutable = MongodStarter.getDefaultInstance().prepare(mongoConfigConfig);
-		MongodProcess mongod = mongodExecutable.start();
-		return mongod;
-	}
-	// <-
 }

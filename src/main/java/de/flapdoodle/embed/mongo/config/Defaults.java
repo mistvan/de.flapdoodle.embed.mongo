@@ -26,6 +26,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.mongo.transitions.*;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
+import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.process.archives.ArchiveType;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.ImmutableRuntimeConfig;
@@ -73,7 +74,8 @@ public abstract class Defaults {
 		StateID<ExtractedFileSet> destination,
 		StateID<Distribution> distributionStateID,
 		StateID<TempDir> tempDirStateID,
-		StateID<Command> commandStateID
+		StateID<Command> commandStateID,
+		StateID<DistributionBaseUrl> distributionBaseUrlStateID
 	) {
 		StateID<Distribution> localDistributionStateID = StateID.of(Distribution.class);
 		StateID<TempDir> localTempDirStateID = StateID.of(TempDir.class);
@@ -86,7 +88,8 @@ public abstract class Defaults {
 		Transitions transitions = Transitions.from(
 			Derive.given(localCommandStateID).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command"),
 
-			PackageOfCommandDistribution.withDefaults(),
+			PackageOfCommandDistribution.withDefaults()
+				.withDistributionBaseUrl(distributionBaseUrlStateID),
 
 			DownloadPackage.with(downloadCache),
 
@@ -104,7 +107,9 @@ public abstract class Defaults {
 
 	public static Transitions workspaceDefaults() {
 		return Transitions.from(
-			InitTempDirectory.withPlatformTempRandomSubDir()
+			InitTempDirectory.withPlatformTempRandomSubDir(),
+			Start.to(DistributionBaseUrl.class)
+				.initializedWith(DistributionBaseUrl.of("https://fastdl.mongodb.org"))
 		);
 	}
 
@@ -146,7 +151,7 @@ public abstract class Defaults {
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoImport).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
@@ -161,7 +166,7 @@ public abstract class Defaults {
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoDump).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
@@ -176,7 +181,7 @@ public abstract class Defaults {
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoRestore).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
@@ -191,7 +196,7 @@ public abstract class Defaults {
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.Mongo).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
@@ -206,7 +211,7 @@ public abstract class Defaults {
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoD).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
@@ -229,7 +234,7 @@ public abstract class Defaults {
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoS).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
@@ -254,7 +259,7 @@ public abstract class Defaults {
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class)))
+			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(
 				Start.to(Command.class).initializedWith(command).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),

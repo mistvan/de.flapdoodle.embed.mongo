@@ -29,6 +29,7 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.transitions.Start;
 import org.bson.Document;
+import org.junit.jupiter.api.Test;
 
 import java.net.UnknownHostException;
 import java.util.List;
@@ -37,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ShardServerMongoDBTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void shardServerOptionVisibleInAdminDb() throws UnknownHostException {
         try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION)
           .replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()

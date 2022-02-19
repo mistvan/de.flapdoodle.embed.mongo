@@ -30,6 +30,7 @@ import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.shortcuts.Mongod;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
@@ -64,9 +65,7 @@ public class HowToDocTest {
 	public void testStandard() throws IOException {
 		recording.begin();
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION)
-			.walker().initState(StateID.of(RunningMongodProcess.class))) {
-
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.start(Version.Main.PRODUCTION)) {
 			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
@@ -95,6 +94,9 @@ public class HowToDocTest {
 	public void testMongodForTests() throws IOException {
 		recording.begin();
 		// TODO REMOVE
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.start(Version.Main.PRODUCTION)) {
+
+		}
 		recording.end();
 	}
 

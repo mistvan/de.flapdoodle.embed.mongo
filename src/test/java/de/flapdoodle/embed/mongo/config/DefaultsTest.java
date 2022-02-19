@@ -34,6 +34,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Deprecated
 class DefaultsTest {
 
 	@Test

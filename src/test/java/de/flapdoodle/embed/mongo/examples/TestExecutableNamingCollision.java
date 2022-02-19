@@ -46,6 +46,7 @@ import java.net.UnknownHostException;
 
 import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
+@Deprecated
 public class TestExecutableNamingCollision extends TestCase {
 
 	private MongodExecutable _mongodExe;

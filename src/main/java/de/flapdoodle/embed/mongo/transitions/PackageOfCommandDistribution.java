@@ -2,6 +2,7 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
+import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.process.archives.ArchiveType;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.Package;
@@ -30,9 +31,9 @@ public abstract class PackageOfCommandDistribution implements Transition<Package
 	}
 
 	@Value.Auxiliary
-	protected Package packageOf(Command command, Distribution distribution) {
+	protected Package packageOf(Command command, Distribution distribution, DistributionBaseUrl baseUrl) {
 		DistributionPackage distPackage = legacyPackageResolverFactory().apply(command).packageFor(distribution);
-		return Package.of(archiveTypeOfLegacy(distPackage.archiveType()), distPackage.fileSet(), "https://fastdl.mongodb.org"+distPackage.archivePath());
+		return Package.of(archiveTypeOfLegacy(distPackage.archiveType()), distPackage.fileSet(),  baseUrl.value() /*"https://fastdl.mongodb.org"*/+distPackage.archivePath());
 	}
 
 	private static ArchiveType archiveTypeOfLegacy(de.flapdoodle.embed.process.distribution.ArchiveType archiveType) {
@@ -61,6 +62,11 @@ public abstract class PackageOfCommandDistribution implements Transition<Package
 		return StateID.of(Distribution.class);
 	}
 
+	@Value.Default
+	public StateID<DistributionBaseUrl> distributionBaseUrl() {
+		return StateID.of(DistributionBaseUrl.class);
+	}
+
 	@Override
 	@Value.Default
 	public StateID<Package> destination() {
@@ -69,14 +75,15 @@ public abstract class PackageOfCommandDistribution implements Transition<Package
 
 	@Override
 	public Set<StateID<?>> sources() {
-		return StateID.setOf(command(), distribution());
+		return StateID.setOf(command(), distribution(), distributionBaseUrl());
 	}
 
 	@Override
 	public State<Package> result(StateLookup lookup) {
 		Command command = lookup.of(command());
 		Distribution distribution = lookup.of(distribution());
-		return State.of(packageOf(command,distribution));
+		DistributionBaseUrl baseUrl = lookup.of(distributionBaseUrl());
+		return State.of(packageOf(command,distribution, baseUrl));
 	}
 
 	public static ImmutablePackageOfCommandDistribution.Builder builder() {

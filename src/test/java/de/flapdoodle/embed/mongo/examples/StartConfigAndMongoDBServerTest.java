@@ -46,6 +46,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StartConfigAndMongoDBServerTest {
 
+	/*
+	 this is an very easy example to use mongos and mongod
+	 */
 	@Test
 	public void mongosAndMongod() throws UnknownHostException {
 		Version.Main version = Version.Main.PRODUCTION;
@@ -76,64 +79,5 @@ public class StartConfigAndMongoDBServerTest {
 
 			}
 		}
-	}
-
-	/*
-	 this is an very easy example to use mongos and mongod
-	 */
-	@Test
-	@Disabled
-	public void startAndStopMongosAndMongod() throws IOException {
-		int mongosPort = Network.getFreeServerPort();
-		int mongodPort = Network.getFreeServerPort();
-		String defaultHost = "localhost";
-
-		MongodProcess mongod = startMongod(mongodPort);
-
-		try {
-			// init replica set, aka rs.initiate()
-			try (MongoClient client = new MongoClient(defaultHost, mongodPort)) {
-				client.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
-			}
-
-			MongosProcess mongos = startMongos(mongosPort, mongodPort, defaultHost);
-
-			try {
-				try (MongoClient mongoClient = new MongoClient(defaultHost, mongodPort)) {
-					System.out.println("DB Names: " + mongoClient.getDatabaseNames());
-				}
-			}
-			finally {
-				mongos.stop();
-			}
-		}
-		finally {
-			mongod.stop();
-		}
-	}
-
-	private MongosProcess startMongos(int port, int defaultConfigPort, String defaultHost) throws
-		IOException {
-		MongosConfig mongosConfig = MongosConfig.builder()
-			.version(Version.Main.PRODUCTION)
-			.net(new Net(port, Network.localhostIsIPv6()))
-			.configDB(defaultHost + ":" + defaultConfigPort)
-			.replicaSet("testRepSet")
-			.build();
-
-		MongosExecutable mongosExecutable = MongosStarter.getDefaultInstance().prepare(mongosConfig);
-		return mongosExecutable.start();
-	}
-
-	private MongodProcess startMongod(int defaultConfigPort) throws IOException {
-		MongodConfig mongoConfigConfig = MongodConfig.builder()
-			.version(Version.Main.PRODUCTION)
-			.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
-			.replication(new Storage(null, "testRepSet", 5000))
-			.isConfigServer(true)
-			.build();
-
-		MongodExecutable mongodExecutable = MongodStarter.getDefaultInstance().prepare(mongoConfigConfig);
-		return mongodExecutable.start();
 	}
 }

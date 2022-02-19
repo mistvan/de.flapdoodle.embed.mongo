@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+@Deprecated
 public class ExtractMarkdownFromCode {
 
 	public static void main(String[] args) {
