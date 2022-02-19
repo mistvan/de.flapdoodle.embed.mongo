@@ -20,22 +20,11 @@
  */
 package de.flapdoodle.embed.mongo.distribution;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
-import java.util.EnumSet;
-
 import org.junit.Test;
 
-public class VersionsTest {
+import static org.assertj.core.api.Assertions.assertThat;
 
-	@Test
-	public void testEquals() {
-		assertEquals(Versions.withFeatures(genericVersion("2.6.5")), Versions.withFeatures(genericVersion("2.6.5")));
-		assertEquals(Versions.withFeatures(genericVersion("2.6.5"), Feature.TEXT_SEARCH), Versions.withFeatures(genericVersion("2.6.5"), Feature.TEXT_SEARCH));
-		assertNotEquals(Versions.withFeatures(genericVersion("2.6.5")), Versions.withFeatures(genericVersion("2.6.5"), Feature.TEXT_SEARCH));
-	}
+public class VersionsTest {
 
 	private de.flapdoodle.embed.process.distribution.Version genericVersion(String version) {
 		return de.flapdoodle.embed.process.distribution.Version.of(version);
@@ -49,13 +38,4 @@ public class VersionsTest {
       assertThat(iFeatureAwareVersion.toString()).contains(version);
       assertThat(iFeatureAwareVersion.asInDownloadPath()).isEqualTo(version);
     }
-
-	@Test
-	public void getFeatures() {
-		EnumSet<Feature> features = Version.Main.PRODUCTION.getFeatures();
-		IFeatureAwareVersion iFeatureAwareVersion = Versions.withFeatures(genericVersion("6.6.6"), features);
-
-		assertThat(iFeatureAwareVersion.getFeatures()).containsAll(features);
-	}
-
 }

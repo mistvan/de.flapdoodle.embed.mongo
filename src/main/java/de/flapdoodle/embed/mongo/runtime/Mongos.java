@@ -20,13 +20,13 @@
  */
 package de.flapdoodle.embed.mongo.runtime;
 
+import de.flapdoodle.embed.mongo.config.MongosConfig;
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
+import de.flapdoodle.embed.process.extract.ExtractedFileSet;
+
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
-import de.flapdoodle.embed.mongo.config.MongosConfig;
-import de.flapdoodle.embed.mongo.distribution.Feature;
-import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 
 /**
  *

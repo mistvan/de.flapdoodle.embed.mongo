@@ -20,9 +20,10 @@
  */
 package de.flapdoodle.embed.mongo.distribution;
 
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
+import de.flapdoodle.embed.mongo.packageresolver.FeatureSet;
+import de.flapdoodle.embed.mongo.packageresolver.FeatureSetResolver;
 import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
-
-import java.util.EnumSet;
 
 public class Versions {
 
@@ -30,27 +31,18 @@ public class Versions {
 		// no instance
 	}
 
-	public static IFeatureAwareVersion withFeatures(de.flapdoodle.embed.process.distribution.Version version, EnumSet<Feature> features) {
-		return new GenericFeatureAwareVersion(version, features);
-	}
-	
 	public static IFeatureAwareVersion withFeatures(de.flapdoodle.embed.process.distribution.Version version, Feature...features) {
-		return new GenericFeatureAwareVersion(version, features);
+		return new GenericFeatureAwareVersion(version);
 	}
 	
 	static class GenericFeatureAwareVersion implements IFeatureAwareVersion {
 
 		private final de.flapdoodle.embed.process.distribution.Version _version;
-		private final EnumSet<Feature> _features;
+		private final FeatureSet _features;
 
-		public GenericFeatureAwareVersion(de.flapdoodle.embed.process.distribution.Version version, EnumSet<Feature> features) {
+		public GenericFeatureAwareVersion(de.flapdoodle.embed.process.distribution.Version version) {
 			_version = version;
-			_features = EnumSet.copyOf(features);
-		}
-
-		public GenericFeatureAwareVersion(de.flapdoodle.embed.process.distribution.Version version, Feature...features) {
-			_version = version;
-			_features = Feature.asSet(features);
+			_features = FeatureSetResolver.defaultInstance().featuresOf(version);
 		}
 		
 		@Override
@@ -59,7 +51,7 @@ public class Versions {
 		}
 
 		@Override
-		public EnumSet<Feature> getFeatures() {
+		public FeatureSet getFeatures() {
 			return _features;
 		}
 

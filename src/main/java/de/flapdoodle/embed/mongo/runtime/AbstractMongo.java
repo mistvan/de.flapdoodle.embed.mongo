@@ -25,7 +25,7 @@ import java.util.Objects;
 
 import de.flapdoodle.embed.mongo.config.MongoCommonConfig;
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Feature;
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
 
 
 public abstract class AbstractMongo {

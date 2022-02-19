@@ -20,49 +20,17 @@
  */
 package de.flapdoodle.embed.mongo.doc;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-
-import de.flapdoodle.embed.mongo.packageresolver.Command;
-import de.flapdoodle.embed.mongo.MongoImportExecutable;
-import de.flapdoodle.embed.mongo.MongoImportProcess;
-import de.flapdoodle.embed.mongo.MongoImportStarter;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.config.MongoImportConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.Storage;
-import de.flapdoodle.embed.mongo.config.Timeout;
+import com.mongodb.*;
+import de.flapdoodle.embed.mongo.*;
+import de.flapdoodle.embed.mongo.config.*;
 import de.flapdoodle.embed.mongo.config.processlistener.CopyDbFilesFromDirBeforeProcessStop;
-import de.flapdoodle.embed.mongo.distribution.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.distribution.Versions;
 import de.flapdoodle.embed.mongo.examples.AbstractMongoDBTest;
 import de.flapdoodle.embed.mongo.examples.FileStreamProcessor;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.mongo.tests.MongodForTestsFactory;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.config.process.ProcessOutput;
@@ -83,12 +51,27 @@ import de.flapdoodle.testdoc.Includes;
 import de.flapdoodle.testdoc.Recorder;
 import de.flapdoodle.testdoc.Recording;
 import de.flapdoodle.testdoc.TabSize;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
+import static org.junit.Assert.assertNotNull;
 
 public class HowToDocTest {
 
 	@ClassRule
-	public static final Recording recording=Recorder.with("Howto.md",TabSize.spaces(2));
-	
+	public static final Recording recording = Recorder.with("Howto.md", TabSize.spaces(2));
+
 	@Test
 	public void testStandard() throws IOException {
 		recording.begin();
@@ -97,10 +80,10 @@ public class HowToDocTest {
 		int port = Network.getFreeServerPort();
 		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.net(new Net(port, Network.localhostIsIPv6()))
-				.cmdOptions(getCmdOptions(version))
-				.build();
+			.version(version)
+			.net(new Net(port, Network.localhostIsIPv6()))
+			.cmdOptions(getCmdOptions(version))
+			.build();
 
 		MongodExecutable mongodExecutable = null;
 		try {
@@ -113,7 +96,8 @@ public class HowToDocTest {
 				col.save(new BasicDBObject("testDoc", new Date()));
 			}
 
-		} finally {
+		}
+		finally {
 			if (mongodExecutable != null)
 				mongodExecutable.stop();
 		}
@@ -122,23 +106,23 @@ public class HowToDocTest {
 
 	@Test
 	public void testCustomMongodFilename() throws IOException {
-		recording.begin();		
+		recording.begin();
 		int port = Network.getFreeServerPort();
 
 		Command command = Command.MongoD;
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
-		.artifactStore(Defaults.extractedArtifactStoreFor(command)
+			.artifactStore(Defaults.extractedArtifactStoreFor(command)
 				.withDownloadConfig(Defaults.downloadConfigFor(command).build())
 				.executableNaming(new UserTempNaming()))
-		.build();
+			.build();
 
 		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.net(new Net(port, Network.localhostIsIPv6()))
-				.cmdOptions(getCmdOptions(version))
-				.build();
+			.version(version)
+			.net(new Net(port, Network.localhostIsIPv6()))
+			.cmdOptions(getCmdOptions(version))
+			.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
 
@@ -153,11 +137,12 @@ public class HowToDocTest {
 				col.save(new BasicDBObject("testDoc", new Date()));
 			}
 
-		} finally {
+		}
+		finally {
 			if (mongodExecutable != null)
 				mongodExecutable.stop();
 		}
-		recording.end();		
+		recording.end();
 	}
 
 	public void testUnitTests() {
@@ -178,7 +163,8 @@ public class HowToDocTest {
 				col.save(new BasicDBObject("testDoc", new Date()));
 			}
 
-		} finally {
+		}
+		finally {
 			if (factory != null)
 				factory.shutdown();
 		}
@@ -191,36 +177,36 @@ public class HowToDocTest {
 		Command command = Command.MongoD;
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
-				.artifactStore(Defaults.extractedArtifactStoreFor(command)
-						.withDownloadConfig(Defaults.downloadConfigFor(command)
-								.downloadPath((__) -> "http://my.custom.download.domain/")
-								.build()))
-				.build();
+			.artifactStore(Defaults.extractedArtifactStoreFor(command)
+				.withDownloadConfig(Defaults.downloadConfigFor(command)
+					.downloadPath((__) -> "http://my.custom.download.domain/")
+					.build()))
+			.build();
 		recording.end();
 	}
 
-	@Test 
+	@Test
 	public void testCustomProxy() {
 		recording.begin();
 		Command command = Command.MongoD;
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
-				.artifactStore(Defaults.extractedArtifactStoreFor(command)
-						.withDownloadConfig(Defaults.downloadConfigFor(command)
-								.proxyFactory(new HttpProxyFactory("fooo", 1234))
-								.build()))
-				.build();
+			.artifactStore(Defaults.extractedArtifactStoreFor(command)
+				.withDownloadConfig(Defaults.downloadConfigFor(command)
+					.proxyFactory(new HttpProxyFactory("fooo", 1234))
+					.build()))
+			.build();
 		recording.end();
 	}
-	
+
 	@Test
 	public void testCustomizeArtifactStorage() throws IOException {
 		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.net(new Net(Network.getFreeServerPort(), Network.localhostIsIPv6()))
-				.cmdOptions(getCmdOptions(version))
-				.build();
+			.version(version)
+			.net(new Net(Network.getFreeServerPort(), Network.localhostIsIPv6()))
+			.cmdOptions(getCmdOptions(version))
+			.build();
 
 		// ->
 		// ...
@@ -228,15 +214,15 @@ public class HowToDocTest {
 		Directory artifactStorePath = new FixedPath(System.getProperty("user.home") + "/.embeddedMongodbCustomPath");
 		TempNaming executableNaming = new UUIDTempNaming();
 
-		Command command = Command.MongoD;		
+		Command command = Command.MongoD;
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(command)
-				.artifactStore(Defaults.extractedArtifactStoreFor(command)
-						.withDownloadConfig(Defaults.downloadConfigFor(command)
-								.artifactStorePath(artifactStorePath)
-								.build())
-						.executableNaming(executableNaming))
-				.build();
+			.artifactStore(Defaults.extractedArtifactStoreFor(command)
+				.withDownloadConfig(Defaults.downloadConfigFor(command)
+					.artifactStorePath(artifactStorePath)
+					.build())
+				.executableNaming(executableNaming))
+			.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
 		MongodExecutable mongodExe = runtime.prepare(mongodConfig);
@@ -255,14 +241,14 @@ public class HowToDocTest {
 		// ...
 		recording.begin();
 		ProcessOutput processOutput = ProcessOutput.builder()
-						.output(Processors.namedConsole("[mongod>]"))
-						.error(Processors.namedConsole("[MONGOD>]"))
-						.commands(Processors.namedConsole("[console>]"))
-						.build();
+			.output(Processors.namedConsole("[mongod>]"))
+			.error(Processors.namedConsole("[MONGOD>]"))
+			.commands(Processors.namedConsole("[console>]"))
+			.build();
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
-				.processOutput(processOutput)
-				.build();
+			.processOutput(processOutput)
+			.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
 		recording.end();
@@ -277,13 +263,13 @@ public class HowToDocTest {
 		// ...
 		recording.begin();
 		StreamProcessor mongodOutput = Processors.named("[mongod>]",
-				new FileStreamProcessor(File.createTempFile("mongod", "log")));
+			new FileStreamProcessor(File.createTempFile("mongod", "log")));
 		StreamProcessor mongodError = new FileStreamProcessor(File.createTempFile("mongod-error", "log"));
 		StreamProcessor commandsOutput = Processors.namedConsole("[console>]");
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
-				.processOutput(ProcessOutput.builder().output(mongodOutput).error(mongodError).commands(commandsOutput).build())
-				.build();
+			.processOutput(ProcessOutput.builder().output(mongodOutput).error(mongodError).commands(commandsOutput).build())
+			.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
 		recording.end();
@@ -299,18 +285,17 @@ public class HowToDocTest {
 		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 		ProcessOutput processOutput = ProcessOutput.builder()
-						.output(Processors.logTo(logger, Slf4jLevel.INFO))
-						.error(Processors.logTo(logger,Slf4jLevel.ERROR))
-						.commands(Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)))
-						.build();
-		
+			.output(Processors.logTo(logger, Slf4jLevel.INFO))
+			.error(Processors.logTo(logger, Slf4jLevel.ERROR))
+			.commands(Processors.named("[console>]", Processors.logTo(logger, Slf4jLevel.DEBUG)))
+			.build();
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
-				.processOutput(processOutput)
-				.artifactStore(Defaults.extractedArtifactStoreFor(Command.MongoD)
-						.download(Defaults.downloadConfigFor(Command.MongoD)
-								.progressListener(new Slf4jProgressListener(logger))))
-				.build();
+			.processOutput(processOutput)
+			.artifactStore(Defaults.extractedArtifactStoreFor(Command.MongoD)
+				.download(Defaults.downloadConfigFor(Command.MongoD)
+					.progressListener(new Slf4jProgressListener(logger))))
+			.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
 		recording.end();
@@ -327,7 +312,7 @@ public class HowToDocTest {
 		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
-				.build();
+			.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
 		recording.end();
@@ -341,18 +326,18 @@ public class HowToDocTest {
 		int port = 12345;
 		final IFeatureAwareVersion version = Versions.withFeatures(genericVersion("3.3.1"), Feature.SYNC_DELAY);
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.net(new Net(port, Network.localhostIsIPv6()))
-				.cmdOptions(getCmdOptions(version))
-				.build();
+			.version(version)
+			.net(new Net(port, Network.localhostIsIPv6()))
+			.cmdOptions(getCmdOptions(version))
+			.build();
 		// ->
 		// ...
 		recording.begin();
 		Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD, logger)
-				.processOutput(ProcessOutput.silent())
-				.build();
+			.processOutput(ProcessOutput.silent())
+			.build();
 
 		MongodStarter runtime = MongodStarter.getInstance(runtimeConfig);
 		recording.end();
@@ -371,7 +356,8 @@ public class HowToDocTest {
 				col.save(new BasicDBObject("testDoc", new Date()));
 			}
 
-		} finally {
+		}
+		finally {
 			if (mongod != null) {
 				mongod.stop();
 			}
@@ -393,10 +379,10 @@ public class HowToDocTest {
 		int port = 12345;
 		final IFeatureAwareVersion version = Versions.withFeatures(de.flapdoodle.embed.process.distribution.Version.of("3.3.1"), Feature.SYNC_DELAY);
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.net(new Net(port, Network.localhostIsIPv6()))
-				.cmdOptions(getCmdOptions(version))
-				.build();
+			.version(version)
+			.net(new Net(port, Network.localhostIsIPv6()))
+			.cmdOptions(getCmdOptions(version))
+			.build();
 
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
 		MongodProcess mongod = null;
@@ -417,7 +403,8 @@ public class HowToDocTest {
 			// ->
 			// ...
 
-		} finally {
+		}
+		finally {
 			if (mongod != null) {
 				mongod.stop();
 			}
@@ -482,8 +469,8 @@ public class HowToDocTest {
 			mongod = mongodExecutable.start();
 
 			try (MongoClient mongo = new MongoClient(
-					new ServerAddress(mongodConfig.net().getServerAddress(), mongodConfig.net().getPort()))) {
-			// <-
+				new ServerAddress(mongodConfig.net().getServerAddress(), mongodConfig.net().getPort()))) {
+				// <-
 				recording.end();
 				DB db = mongo.getDB("test");
 				DBCollection col = db.createCollection("testCol", new BasicDBObject());
@@ -493,7 +480,8 @@ public class HowToDocTest {
 			// ->
 			// ...
 
-		} finally {
+		}
+		finally {
 			if (mongod != null) {
 				mongod.stop();
 			}
@@ -513,10 +501,10 @@ public class HowToDocTest {
 		recording.begin();
 		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.timeout(new Timeout(30000))
-				.cmdOptions(getCmdOptions(version))
-				.build();
+			.version(version)
+			.timeout(new Timeout(30000))
+			.cmdOptions(getCmdOptions(version))
+			.build();
 		recording.end();
 		// ...
 		// <-
@@ -531,19 +519,19 @@ public class HowToDocTest {
 		// ...
 		recording.begin();
 		CommandLinePostProcessor postProcessor = // ...
-				// <-
-				new CommandLinePostProcessor() {
-					@Override
-					public List<String> process(Distribution distribution, List<String> args) {
-						return null;
-					}
-				};
+			// <-
+			new CommandLinePostProcessor() {
+				@Override
+				public List<String> process(Distribution distribution, List<String> args) {
+					return null;
+				}
+			};
 		recording.end();
 		// ->
 		recording.begin();
 		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD)
-				.commandLinePostProcessor(postProcessor)
-				.build();
+			.commandLinePostProcessor(postProcessor)
+			.build();
 		recording.end();
 		// ...
 		// <-
@@ -561,15 +549,15 @@ public class HowToDocTest {
 		// ->
 		recording.begin();
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
-				.cmdOptions(MongoCmdOptions.builder()
-						.syncDelay(10)
-						.useNoPrealloc(false)
-						.useSmallFiles(false)
-						.useNoJournal(false)
-						.enableTextSearch(true)
-						.build())
-				.build();
+			.version(Version.Main.PRODUCTION)
+			.cmdOptions(MongoCmdOptions.builder()
+				.syncDelay(10)
+				.useNoPrealloc(false)
+				.useSmallFiles(false)
+				.useNoJournal(false)
+				.enableTextSearch(true)
+				.build())
+			.build();
 		recording.end();
 		// ...
 		// <-
@@ -588,14 +576,14 @@ public class HowToDocTest {
 		// ->
 		recording.begin();
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(Version.Main.PRODUCTION)
-				.processListener(new CopyDbFilesFromDirBeforeProcessStop(destination))
-				.cmdOptions(MongoCmdOptions.builder()
-						.useDefaultSyncDelay(true)
-						.useNoPrealloc(false)
-						.useSmallFiles(false)
-						.build())
-				.build();
+			.version(Version.Main.PRODUCTION)
+			.processListener(new CopyDbFilesFromDirBeforeProcessStop(destination))
+			.cmdOptions(MongoCmdOptions.builder()
+				.useDefaultSyncDelay(true)
+				.useNoPrealloc(false)
+				.useSmallFiles(false)
+				.build())
+			.build();
 		recording.end();
 		// ...
 		// <-
@@ -611,14 +599,14 @@ public class HowToDocTest {
 	public void testCustomDatabaseDirectory() throws UnknownHostException, IOException {
 		// ->
 		recording.begin();
-		Storage replication = new Storage("/custom/databaseDir",null,0);
+		Storage replication = new Storage("/custom/databaseDir", null, 0);
 
 		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongodConfig = MongodConfig.builder()
-				.version(version)
-				.cmdOptions(getCmdOptions(version))
-				.replication(replication)
-				.build();
+			.version(version)
+			.cmdOptions(getCmdOptions(version))
+			.replication(replication)
+			.build();
 		recording.end();
 		// ...
 		// <-
@@ -626,9 +614,9 @@ public class HowToDocTest {
 	}
 	// ### Start mongos with mongod instance
 	// @include StartConfigAndMongoDBServerTest.java
-	
+
 	// ## Common Errors
-	
+
 	// ### Executable Collision
 
 	/*
@@ -637,39 +625,39 @@ public class HowToDocTest {
 	If you got an exception, then you should make your RuntimeConfig or MongoStarter class or jvm static (static final in your test class or singleton class for all tests).
 	// <-
 	*/
-	
-  @Test
-  public void importJsonIntoMongoDB() throws UnknownHostException, IOException {
+
+	@Test
+	public void importJsonIntoMongoDB() throws UnknownHostException, IOException {
 		String jsonFile = Thread.currentThread().getContextClassLoader().getResource("sample.json").toString();
 		jsonFile = jsonFile.replaceFirst("file:", "");
 		String defaultHost = "localhost";
-		
-  	recording.begin();
+
+		recording.begin();
 		int defaultConfigPort = Network.getFreeServerPort();
 		String database = "importTestDB";
 		String collection = "importedCollection";
 
-	  final Version.Main version = Version.Main.PRODUCTION;
+		final Version.Main version = Version.Main.PRODUCTION;
 		MongodConfig mongoConfigConfig = MongodConfig.builder()
-				.version(version)
-			  	.cmdOptions(getCmdOptions(version))
-				.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
-				.build();
+			.version(version)
+			.cmdOptions(getCmdOptions(version))
+			.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
+			.build();
 
 		MongodExecutable mongodExecutable = MongodStarter.getDefaultInstance().prepare(mongoConfigConfig);
 		MongodProcess mongod = mongodExecutable.start();
 
 		try {
 			MongoImportConfig mongoImportConfig = MongoImportConfig.builder()
-					.version(version)
-					.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
-					.databaseName(database)
-					.collectionName(collection)
-					.isUpsertDocuments(true)
-					.isDropCollection(true)
-					.isJsonArray(true)
-					.importFile(jsonFile)
-					.build();
+				.version(version)
+				.net(new Net(defaultConfigPort, Network.localhostIsIPv6()))
+				.databaseName(database)
+				.collectionName(collection)
+				.isUpsertDocuments(true)
+				.isDropCollection(true)
+				.isJsonArray(true)
+				.importFile(jsonFile)
+				.build();
 
 			MongoImportExecutable mongoImportExecutable = MongoImportStarter.getDefaultInstance().prepare(mongoImportConfig);
 			MongoImportProcess mongoImport = mongoImportExecutable.start();
@@ -688,5 +676,5 @@ public class HowToDocTest {
 			mongod.stop();
 		}
 		recording.end();
-  }
+	}
 }
