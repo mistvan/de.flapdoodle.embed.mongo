@@ -19,7 +19,7 @@ import de.flapdoodle.reverse.transitions.Start;
 
 public interface ExtractedFileSetFor {
 
-	default Transition<PersistentDir> storeBase() {
+	default Transition<PersistentDir> persistentBaseDir() {
 		return Start.to(PersistentDir.class)
 			.providedBy(PersistentDir.userHome(".embedmongo"));
 	}
@@ -27,13 +27,15 @@ public interface ExtractedFileSetFor {
 	default Transition<DownloadCache> downloadCache() {
 		return Derive.given(PersistentDir.class)
 			.state(DownloadCache.class)
-			.deriveBy(storeBaseDir -> new LocalDownloadCache(storeBaseDir.value().resolve("archives")));
+			.deriveBy(storeBaseDir -> new LocalDownloadCache(storeBaseDir.value().resolve("archives")))
+			.withTransitionLabel("downloadCache");
 	}
 
 	default Transition<ExtractedFileSetStore> extractedFileSetStore() {
 		return Derive.given(PersistentDir.class)
 			.state(ExtractedFileSetStore.class)
-			.deriveBy(baseDir -> new ContentHashExtractedFileSetStore(baseDir.value().resolve("fileSets")));
+			.deriveBy(baseDir -> new ContentHashExtractedFileSetStore(baseDir.value().resolve("fileSets")))
+			.withTransitionLabel("extractedFileSetStore");
 	}
 
 	default DownloadPackage downloadPackage() {
@@ -45,8 +47,8 @@ public interface ExtractedFileSetFor {
 			.withExtractedFileSetStore(StateID.of(ExtractedFileSetStore.class));
 	}
 
-	default Transition<de.flapdoodle.embed.process.archives.ExtractedFileSet> extractedFileSetFor(
-		StateID<de.flapdoodle.embed.process.archives.ExtractedFileSet> destination,
+	default Transition<ExtractedFileSet> extractedFileSetFor(
+		StateID<ExtractedFileSet> destination,
 		StateID<Distribution> distributionStateID,
 		StateID<TempDir> tempDirStateID,
 		StateID<Command> commandStateID,
@@ -57,10 +59,13 @@ public interface ExtractedFileSetFor {
 		StateID<Command> localCommandStateID = StateID.of(Command.class);
 
 		Transitions transitions = Transitions.from(
-			storeBase(),
+			persistentBaseDir(),
 			downloadCache(),
 			
-			Derive.given(localCommandStateID).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command"),
+			Derive.given(localCommandStateID)
+				.state(Name.class)
+				.deriveBy(c -> Name.of(c.commandName()))
+				.withTransitionLabel("name from command"),
 
 			PackageOfCommandDistribution.withDefaults()
 				.withDistributionBaseUrl(distributionBaseUrlStateID),
@@ -72,7 +77,7 @@ public interface ExtractedFileSetFor {
 
 		return transitions.walker()
 			.asTransitionTo(
-				TransitionMapping.builder("extract file set", StateMapping.of(StateID.of(de.flapdoodle.embed.process.archives.ExtractedFileSet.class), destination))
+				TransitionMapping.builder("extract file set", StateMapping.of(StateID.of(ExtractedFileSet.class), destination))
 					.addMappings(StateMapping.of(distributionStateID, localDistributionStateID))
 					.addMappings(StateMapping.of(tempDirStateID, localTempDirStateID))
 					.addMappings(StateMapping.of(commandStateID, localCommandStateID))
