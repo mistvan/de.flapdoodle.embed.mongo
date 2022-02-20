@@ -243,14 +243,17 @@ public class HowToDocTest {
 	@Test
 	public void testCommandLineOptions() {
 		recording.begin();
-		Mongod.instance().transitions(Version.Main.PRODUCTION)
-			.replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
-				.withSyncDelay(10)
-				.withUseNoPrealloc(false)
-				.withUseSmallFiles(false)
-				.withUseNoJournal(false)
-				.withEnableTextSearch(true)
-			));
+		new Mongod() {
+			@Override
+			public Transition<MongodArguments> mongodArguments() {
+				return Start.to(MongodArguments.class)
+					.initializedWith(MongodArguments.defaults().withSyncDelay(10)
+						.withUseNoPrealloc(false)
+						.withUseSmallFiles(false)
+						.withUseNoJournal(false)
+						.withEnableTextSearch(true));
+			}
+		}.transitions(Version.Main.PRODUCTION);
 		recording.end();
 	}
 
