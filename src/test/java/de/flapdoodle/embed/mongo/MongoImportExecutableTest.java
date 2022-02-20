@@ -29,17 +29,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
-import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.MongoImportConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
+import de.flapdoodle.embed.mongo.transitions.MongoImport;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
-import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
-import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -47,18 +43,13 @@ import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
-import org.assertj.core.api.Assertions;
 import org.bson.Document;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -97,11 +88,11 @@ public class MongoImportExecutableTest {
 	) throws UnknownHostException {
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			Transitions transitions = Defaults.transitionsForMongoImport(version)
+			Transitions transitions = MongoImport.instance().transitions(version)
 				.replace(Start.to(MongoImportArguments.class).initializedWith(mongoImportArguments))
 				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Defaults.transitionsForMongod(version).walker()
+				.addAll(Mongod.instance().transitions(version).walker()
 					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 						.build()));
 

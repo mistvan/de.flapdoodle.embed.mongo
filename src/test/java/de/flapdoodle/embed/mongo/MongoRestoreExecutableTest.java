@@ -31,11 +31,8 @@ import de.flapdoodle.embed.mongo.commands.ImmutableMongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoRestoreArguments;
 import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoRestoreArguments;
-import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.ExecutedMongoDumpProcess;
-import de.flapdoodle.embed.mongo.transitions.ExecutedMongoRestoreProcess;
-import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.embed.mongo.transitions.*;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
@@ -49,8 +46,6 @@ import org.bson.Document;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 import java.nio.file.Path;
@@ -150,11 +145,11 @@ public class MongoRestoreExecutableTest {
 			.build();
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			Transitions transitions = Defaults.transitionsForMongoRestore(version)
+			Transitions transitions = MongoRestore.instance().transitions(version)
 				.replace(Start.to(MongoRestoreArguments.class).initializedWith(mongoRestoreArguments))
 				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Defaults.transitionsForMongod(version).walker()
+				.addAll(Mongod.instance().transitions(version).walker()
 					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 						.build()));
 
@@ -196,11 +191,11 @@ public class MongoRestoreExecutableTest {
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
 //         Defaults.transitionsForMongoDump(version)
 //           .replace(Start.to(MongoDumpStarter))
-			Transitions transitions = Defaults.transitionsForMongoRestore(version)
+			Transitions transitions = MongoRestore.instance().transitions(version)
 				.replace(Start.to(MongoRestoreArguments.class).initializedWith(mongoRestoreArguments))
 				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Defaults.transitionsForMongod(version).walker()
+				.addAll(Mongod.instance().transitions(version).walker()
 					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 						.build()));
 
@@ -241,15 +236,15 @@ public class MongoRestoreExecutableTest {
 	) throws UnknownHostException {
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			Transitions transitions = Defaults.transitionsForMongoRestore(version)
+			Transitions transitions = MongoRestore.instance().transitions(version)
 				.replace(Start.to(MongoRestoreArguments.class).initializedWith(mongoRestoreArguments))
-				.addAll(Defaults.transitionsForMongoDump(version)
+				.addAll(MongoDump.instance().transitions(version)
 					.replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
 					.walker().asTransitionTo(TransitionMapping.builder("mongoDump", StateID.of(ExecutedMongoDumpProcess.class))
 						.build()))
 				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Defaults.transitionsForMongod(version).walker()
+				.addAll(Mongod.instance().transitions(version).walker()
 					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 						.build()));
 

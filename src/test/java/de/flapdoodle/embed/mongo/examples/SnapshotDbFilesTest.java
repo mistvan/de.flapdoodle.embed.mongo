@@ -20,19 +20,11 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import de.flapdoodle.embed.mongo.config.Defaults;
-import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.config.processlistener.CopyDbFilesFromDirBeforeProcessStop;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.mongo.util.FileUtils;
-import de.flapdoodle.embed.process.io.directories.PlatformTempDir;
-import de.flapdoodle.embed.process.io.file.Files;
 import de.flapdoodle.reverse.Listener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -40,9 +32,7 @@ import de.flapdoodle.types.Try;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,7 +46,7 @@ public class SnapshotDbFilesTest {
 			})
 			.build();
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION).walker()
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().transitions(Version.Main.PRODUCTION).walker()
 			.initState(StateID.of(RunningMongodProcess.class), listener)) {
 
 		}

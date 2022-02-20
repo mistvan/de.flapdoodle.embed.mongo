@@ -22,8 +22,8 @@ package de.flapdoodle.embed.mongo.examples;
 
 import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
-import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -40,7 +40,7 @@ public class ShardServerMongoDBTest {
 
     @Test
     public void shardServerOptionVisibleInAdminDb() throws UnknownHostException {
-        try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+        try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().transitions(Version.Main.PRODUCTION)
           .replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
             .withIsShardServer(true)))
           .walker()

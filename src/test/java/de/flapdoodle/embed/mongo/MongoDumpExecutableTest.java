@@ -23,9 +23,10 @@ package de.flapdoodle.embed.mongo;
 import com.mongodb.ServerAddress;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
-import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoDumpProcess;
+import de.flapdoodle.embed.mongo.transitions.MongoDump;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
@@ -47,11 +48,11 @@ public class MongoDumpExecutableTest {
 
     private static void dump(Version.Main version, MongoDumpArguments mongoDumpArguments, Runnable afterDump) {
         try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-            Transitions transitions = Defaults.transitionsForMongoDump(version)
+            Transitions transitions = MongoDump.instance().transitions(version)
               .replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
               .addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
                 .deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-              .addAll(Defaults.transitionsForMongod(version).walker()
+              .addAll(Mongod.instance().transitions(version).walker()
                 .asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
                   .build()));
 

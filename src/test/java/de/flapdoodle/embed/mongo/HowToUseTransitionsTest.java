@@ -8,9 +8,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
-import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
+import de.flapdoodle.embed.mongo.transitions.MongoImport;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
@@ -35,7 +36,7 @@ public class HowToUseTransitionsTest {
 
 	@Test
 	public void startMongoD() throws UnknownHostException {
-		Transitions transitions = Defaults.transitionsForMongod(Version.Main.PRODUCTION);
+		Transitions transitions = Mongod.instance().transitions(Version.Main.PRODUCTION);
 
 		String dot = Transitions.edgeGraphAsDot("mongod", transitions.asGraph());
 		System.out.println("---------------------");
@@ -74,7 +75,7 @@ public class HowToUseTransitionsTest {
 
 		Version.Main version = Version.Main.PRODUCTION;
 
-		Transitions transitions = Defaults.transitionsForMongoImport(version)
+		Transitions transitions = MongoImport.instance().transitions(version)
 			.replace(Start.to(MongoImportArguments.class).initializedWith(arguments));
 
 		String dot = Transitions.edgeGraphAsDot("mongoImport", transitions.asGraph());
@@ -84,7 +85,7 @@ public class HowToUseTransitionsTest {
 
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = Defaults.transitionsForMongod(version)
+			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = Mongod.instance().transitions(version)
 				.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
@@ -122,11 +123,11 @@ public class HowToUseTransitionsTest {
 
 		Version.Main version = Version.Main.PRODUCTION;
 
-		Transitions mongoImportTransitions = Defaults.transitionsForMongoImport(version)
+		Transitions mongoImportTransitions = MongoImport.instance().transitions(version)
 			.replace(Start.to(MongoImportArguments.class).initializedWith(arguments))
 			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-			.addAll(Defaults.transitionsForMongod(version).walker()
+			.addAll(Mongod.instance().transitions(version).walker()
 				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 					.build()));
 

@@ -21,25 +21,20 @@
 package de.flapdoodle.embed.mongo.examples;
 
 import com.mongodb.MongoClient;
-import de.flapdoodle.embed.mongo.*;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.commands.MongosArguments;
 import de.flapdoodle.embed.mongo.config.*;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
+import de.flapdoodle.embed.mongo.transitions.Mongos;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.mongo.transitions.RunningMongosProcess;
-import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.reverse.StateID;
-import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
-import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Start;
-import org.assertj.core.api.Assertions;
 import org.bson.Document;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +48,7 @@ public class StartConfigAndMongoDBServerTest {
 	public void mongosAndMongod() throws UnknownHostException {
 		Version.Main version = Version.Main.PRODUCTION;
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = Defaults.transitionsForMongod(version)
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = Mongod.instance().transitions(version)
 			.replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
 				.withIsConfigServer(true)
 				.withReplication(new Storage(null, "testRepSet", 5000))))
@@ -64,7 +59,7 @@ public class StartConfigAndMongoDBServerTest {
 				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
 			}
 
-			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = Defaults.transitionsForMongos(version)
+			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = Mongos.instance().transitions(version)
 				.replace(Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
 					.withConfigDB(runningMongod.current().getServerAddress().toString())
 					.withReplicaSet("testRepSet")

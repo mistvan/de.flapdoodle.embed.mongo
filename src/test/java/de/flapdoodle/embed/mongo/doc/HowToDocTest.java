@@ -27,10 +27,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
-import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
+import de.flapdoodle.embed.mongo.transitions.MongoImport;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
@@ -135,7 +135,7 @@ public class HowToDocTest {
 	@Test
 	public void testCustomOutputToConsolePrefix() {
 		recording.begin();
-		Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+		Mongod.instance().transitions(Version.Main.PRODUCTION)
 			.replace(Start.to(de.flapdoodle.embed.process.config.io.ProcessOutput.class)
 				.initializedWith(new de.flapdoodle.embed.process.config.io.ProcessOutput(
 					Processors.namedConsole("[mongod>]"),
@@ -170,7 +170,7 @@ public class HowToDocTest {
 	@Test
 	public void testDefaultOutputToNone() throws IOException {
 		recording.begin();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().transitions(Version.Main.PRODUCTION)
 			.replace(Start.to(de.flapdoodle.embed.process.config.io.ProcessOutput.class)
 				.initializedWith(new de.flapdoodle.embed.process.config.io.ProcessOutput(
 					Processors.silent(),
@@ -243,7 +243,7 @@ public class HowToDocTest {
 	@Test
 	public void testCommandLineOptions() {
 		recording.begin();
-		Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+		Mongod.instance().transitions(Version.Main.PRODUCTION)
 			.replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
 				.withSyncDelay(10)
 				.withUseNoPrealloc(false)
@@ -264,7 +264,7 @@ public class HowToDocTest {
 			})
 			.build();
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Defaults.transitionsForMongod(Version.Main.PRODUCTION).walker()
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().transitions(Version.Main.PRODUCTION).walker()
 			.initState(StateID.of(RunningMongodProcess.class), listener)) {
 		}
 
@@ -278,7 +278,7 @@ public class HowToDocTest {
 	@Test
 	public void testCustomDatabaseDirectory(@TempDir Path customDatabaseDir) throws UnknownHostException, IOException {
 		recording.begin();
-		Defaults.transitionsForMongod(Version.Main.PRODUCTION)
+		Mongod.instance().transitions(Version.Main.PRODUCTION)
 			.replace(Start.to(DatabaseDir.class).initializedWith(DatabaseDir.of(customDatabaseDir)));
 
 		// TODO replication config? replSetName, oplogSize?
@@ -307,7 +307,7 @@ public class HowToDocTest {
 
 		Version.Main version = Version.Main.PRODUCTION;
 
-		Transitions transitions = Defaults.transitionsForMongoImport(version)
+		Transitions transitions = MongoImport.instance().transitions(version)
 			.replace(Start.to(MongoImportArguments.class).initializedWith(MongoImportArguments.builder()
 				.databaseName("importTestDB")
 				.collectionName("importedCollection")
@@ -318,7 +318,7 @@ public class HowToDocTest {
 				.build()))
 			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
 				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-			.addAll(Defaults.transitionsForMongod(version).walker()
+			.addAll(Mongod.instance().transitions(version).walker()
 				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 					.build()));
 
