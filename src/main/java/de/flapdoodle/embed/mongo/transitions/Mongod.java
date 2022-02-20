@@ -16,7 +16,7 @@ import de.flapdoodle.reverse.transitions.ImmutableStart;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
 
-public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDefaults, CommandName, ExtractedFileSetFor {
+public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDefaults, CommandName, ExtractFileSet {
 
 	public Transition<MongodArguments> mongodArguments() {
 		return Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults());
@@ -47,8 +47,8 @@ public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
 			.addAll(commandName())
-			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(
-				DistributionBaseUrl.class)))
+//			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
+			.addAll(extractFileSet())
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoD).withTransitionLabel("provide Command"),
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
