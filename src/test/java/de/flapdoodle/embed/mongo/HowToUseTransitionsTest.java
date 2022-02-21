@@ -75,19 +75,19 @@ public class HowToUseTransitionsTest {
 
 		Version.Main version = Version.Main.PRODUCTION;
 
-		Transitions transitions = MongoImport.instance().transitions(version)
-			.replace(Start.to(MongoImportArguments.class).initializedWith(arguments));
-
-		String dot = Transitions.edgeGraphAsDot("mongoImport", transitions.asGraph());
-		System.out.println("---------------------");
-		System.out.println(dot);
-		System.out.println("---------------------");
-
 		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
 
 			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = Mongod.instance().transitions(version)
 				.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
+
+				Transitions transitions = MongoImport.instance().transitions(version)
+					.replace(Start.to(MongoImportArguments.class).initializedWith(arguments));
+
+				String dot = Transitions.edgeGraphAsDot("mongoImport", transitions.asGraph());
+				System.out.println("---------------------");
+				System.out.println(dot);
+				System.out.println("---------------------");
 
 				Transitions withMongoDbServerAddress = transitions.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
 

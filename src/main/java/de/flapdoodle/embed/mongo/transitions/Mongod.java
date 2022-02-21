@@ -4,15 +4,11 @@ import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
-import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
-import de.flapdoodle.embed.process.archives.ExtractedFileSet;
-import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.embed.process.nio.Directories;
 import de.flapdoodle.embed.process.nio.directories.TempDir;
 import de.flapdoodle.reverse.*;
 import de.flapdoodle.reverse.transitions.Derive;
-import de.flapdoodle.reverse.transitions.ImmutableStart;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
 
