@@ -22,6 +22,7 @@ package de.flapdoodle.embed.mongo.distribution;
 
 import de.flapdoodle.embed.mongo.packageresolver.*;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 /**
@@ -273,10 +274,14 @@ public enum Version implements IFeatureAwareVersion, HasMongotoolsPackage {
 	}
 
 	@Override
-	public FeatureSet getFeatures() {
-		return features;
+	public EnumSet<Feature> getFeatures() {
+		return EnumSet.noneOf(Feature.class);
 	}
 
+	@Override
+	public FeatureSet features() {
+		return features;
+	}
 	@Override
 	public String toString() {
 		return "Version{" + specificVersion + '}';
@@ -346,11 +351,16 @@ public enum Version implements IFeatureAwareVersion, HasMongotoolsPackage {
 		}
 
 		@Override
-		public FeatureSet getFeatures() {
+		public EnumSet<Feature> getFeatures() {
 			return _latest.getFeatures();
 		}
 
-			@Override
+		@Override
+		public FeatureSet features() {
+			return _latest.features();
+		}
+
+		@Override
 			public Optional<MongotoolsVersion.Main> mongotoolsVersion() {
 					return _latest instanceof HasMongotoolsPackage
 							? ((HasMongotoolsPackage) _latest).mongotoolsVersion()
