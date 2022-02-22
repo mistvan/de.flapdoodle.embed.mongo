@@ -25,10 +25,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
+import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.examples.FileStreamProcessor;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
 import de.flapdoodle.embed.mongo.transitions.MongoImport;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
@@ -36,11 +40,19 @@ import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.mongo.util.FileUtils;
+import de.flapdoodle.embed.process.config.DownloadConfig;
+import de.flapdoodle.embed.process.config.RuntimeConfig;
+import de.flapdoodle.embed.process.config.io.ProcessOutput;
+import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
 import de.flapdoodle.embed.process.io.Processors;
+import de.flapdoodle.embed.process.io.StreamProcessor;
+import de.flapdoodle.embed.process.nio.directories.PersistentDir;
 import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.embed.process.transitions.DownloadPackage;
 import de.flapdoodle.reverse.*;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.testdoc.Includes;
 import de.flapdoodle.testdoc.Recorder;
 import de.flapdoodle.testdoc.Recording;
 import de.flapdoodle.testdoc.TabSize;
@@ -50,6 +62,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
@@ -102,8 +115,6 @@ public class HowToDocTest {
 	@Test
 	public void testCustomizeDownloadURL() {
 		recording.begin();
-		// TODO change download server to "http://my.custom.download.domain/"
-
 		Mongod mongod = new Mongod() {
 			@Override
 			public Transition<DistributionBaseUrl> distributionBaseUrl() {
@@ -111,46 +122,87 @@ public class HowToDocTest {
 					.initializedWith(DistributionBaseUrl.of("http://my.custom.download.domain"));
 			}
 		};
+		recording.end();
 
 		assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
 			.isInstanceOf(RuntimeException.class);
-
-		recording.end();
 	}
 
 	@Test
-	public void testCustomProxy() {
+	public void testCustomProxy() throws UnknownHostException {
 		recording.begin();
-		// TODO change proxyFactory to new HttpProxyFactory("fooo", 1234)
+		Mongod mongod = new Mongod() {
+			@Override public DownloadPackage downloadPackage() {
+				return DownloadPackage.withDefaults()
+					.withDownloadConfig(DownloadConfig.defaults()
+						.withProxyFactory(new HttpProxyFactory("fooo", 1234)));
+			}
+		};
 		recording.end();
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
+			assertRunningMongoDB(running);
+		}
 	}
 
 	@Test
-	public void testCustomizeArtifactStorage() {
+	public void testCustomizeArtifactStorage() throws UnknownHostException {
 		recording.begin();
-		// TODO change download cache path to System.getProperty("user.home") + "/.embeddedMongodbCustomPath"
+		Mongod mongod = new Mongod() {
+			@Override
+			public Transition<PersistentDir> persistentBaseDir() {
+				return Start.to(PersistentDir.class)
+					.providedBy(PersistentDir.userHome(".embeddedMongodbCustomPath"));
+			}
+		};
 		recording.end();
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
+			assertRunningMongoDB(running);
+		}
 	}
 
 	@Test
-	public void testCustomOutputToConsolePrefix() {
+	public void testCustomOutputToConsolePrefix() throws UnknownHostException {
 		recording.begin();
-		Mongod.instance().transitions(Version.Main.PRODUCTION)
-			.replace(Start.to(de.flapdoodle.embed.process.config.io.ProcessOutput.class)
-				.initializedWith(new de.flapdoodle.embed.process.config.io.ProcessOutput(
-					Processors.namedConsole("[mongod>]"),
-					Processors.namedConsole("[MONGOD>]"),
-					Processors.namedConsole("[console>]")
-				))
-				.withTransitionLabel("create named console"));
+		Mongod mongod = new Mongod() {
+			@Override
+			public Transition<ProcessOutput> processOutput() {
+				return Start.to(ProcessOutput.class)
+					.initializedWith(new ProcessOutput(
+						Processors.namedConsole("[mongod>]"),
+						Processors.namedConsole("[MONGOD>]"),
+						Processors.namedConsole("[console>]")
+					))
+					.withTransitionLabel("create named console");
+			}
+		};
 		recording.end();
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
+			assertRunningMongoDB(running);
+		}
 	}
 
 	@Test
-	public void testCustomOutputToFile() {
+	public void testCustomOutputToFile() throws IOException {
+		recording.include(FileStreamProcessor.class, Includes.WithoutImports, Includes.WithoutPackage, Includes.Trim);
 		recording.begin();
-		// TODO remove me
+		Mongod mongod = new Mongod() {
+			@Override
+			public Transition<ProcessOutput> processOutput() {
+				return Start.to(ProcessOutput.class)
+					.providedBy(Try.supplier(() -> new ProcessOutput(
+						Processors.named("[mongod>]",
+							new FileStreamProcessor(File.createTempFile("mongod", "log"))),
+							new FileStreamProcessor(File.createTempFile("mongod-error", "log")),
+							Processors.namedConsole("[console>]")
+					)).mapCheckedException(RuntimeException::new)
+					::get)
+					.withTransitionLabel("create named console");
+			}
+		};
 		recording.end();
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
+			assertRunningMongoDB(running);
+		}
 	}
 
 	@Test
@@ -171,8 +223,8 @@ public class HowToDocTest {
 	public void testDefaultOutputToNone() throws IOException {
 		recording.begin();
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().transitions(Version.Main.PRODUCTION)
-			.replace(Start.to(de.flapdoodle.embed.process.config.io.ProcessOutput.class)
-				.initializedWith(new de.flapdoodle.embed.process.config.io.ProcessOutput(
+			.replace(Start.to(ProcessOutput.class)
+				.initializedWith(new ProcessOutput(
 					Processors.silent(),
 					Processors.silent(),
 					Processors.silent()
@@ -338,5 +390,14 @@ public class HowToDocTest {
 		}
 
 		recording.end();
+	}
+
+	private static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) throws UnknownHostException {
+		try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+			MongoDatabase db = mongo.getDatabase("test");
+			MongoCollection<Document> col = db.getCollection("testCol");
+			col.insertOne(new Document("testDoc", new Date()));
+			assertThat(col.countDocuments()).isEqualTo(1L);
+		}
 	}
 }

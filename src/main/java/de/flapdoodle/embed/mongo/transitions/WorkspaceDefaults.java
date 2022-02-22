@@ -5,6 +5,7 @@ import de.flapdoodle.embed.process.transitions.InitTempDirectory;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Start;
+import org.immutables.value.Value;
 
 public interface WorkspaceDefaults {
 	default InitTempDirectory initTempDirectory() {
