@@ -1,6 +1,5 @@
 package de.flapdoodle.embed.mongo.transitions;
 
-import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoRestoreArguments;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.naming.HasLabel;

@@ -17,6 +17,7 @@ import de.flapdoodle.reverse.*;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 
+@Deprecated
 public interface ExtractedFileSetFor {
 
 	default Transition<PersistentDir> persistentBaseDir() {

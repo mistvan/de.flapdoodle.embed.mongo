@@ -21,22 +21,12 @@
 package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.SupportConfig;
-import de.flapdoodle.embed.process.config.io.ProcessOutput;
-import de.flapdoodle.embed.process.types.*;
+import de.flapdoodle.embed.process.types.RunningProcessFactory;
 import de.flapdoodle.os.Platform;
-import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
-import de.flapdoodle.reverse.StateLookup;
-import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.naming.HasLabel;
 import org.immutables.value.Value;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Value.Immutable
 public abstract class MongosStarter extends MongoServerStarter<RunningMongosProcess> implements HasLabel {

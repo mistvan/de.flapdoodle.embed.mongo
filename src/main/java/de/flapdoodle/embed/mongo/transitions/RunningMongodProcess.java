@@ -27,7 +27,6 @@ import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.io.*;
 import de.flapdoodle.embed.process.runtime.ProcessControl;
 import de.flapdoodle.embed.process.runtime.Processes;
-import de.flapdoodle.embed.process.types.RunningProcess;
 import de.flapdoodle.embed.process.types.RunningProcessFactory;
 import de.flapdoodle.embed.process.types.RunningProcessImpl;
 import de.flapdoodle.os.Platform;

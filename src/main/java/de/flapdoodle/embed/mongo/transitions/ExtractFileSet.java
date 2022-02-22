@@ -9,7 +9,9 @@ import de.flapdoodle.embed.process.store.ExtractedFileSetStore;
 import de.flapdoodle.embed.process.store.LocalDownloadCache;
 import de.flapdoodle.embed.process.transitions.DownloadPackage;
 import de.flapdoodle.embed.process.transitions.ExtractPackage;
-import de.flapdoodle.reverse.*;
+import de.flapdoodle.reverse.StateID;
+import de.flapdoodle.reverse.Transition;
+import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 

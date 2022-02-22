@@ -25,7 +25,6 @@ import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
-import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.embed.process.types.ProcessArguments;
 import de.flapdoodle.os.Platform;
