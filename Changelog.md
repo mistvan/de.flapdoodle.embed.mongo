@@ -1,5 +1,9 @@
 ### Changelog
 
+### 3.4.2
+
+- restored spring compat after refactoring
+
 ### 3.4.1
 
 - moved feature detection to packageresolver repo
