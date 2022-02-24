@@ -50,6 +50,11 @@ import de.flapdoodle.embed.process.store.UrlConnectionDownloader;
 
 public abstract class Defaults {
 
+	@Deprecated
+	public static ImmutableExtractedArtifactStore extractedArtifactStoreFor(de.flapdoodle.embed.mongo.Command command) {
+		return extractedArtifactStoreFor(mapCommand(command));
+	}
+
 	public static ImmutableExtractedArtifactStore extractedArtifactStoreFor(Command command) {
 		return ExtractedArtifactStore.builder()
 				.downloadConfig(Defaults.downloadConfigFor(command).build())
@@ -64,7 +69,12 @@ public abstract class Defaults {
 						.build())
 				.build();
 	}
-	
+
+	@Deprecated
+	public static ImmutableDownloadConfig.Builder downloadConfigFor(de.flapdoodle.embed.mongo.Command command) {
+		return downloadConfigFor(mapCommand(command));
+	}
+
 	public static ImmutableDownloadConfig.Builder downloadConfigFor(Command command) {
 		return DownloadConfigDefaults.defaultsForCommand(command);
 	}
@@ -116,11 +126,20 @@ public abstract class Defaults {
 		}
 
 	}
-	
+	@Deprecated
+	public static ImmutableRuntimeConfig.Builder runtimeConfigFor(de.flapdoodle.embed.mongo.Command command, Logger logger) {
+		return runtimeConfigFor(mapCommand(command), logger);
+	}
+
 	public static ImmutableRuntimeConfig.Builder runtimeConfigFor(Command command, Logger logger) {
 		return RuntimeConfigDefaults.defaultsWithLogger(command, logger);
 	}
-	
+
+	@Deprecated
+	public static ImmutableRuntimeConfig.Builder runtimeConfigFor(de.flapdoodle.embed.mongo.Command command) {
+		return runtimeConfigFor(mapCommand(command));
+	}
+
 	public static ImmutableRuntimeConfig.Builder runtimeConfigFor(Command command) {
 		return RuntimeConfigDefaults.defaults(command);
 	}
@@ -142,5 +161,17 @@ public abstract class Defaults {
 			.commandLinePostProcessor(new CommandLinePostProcessor.Noop())
 			.artifactStore(Defaults.extractedArtifactStoreFor(command));
 		}
+	}
+
+	private static Command mapCommand(de.flapdoodle.embed.mongo.Command command) {
+		switch (command) {
+			case Mongo: return Command.Mongo;
+			case MongoD: return Command.MongoD;
+			case MongoS: return Command.MongoS;
+			case MongoDump: return Command.MongoDump;
+			case MongoImport: return Command.MongoImport;
+			case MongoRestore: return Command.MongoRestore;
+		}
+		throw new IllegalArgumentException("Unknown command: "+command);
 	}
 }
