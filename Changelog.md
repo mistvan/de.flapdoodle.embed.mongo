@@ -1,8 +1,13 @@
 ### Changelog
 
+
+### 3.4.3
+
+- fixed spring compat after refactoring
+
 ### 3.4.2
 
-- restored spring compat after refactoring
+- restored spring compat after refactoring (still broken)
 
 ### 3.4.1
 
