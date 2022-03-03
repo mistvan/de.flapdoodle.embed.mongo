@@ -99,6 +99,14 @@ When you fork or clone our branch you should always be able to build the library
 Versions: some older, a stable and a development version
 Support for Linux, Windows and MacOSX.
 
+### Spring Integration
+
+There is a new project for spring integration:
+
+- [Spring 2.5.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.5.x)
+- [Spring 2.6.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.6.x)
+
+
 ### Usage
 ```java
 MongodStarter starter = MongodStarter.getDefaultInstance();

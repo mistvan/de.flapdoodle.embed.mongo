@@ -3,6 +3,7 @@
 
 ### 3.4.3
 
+- new spring integration sub project
 - fixed spring compat after refactoring
 
 ### 3.4.2
