@@ -1,6 +1,10 @@
 ### Changelog
 
 
+### 3.4.4
+
+- mongodb dist upgrade
+
 ### 3.4.3
 
 - new spring integration sub project
