@@ -1,6 +1,10 @@
 ### Changelog
 
 
+### 3.4.5
+
+- Process.waitFor timeout added
+
 ### 3.4.4
 
 - mongodb dist upgrade
