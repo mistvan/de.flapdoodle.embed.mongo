@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,8 @@ public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extend
 				StreamToLineProcessor.wrap(outputConfig.output()));
 		Processors.connect(process.getReader(), logWatch);
 		Processors.connect(process.getError(), StreamToLineProcessor.wrap(outputConfig.error()));
-		logWatch.waitForResult(getConfig().timeout().getStartupTimeout());
+		long startupTimeout = getConfig().timeout().getStartupTimeout();
+		logWatch.waitForResult(startupTimeout);
 		if (logWatch.isInitWithSuccess()) {
 			setProcessId(Mongod.getMongodProcessId(logWatch.getOutput(), -1));
 		} else {
@@ -75,7 +77,7 @@ public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extend
 			}
 			try {
 				// Process could be finished with success here! In this case no need to throw an exception!
-				if(process.waitFor() != 0){
+				if(process.waitFor(getConfig().timeout().getStartupTimeout()) != 0){
 					throw new RuntimeException("Could not start process: "+failureFound);
 				}
 			} catch (InterruptedException e) {
