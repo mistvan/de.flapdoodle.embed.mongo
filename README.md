@@ -73,7 +73,7 @@ Snapshots (Repository http://oss.sonatype.org/content/repositories/snapshots)
 	<dependency>
 		<groupId>de.flapdoodle.embed</groupId>
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
-		<version>3.4.6-SNAPSHOT</version>
+		<version>3.4.7-SNAPSHOT</version>
 	</dependency>
 
 ### Gradle
@@ -81,7 +81,7 @@ Snapshots (Repository http://oss.sonatype.org/content/repositories/snapshots)
 Make sure you have mavenCentral() in your repositories or that your enterprise/local server proxies the maven central repository.
 
 	dependencies {
-		testCompile group: "de.flapdoodle.embed", name: "de.flapdoodle.embed.mongo", version: "3.3.1-SNAPSHOT"
+		testCompile group: "de.flapdoodle.embed", name: "de.flapdoodle.embed.mongo", version: "3.4.7-SNAPSHOT"
 	}
 
 ### Build from source
