@@ -1,8 +1,17 @@
 ### Changelog
 
 
+### 3.4.5
+
+- Process.waitFor timeout added
+
+### 3.4.4
+
+- mongodb dist upgrade
+
 ### 3.4.3
 
+- new spring integration sub project
 - fixed spring compat after refactoring
 
 ### 3.4.2
