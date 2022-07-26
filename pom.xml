@@ -120,7 +120,9 @@
 						</goals>
 						<configuration>
 							<rules>
+								<!--
 								<dependencyConvergence />
+								-->
 								<banDuplicateClasses>
 									<ignoreClasses>
 										<!-- example of ignoring one specific class -->
