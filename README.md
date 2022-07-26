@@ -73,7 +73,7 @@ Snapshots (Repository http://oss.sonatype.org/content/repositories/snapshots)
 	<dependency>
 		<groupId>de.flapdoodle.embed</groupId>
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
-		<version>3.4.6-SNAPSHOT</version>
+		<version>3.4.9-SNAPSHOT</version>
 	</dependency>
 
 ### Gradle
@@ -81,7 +81,7 @@ Snapshots (Repository http://oss.sonatype.org/content/repositories/snapshots)
 Make sure you have mavenCentral() in your repositories or that your enterprise/local server proxies the maven central repository.
 
 	dependencies {
-		testCompile group: "de.flapdoodle.embed", name: "de.flapdoodle.embed.mongo", version: "3.3.1-SNAPSHOT"
+		testCompile group: "de.flapdoodle.embed", name: "de.flapdoodle.embed.mongo", version: "3.4.9-SNAPSHOT"
 	}
 
 ### Build from source
@@ -101,11 +101,18 @@ Support for Linux, Windows and MacOSX.
 
 ### Spring Integration
 
-There is a new project for spring integration:
+As the spring projects
+[removed the embed mongo support in 2.7.0](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7-Release-Notes#springmongodbembeddedfeatures-configuration-property-removed)
+you should consider to use one of these integration projects.
+It should behave mostly like the original spring integration, but there are some minor differences:
+- version in 'spring.mongodb.embedded.version' is used in package resolver and is not matched against version enum.
+- 'spring.mongodb.embedded.features' is not supported (not the way to change the config of mongodb)
+
+If you have any trouble in using them fell free to create an issue.
 
 - [Spring 2.5.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.5.x)
 - [Spring 2.6.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.6.x)
-
+- [Spring 2.7.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.7.x)
 
 ### Usage
 ```java
