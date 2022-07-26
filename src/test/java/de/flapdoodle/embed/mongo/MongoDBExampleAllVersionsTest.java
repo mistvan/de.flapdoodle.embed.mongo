@@ -20,18 +20,20 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.reverse.TransitionWalker;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Assume;
@@ -42,6 +44,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -73,69 +76,48 @@ public class MongoDBExampleAllVersionsTest {
 		return result;
 	}
 
-	private static final int PORT = 12345;
-
 	@Parameter
 	public String mongoVersionName;
 
 	@Parameter(value = 1)
 	public IFeatureAwareVersion mongoVersion;
 
-	private MongodExecutable mongodExe;
-	private MongodProcess mongod;
-
-	private MongoClient mongo;
+	private TransitionWalker.ReachedState<RunningMongodProcess> running;
 	private static final String DATABASENAME = "mongo_test";
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 
 		final Distribution distribution = Distribution.detectFor(mongoVersion);
 		if (distribution.platform().operatingSystem() == OS.Linux && distribution.platform().architecture().cpuType() == CPUType.ARM) {
 			Assume.assumeTrue("Mongodb supports Linux ARM64 since 3.4.0", mongoVersion.numericVersion().isNewerOrEqual(3, 4, 0));
 		}
 
-		MongodStarter runtime = MongodStarter.getDefaultInstance();
-		mongodExe = runtime.prepare(MongodConfig.builder().version(this.mongoVersion).net(new Net(PORT,
-				Network.localhostIsIPv6())).cmdOptions(getCmdOptions(mongoVersion)).build());
-		mongod = mongodExe.start();
-
-		mongo = new MongoClient(new ServerAddress(Network.getLocalHost(), PORT));
+		running = Mongod.instance().start(mongoVersion);
 	}
 
 	@After
-	public void tearDown() throws Exception {
-
-		mongod.stop();
-		mongodExe.stop();
-	}
-
-	public MongoClient getMongo() {
-		return mongo;
-	}
-
-	public String getDatabaseName() {
-		return DATABASENAME;
+	public void tearDown() {
+		running.close();
 	}
 
 	@Test
-	public void testInsert1() {
-		System.out.println("-1-8<---------------");
-		MongoDatabase db = mongo.getDatabase("test");
-		db.createCollection("testCol");
-		MongoCollection<Document> col = db.getCollection("testCol");
-		col.insertOne(new Document("testDoc", new Date()));
-		System.out.println("-1->8---------------");
+	public void testInsert1() throws UnknownHostException {
+		try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+			MongoDatabase db = mongo.getDatabase("test");
+			db.createCollection("testCol");
+			MongoCollection<Document> col = db.getCollection("testCol");
+			col.insertOne(new Document("testDoc", new Date()));
+		}
 	}
 
 	@Test
-	public void testInsert2() {
-		System.out.println("-2-8<---------------");
-		MongoDatabase db = mongo.getDatabase("test");
-		db.createCollection("testCol");
-		MongoCollection<Document> col = db.getCollection("testCol");
-		col.insertOne(new Document("testDoc", new Date()));
-		System.out.println("-2->8---------------");
+	public void testInsert2() throws UnknownHostException {
+		try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+			MongoDatabase db = mongo.getDatabase("test");
+			db.createCollection("testCol");
+			MongoCollection<Document> col = db.getCollection("testCol");
+			col.insertOne(new Document("testDoc", new Date()));
+		}
 	}
-
 }

@@ -31,6 +31,7 @@ import de.flapdoodle.embed.process.runtime.Starter;
 /**
  *
  */
+@Deprecated
 public class MongodStarter extends Starter<MongodConfig,MongodExecutable,MongodProcess> {
 
 	private MongodStarter(RuntimeConfig config) {

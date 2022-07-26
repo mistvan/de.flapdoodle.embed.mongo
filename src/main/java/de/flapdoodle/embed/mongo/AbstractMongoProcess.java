@@ -43,6 +43,7 @@ import de.flapdoodle.embed.process.runtime.IStopable;
 import de.flapdoodle.embed.process.runtime.ProcessControl;
 
 
+@Deprecated
 public abstract class AbstractMongoProcess<T extends MongoCommonConfig, E extends Executable<T, P>, P extends IStopable> extends AbstractProcess<T, E, P> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMongoProcess.class);

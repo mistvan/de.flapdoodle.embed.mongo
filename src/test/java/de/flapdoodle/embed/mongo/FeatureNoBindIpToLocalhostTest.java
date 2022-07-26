@@ -20,67 +20,41 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import com.mongodb.*;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.runtime.Network;
-import org.junit.After;
-import org.junit.Before;
+import de.flapdoodle.reverse.Transition;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.transitions.Start;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Date;
 
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
-
 
 public class FeatureNoBindIpToLocalhostTest {
 
-    private static MongodStarter mongodStarter = MongodStarter.getDefaultInstance();
-    private static Net net = getNet();
-    private MongodConfig mongodConfig = createMongoConfig(net);
-
-    private MongodExecutable mongodExecutable;
-    private MongodProcess mongodProcess;
-
-
-    @Before
-    public void setUp() {
-        mongodExecutable = mongodStarter.prepare(mongodConfig);
-
-        try {
-            mongodProcess = mongodExecutable.start();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-
-    }
-
-    @After
-    public void tearDown() {
-        if (mongodExecutable != null && mongodProcess != null && mongodProcess.isProcessRunning()) {
-            mongodProcess.stop();
-            mongodExecutable.stop();
-        }
-    }
-
     @Test
     public void testInsert() throws UnknownHostException {
-        MongoClient mongo = new MongoClient(new ServerAddress(net.getServerAddress(), net.getPort()));
-        DB db = mongo.getDB("test");
-        DBCollection col = db.createCollection("testCol", new BasicDBObject());
-        col.save(new BasicDBObject("testDoc", new Date()));
-    }
-
-    private MongodConfig createMongoConfig(Net net) {
-        Version version = Version.V3_6_0;
-        return MongodConfig.builder()
-		        .version(version)
-            .cmdOptions(getCmdOptions(version))
-		        .net(net)
-		        .build();
+        try (TransitionWalker.ReachedState<RunningMongodProcess> running = new Mongod() {
+            @Override
+            public Transition<Net> net() {
+                return Start.to(Net.class).providedBy(FeatureNoBindIpToLocalhostTest::getNet);
+            }
+        }.start(Version.V3_6_0)) {
+            try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+                DB db = mongo.getDB("test");
+                DBCollection col = db.createCollection("testCol", new BasicDBObject());
+                col.save(new BasicDBObject("testDoc", new Date()));
+            }
+        }
     }
 
     private static Net getNet() {
