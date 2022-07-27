@@ -28,15 +28,14 @@ import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
+import de.flapdoodle.embed.mongo.commands.MongosArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
+import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.examples.FileStreamProcessor;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
-import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
-import de.flapdoodle.embed.mongo.transitions.MongoImport;
-import de.flapdoodle.embed.mongo.transitions.Mongod;
-import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.embed.mongo.transitions.*;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.mongo.util.FileUtils;
@@ -91,24 +90,6 @@ public class HowToDocTest {
 			}
 		}
 
-		recording.end();
-	}
-
-	@Test
-	public void testCustomMongodFilename() throws IOException {
-		recording.begin();
-		// TODO REMOVE
-		recording.end();
-	}
-
-	public void testUnitTests() {
-		// TODO REMOVE
-	}
-
-	@Test
-	public void testMongodForTests() throws IOException {
-		recording.begin();
-		// TODO REMOVE
 		recording.end();
 	}
 
@@ -206,20 +187,6 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomOutputToLogging() {
-		recording.begin();
-		// TODO remove me
-		recording.end();
-	}
-
-	@Test
-	public void testDefaultOutputToLogging() {
-		recording.begin();
-		// TODO remove me
-		recording.end();
-	}
-
-	@Test
 	public void testDefaultOutputToNone() throws IOException {
 		recording.begin();
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().transitions(Version.Main.PRODUCTION)
@@ -245,13 +212,6 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomVersion() {
-		recording.begin();
-		// TODO remove
-		recording.end();
-	}
-
-	@Test
 	public void testMainVersions() {
 		recording.begin();
 		IFeatureAwareVersion version = Version.V2_2_5;
@@ -268,20 +228,6 @@ public class HowToDocTest {
 	public void testFreeServerPort() throws IOException {
 		recording.begin();
 		int port = Network.getFreeServerPort();
-		recording.end();
-	}
-
-	@Test
-	public void testFreeServerPortAuto() throws IOException {
-		recording.begin();
-		// TODO remove me
-		recording.end();
-	}
-
-	@Test
-	public void testCustomTimeouts() throws UnknownHostException, IOException {
-		recording.begin();
-		// TODO set mongod timeout to 30000
 		recording.end();
 	}
 
@@ -340,19 +286,39 @@ public class HowToDocTest {
 		recording.end();
 	}
 
-	// ### Start mongos with mongod instance
-	// @include StartConfigAndMongoDBServerTest.java
+	@Test
+	public void testMongosAndMongod() throws UnknownHostException {
+		recording.begin();
+		Version.Main version = Version.Main.PRODUCTION;
 
-	// ## Common Errors
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = Mongod.instance().transitions(version)
+			.replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
+				.withIsConfigServer(true)
+				.withReplication(new Storage(null, "testRepSet", 5000))))
+			.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
 
-	// ### Executable Collision
+			try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
+			}
 
-	/*
-	// ->
-	There is a good chance of filename collisions if you use a custom naming schema for the executable (see [Usage - custom mongod filename](#usage---custom-mongod-filename)).
-	If you got an exception, then you should make your RuntimeConfig or MongoStarter class or jvm static (static final in your test class or singleton class for all tests).
-	// <-
-	*/
+			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = Mongos.instance().transitions(version)
+				.replace(Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
+					.withConfigDB(runningMongod.current().getServerAddress().toString())
+					.withReplicaSet("testRepSet")
+				))
+
+				.walker()
+				.initState(StateID.of(RunningMongosProcess.class))) {
+
+				try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+					assertThat(mongo.listDatabaseNames()).contains("admin","config","local");
+				}
+
+			}
+		}
+		recording.end();
+	}
 
 	@Test
 	public void importJsonIntoMongoDB() {
