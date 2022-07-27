@@ -4,6 +4,18 @@
 ${testStandard}
 ```
 
+#### Customize by Override
+
+```java
+${customizeMongodByOverride}
+```
+
+#### Customize by Replacement
+
+```java
+${customizeMongodByReplacement}
+```
+
 ### Usage - Optimization
 
 All artifacts are cached. Even so the extracted results.

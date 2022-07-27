@@ -7,6 +7,7 @@ import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
+import de.flapdoodle.reverse.transitions.ImmutableStart;
 import de.flapdoodle.reverse.transitions.Start;
 
 public class Mongos implements WorkspaceDefaults, VersionAndPlatform, ProcessDefaults, CommandName, ExtractFileSet {
@@ -21,10 +22,14 @@ public class Mongos implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 				Start.to(de.flapdoodle.embed.process.distribution.Version.class).initializedWith(version),
 				Start.to(Net.class).providedBy(Net::defaults),
 
-				Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()),
+				mongosArguments(),
 				MongosProcessArguments.withDefaults(),
 				MongosStarter.withDefaults()
 			);
+	}
+
+	public Start<MongosArguments> mongosArguments() {
+		return Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults());
 	}
 
 	public TransitionWalker.ReachedState<RunningMongosProcess> start(Version version) {

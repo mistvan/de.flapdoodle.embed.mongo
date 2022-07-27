@@ -21,23 +21,34 @@
 package de.flapdoodle.embed.mongo;
 
 import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Defaults;
 import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
+import de.flapdoodle.embed.mongo.transitions.Mongod;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.config.RuntimeConfig;
 import de.flapdoodle.embed.process.runtime.Network;
-import org.junit.Assert;
-import org.junit.Test;
+import de.flapdoodle.reverse.Transition;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.transitions.Start;
+import org.assertj.core.api.Assertions;
+import org.bson.Document;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * Integration test for starting and stopping MongodExecutable
@@ -51,77 +62,66 @@ public class MongoExecutableTest {
 
 	@Test
 	public void testStartStopTenTimesWithNewMongoExecutable() throws IOException {
-		boolean useMongodb = true;
 		int loops = 10;
 
-		final Version.Main version = Version.Main.PRODUCTION;
-		MongodConfig mongodConfig = MongodConfig.builder()
-			.version(version)
-			.stopTimeoutInMillis(5L)
-			.net(new Net(Network.getFreeServerPort(), Network.localhostIsIPv6()))
-			.cmdOptions(getCmdOptions(version))
-			.build();
-
-		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
+		Mongod mongod = new Mongod() {
+			@Override public Transition<MongodArguments> mongodArguments() {
+				return Start.to(MongodArguments.class)
+					.initializedWith(MongodArguments.defaults()
+						.withUseNoPrealloc(true)
+						.withUseSmallFiles(true));
+			}
+		};
 
 		for (int i = 0; i < loops; i++) {
 			logger.info("Loop: {}", i);
-			MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
-			try {
-				MongodProcess mongod = mongodExe.start();
-
-				try (MongoClient mongo = new MongoClient(
-					new ServerAddress(mongodConfig.net().getServerAddress(), mongodConfig.net().getPort()))) {
+			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.start(Version.Main.PRODUCTION)) {
+				try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
 					DB db = mongo.getDB("test");
 					DBCollection col = db.createCollection("testCol", new BasicDBObject());
 					col.save(new BasicDBObject("testDoc", new Date()));
 				}
-
-				mongod.stop();
-			}
-			finally {
-				mongodExe.stop();
 			}
 		}
-
 	}
 
 	@Test
-	public void testStartMongodOnNonFreePort() throws IOException, InterruptedException {
-		int port = Network.getFreeServerPort();
+	public void startTwoMongodInstancesUsingDifferentPorts() throws UnknownHostException {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> outerMongod = Mongod.instance().start(Version.Main.PRODUCTION)) {
+			try (TransitionWalker.ReachedState<RunningMongodProcess> innerMongod = Mongod.instance().start(Version.Main.PRODUCTION)) {
 
-		final Version.Main version = Version.Main.PRODUCTION;
-		MongodConfig mongodConfig = MongodConfig.builder()
-			.version(version)
-			.net(new Net(port, Network.localhostIsIPv6()))
-			.cmdOptions(getCmdOptions(version))
-			.build();
+				try (MongoClient mongo = new MongoClient(innerMongod.current().getServerAddress())) {
+					MongoDatabase db = mongo.getDatabase("test");
+					db.createCollection("testCol");
+					MongoCollection<Document> col = db.getCollection("testColl");
+					col.insertOne(new Document("testDoc", new Date()));
+				}
 
-		RuntimeConfig runtimeConfig = Defaults.runtimeConfigFor(Command.MongoD).build();
-
-		MongodExecutable mongodExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
-		MongodProcess mongod = mongodExe.start();
-
-		boolean innerMongodCouldNotStart = false;
-		{
-			Thread.sleep(500);
-
-			MongodExecutable innerExe = MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig);
-			try {
-				MongodProcess innerMongod = innerExe.start();
-				assertNotNull(innerMongod);
-			}
-			catch (RuntimeException iox) {
-				innerMongodCouldNotStart = true;
-			}
-			finally {
-				innerExe.stop();
-				Assert.assertTrue("inner Mongod could not start", innerMongodCouldNotStart);
+				try (MongoClient mongo = new MongoClient(outerMongod.current().getServerAddress())) {
+					MongoDatabase db = mongo.getDatabase("test");
+					db.createCollection("testCol");
+					MongoCollection<Document> col = db.getCollection("testColl");
+					col.insertOne(new Document("testDoc", new Date()));
+				}
 			}
 		}
-
-		mongod.stop();
-		mongodExe.stop();
 	}
 
+	@Test
+	public void testStartMongodOnNonFreePort() {
+		Net net = Net.defaults();
+
+		Mongod mongod = new Mongod() {
+			@Override public Transition<Net> net() {
+				return Start.to(Net.class)
+					.initializedWith(net);
+			}
+		};
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> outerMongod = mongod.start(Version.Main.PRODUCTION)) {
+			Assertions.assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
+				.isInstanceOf(RuntimeException.class)
+				.hasMessage("error on transition to State(de.flapdoodle.embed.mongo.transitions.RunningMongodProcess), rollback");
+		}
+	}
 }

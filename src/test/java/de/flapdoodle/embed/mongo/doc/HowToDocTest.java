@@ -94,6 +94,35 @@ public class HowToDocTest {
 	}
 
 	@Test
+	public void customizeMongodByOverride() {
+		recording.begin();
+		Mongod mongod = new Mongod() {
+			@Override
+			public Transition<DistributionBaseUrl> distributionBaseUrl() {
+				return Start.to(DistributionBaseUrl.class)
+					.initializedWith(DistributionBaseUrl.of("http://my.custom.download.domain"));
+			}
+		};
+		recording.end();
+
+		assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
+			.isInstanceOf(RuntimeException.class);
+	}
+
+	@Test
+	public void customizeMongodByReplacement() {
+		recording.begin();
+		Transitions mongod = Mongod.instance()
+			.transitions(Version.Main.PRODUCTION)
+			.replace(Start.to(DistributionBaseUrl.class)
+				.initializedWith(DistributionBaseUrl.of("http://my.custom.download.domain")));
+		recording.end();
+
+		assertThatThrownBy(() -> mongod.walker().initState(StateID.of(RunningMongodProcess.class)))
+			.isInstanceOf(RuntimeException.class);
+	}
+
+	@Test
 	public void testCustomizeDownloadURL() {
 		recording.begin();
 		Mongod mongod = new Mongod() {
@@ -113,7 +142,8 @@ public class HowToDocTest {
 	public void testCustomProxy() throws UnknownHostException {
 		recording.begin();
 		Mongod mongod = new Mongod() {
-			@Override public DownloadPackage downloadPackage() {
+			@Override
+			public DownloadPackage downloadPackage() {
 				return DownloadPackage.withDefaults()
 					.withDownloadConfig(DownloadConfig.defaults()
 						.withProxyFactory(new HttpProxyFactory("fooo", 1234)));
@@ -173,10 +203,10 @@ public class HowToDocTest {
 					.providedBy(Try.supplier(() -> new ProcessOutput(
 						Processors.named("[mongod>]",
 							new FileStreamProcessor(File.createTempFile("mongod", "log"))),
-							new FileStreamProcessor(File.createTempFile("mongod-error", "log")),
-							Processors.namedConsole("[console>]")
+						new FileStreamProcessor(File.createTempFile("mongod-error", "log")),
+						Processors.namedConsole("[console>]")
 					)).mapCheckedException(RuntimeException::new)
-					::get)
+						::get)
 					.withTransitionLabel("create named console");
 			}
 		};
@@ -189,16 +219,19 @@ public class HowToDocTest {
 	@Test
 	public void testDefaultOutputToNone() throws IOException {
 		recording.begin();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().transitions(Version.Main.PRODUCTION)
-			.replace(Start.to(ProcessOutput.class)
-				.initializedWith(new ProcessOutput(
-					Processors.silent(),
-					Processors.silent(),
-					Processors.silent()
-				))
-				.withTransitionLabel("no output"))
-			.walker().initState(StateID.of(RunningMongodProcess.class))) {
+		Mongod mongod = new Mongod() {
+			@Override public Transition<ProcessOutput> processOutput() {
+				return Start.to(ProcessOutput.class)
+					.initializedWith(new ProcessOutput(
+						Processors.silent(),
+						Processors.silent(),
+						Processors.silent()
+					))
+					.withTransitionLabel("no output");
+			}
+		};
 
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
 			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
@@ -279,8 +312,11 @@ public class HowToDocTest {
 	@Test
 	public void testCustomDatabaseDirectory(@TempDir Path customDatabaseDir) throws UnknownHostException, IOException {
 		recording.begin();
-		Mongod.instance().transitions(Version.Main.PRODUCTION)
-			.replace(Start.to(DatabaseDir.class).initializedWith(DatabaseDir.of(customDatabaseDir)));
+		Mongod mongod = new Mongod() {
+			@Override public Transition<DatabaseDir> databaseDir() {
+				return Start.to(DatabaseDir.class).initializedWith(DatabaseDir.of(customDatabaseDir));
+			}
+		};
 
 		// TODO replication config? replSetName, oplogSize?
 		recording.end();
@@ -291,30 +327,36 @@ public class HowToDocTest {
 		recording.begin();
 		Version.Main version = Version.Main.PRODUCTION;
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = Mongod.instance().transitions(version)
-			.replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
-				.withIsConfigServer(true)
-				.withReplication(new Storage(null, "testRepSet", 5000))))
-			.walker()
-			.initState(StateID.of(RunningMongodProcess.class))) {
+		Mongod mongod = new Mongod() {
+			@Override
+			public Transition<MongodArguments> mongodArguments() {
+				return Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
+					.withIsConfigServer(true)
+					.withReplication(new Storage(null, "testRepSet", 5000)));
+			}
+		};
 
-			try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.start(version)) {
+
+			ServerAddress serverAddress = runningMongod.current().getServerAddress();
+
+			try (MongoClient mongo = new MongoClient(serverAddress)) {
 				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
 			}
 
-			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = Mongos.instance().transitions(version)
-				.replace(Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
-					.withConfigDB(runningMongod.current().getServerAddress().toString())
-					.withReplicaSet("testRepSet")
-				))
-
-				.walker()
-				.initState(StateID.of(RunningMongosProcess.class))) {
-
-				try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
-					assertThat(mongo.listDatabaseNames()).contains("admin","config","local");
+			Mongos mongos = new Mongos() {
+				@Override public Start<MongosArguments> mongosArguments() {
+					return Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
+						.withConfigDB(serverAddress.toString())
+						.withReplicaSet("testRepSet")
+					);
 				}
+			};
 
+			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = mongos.start(version)) {
+				try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+					assertThat(mongo.listDatabaseNames()).contains("admin", "config", "local");
+				}
 			}
 		}
 		recording.end();
