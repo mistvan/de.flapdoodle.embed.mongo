@@ -58,9 +58,6 @@ public class MongosSystemForTestFactory {
 			.getLogger(MongosSystemForTestFactory.class);
 
 	public static final String ADMIN_DATABASE_NAME = "admin";
-	public static final String LOCAL_DATABASE_NAME = "local";
-	public static final String REPLICA_SET_NAME = "rep1";
-	public static final String OPLOG_COLLECTION = "oplog.rs";
 
 	private final MongosConfig config;
 	private final Map<String, List<MongodConfig>> replicaSets;

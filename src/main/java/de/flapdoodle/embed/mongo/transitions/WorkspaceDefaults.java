@@ -12,8 +12,10 @@ import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
 import org.immutables.value.Value;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 
 public interface WorkspaceDefaults {
 	default InitTempDirectory initTempDirectory() {
@@ -26,7 +28,10 @@ public interface WorkspaceDefaults {
 			.with(tempDir -> {
 				Path workingDir= Try.get(() -> tempDir.createDirectory("workingDir"));
 				return State.of(ProcessWorkingDir.of(workingDir), current -> {
-					Try.run(() -> Files.delete(current.value()));
+					Try.run(() -> Files.walk(current.value())
+						.sorted(Comparator.reverseOrder())
+						.map(Path::toFile)
+						.forEach(File::delete));
 				});
 			});
 	}

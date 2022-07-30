@@ -160,7 +160,7 @@ public abstract class MongodArguments {
 		builder.addIf(net.isIpv6(), "--ipv6");
 
 		String bindIp = net.getBindIp();
-		builder.addIf(bindIp!=null, "--bind_ip", Objects.equals("localhost", bindIp) && version.enabled(Feature.NO_BIND_IP_TO_LOCALHOST) ? "127.0.0.1" : bindIp);
+		builder.add("--bind_ip", (Objects.equals("localhost", bindIp) || bindIp==null) && version.enabled(Feature.NO_BIND_IP_TO_LOCALHOST) ? "127.0.0.1" : bindIp);
 
 		Storage replication = config.replication();
 		builder.addIf(replication.getReplSetName() != null,"--replSet",replication.getReplSetName());
