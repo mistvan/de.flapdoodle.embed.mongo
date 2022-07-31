@@ -23,56 +23,48 @@ package de.flapdoodle.embed.mongo.config;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 
 import de.flapdoodle.embed.process.runtime.Network;
+import org.immutables.value.Value;
 
-/**
- * irgendwie passt das nicht
- */
-@Deprecated
-public class Net {
+@Value.Immutable
+public abstract class Net {
 
-	private final String bindIp;
-	private final int port;
-	private final boolean ipv6;
+	public abstract Optional<String> getBindIp();
 
-	public Net() throws IOException {
-		this(null, Network.freeServerPort(Network.getLocalHost()), Network.localhostIsIPv6());
-	}
+	public abstract int getPort();
 
-	public Net(int port, boolean ipv6) {
-		this(null, port, ipv6);
-	}
+	public abstract boolean isIpv6();
 
-	public Net(String bindIp, int port, boolean ipv6) {
-		this.bindIp = bindIp;
-		this.port = port;
-		this.ipv6 = ipv6;
-	}
-
-	public String getBindIp() {
-		return bindIp;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public boolean isIpv6() {
-		return ipv6;
-	}
-
+	@Value.Auxiliary
 	public InetAddress getServerAddress() throws UnknownHostException {
-		if (bindIp != null) {
-			return InetAddress.getByName(bindIp);
+		if (getBindIp().isPresent()) {
+			return InetAddress.getByName(getBindIp().get());
 		}
 		return Network.getLocalHost();
 	}
-	
+
+	public static Net of(String bindIp, int port, boolean ipv6) {
+		return ImmutableNet.builder()
+			.bindIp(bindIp)
+			.port(port)
+			.isIpv6(ipv6)
+			.build();
+	}
+
 	public static Net defaults() {
 		try {
-			return new Net();
-		} catch (IOException e) {
+			InetAddress localHost = Network.getLocalHost();
+			int freeServerPort = Network.freeServerPort(localHost);
+			boolean localhostIsIPv6 = Network.localhostIsIPv6();
+
+			return ImmutableNet.builder()
+				.port(freeServerPort)
+				.isIpv6(localhostIsIPv6)
+				.build();
+		}
+		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

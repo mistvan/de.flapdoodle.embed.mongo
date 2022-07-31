@@ -59,7 +59,7 @@ public class FeatureNoBindIpToLocalhostTest {
 
     private static Net getNet() {
         try {
-            return new Net("localhost",
+            return Net.of("localhost",
                     Network.getFreeServerPort(),
                     Network.localhostIsIPv6());
         } catch (IOException e) {
