@@ -25,26 +25,12 @@ import de.flapdoodle.embed.mongo.packageresolver.FeatureSetResolver;
 import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
 
 import java.util.EnumSet;
+import java.util.Objects;
 
 public class Versions {
 
 	private Versions() {
 		// no instance
-	}
-
-	@Deprecated
-	public static IFeatureAwareVersion withFeatures(de.flapdoodle.embed.process.distribution.Version version, EnumSet<Feature> features) {
-		return new GenericFeatureAwareVersion(version, features);
-	}
-
-	@Deprecated
-	public static IFeatureAwareVersion withFeatures(de.flapdoodle.embed.process.distribution.Version version, Feature...features) {
-		return new GenericFeatureAwareVersion(version, features);
-	}
-
-	@Deprecated
-	public static IFeatureAwareVersion withFeatures(de.flapdoodle.embed.process.distribution.Version version, de.flapdoodle.embed.mongo.packageresolver.Feature...features) {
-		return new GenericFeatureAwareVersion(version);
 	}
 
 	public static IFeatureAwareVersion withFeatures(de.flapdoodle.embed.process.distribution.Version version) {
@@ -54,20 +40,7 @@ public class Versions {
 	static class GenericFeatureAwareVersion implements IFeatureAwareVersion {
 
 		private final de.flapdoodle.embed.process.distribution.Version _version;
-		private final EnumSet<Feature> _features=EnumSet.noneOf(Feature.class);
 		private final FeatureSet featureSet;
-
-		@Deprecated
-		public GenericFeatureAwareVersion(de.flapdoodle.embed.process.distribution.Version version, EnumSet<Feature> features) {
-			_version = version;
-			featureSet = FeatureSetResolver.defaultInstance().featuresOf(version);
-		}
-
-		@Deprecated
-		public GenericFeatureAwareVersion(de.flapdoodle.embed.process.distribution.Version version, Feature...features) {
-			_version = version;
-			featureSet = FeatureSetResolver.defaultInstance().featuresOf(version);
-		}
 
 		public GenericFeatureAwareVersion(de.flapdoodle.embed.process.distribution.Version version) {
 			_version = version;
@@ -80,45 +53,8 @@ public class Versions {
 		}
 
 		@Override
-		public EnumSet<Feature> getFeatures() {
-			return _features;
-		}
-
-		@Override
 		public FeatureSet features() {
 			return featureSet;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((_features == null) ? 0 : _features.hashCode());
-			result = prime * result + ((_version == null) ? 0 : _version.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			GenericFeatureAwareVersion other = (GenericFeatureAwareVersion) obj;
-			if (_features == null) {
-				if (other._features != null)
-					return false;
-			} else if (!_features.equals(other._features))
-				return false;
-			if (_version == null) {
-				if (other._version != null)
-					return false;
-			} else if (!_version.equals(other._version))
-				return false;
-			return true;
 		}
 
 		@Override
@@ -127,9 +63,19 @@ public class Versions {
 		}
 
 		@Override
-        public String toString() {
+		public String toString() {
            return "GenericFeatureAwareVersion{" + _version.asInDownloadPath() + "}";
 		}
 
+		@Override public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			GenericFeatureAwareVersion that = (GenericFeatureAwareVersion) o;
+			return _version.equals(that._version) && featureSet.equals(that.featureSet);
+		}
+		
+		@Override public int hashCode() {
+			return Objects.hash(_version, featureSet);
+		}
 	}
 }

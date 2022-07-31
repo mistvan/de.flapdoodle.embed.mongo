@@ -15,11 +15,23 @@ import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Optional;
+
 public interface ExtractFileSet {
+
+	default Map<String, String> systemEnv() {
+		return System.getenv();
+	}
 
 	default Transition<PersistentDir> persistentBaseDir() {
 		return Start.to(PersistentDir.class)
-			.providedBy(PersistentDir.userHome(".embedmongo"));
+			.providedBy(() -> Optional.ofNullable(systemEnv().get("EMBEDDED_MONGO_ARTIFACTS"))
+				.map(Paths::get)
+				.map(PersistentDir::of)
+				.orElseGet(PersistentDir.userHome(".embedmongo")));
 	}
 
 	default Transition<DownloadCache> downloadCache() {

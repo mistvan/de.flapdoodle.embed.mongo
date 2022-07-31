@@ -20,11 +20,14 @@
  */
 package de.flapdoodle.embed.mongo.runtime;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 //CHECKSTYLE:OFF
-public class TestMongod extends TestCase {
+public class TestMongod {
 
+	@Test
 	public void testGetPID() {
 		String consoleOutput = "Fri Apr 27 08:08:55 BackgroundJob starting: DataFileSync\n" +
 				"Fri Apr 27 08:08:55 versionCmpTest passed\n" +
@@ -33,6 +36,6 @@ public class TestMongod extends TestCase {
 				"Fri Apr 27 08:08:55 [initandlisten]\n" +
 				"Fri Apr 27 08:08:55 [initandlisten] ** NOTE: when using MongoDB 32 bit, you are limited to about 2 gigabytes of data\n";
 
-		assertEquals("PID", 11026, Mongod.getMongodProcessId(consoleOutput, -1));
+		assertThat(Mongod.getMongodProcessId(consoleOutput, -1)).describedAs("PID").isEqualTo(11026);
 	}
 }

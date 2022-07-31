@@ -20,13 +20,13 @@
  */
 package de.flapdoodle.embed.mongo.commands;
 
-import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.Storage;
-import de.flapdoodle.embed.mongo.config.SupportConfig;
-import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
+import de.flapdoodle.embed.mongo.packageresolver.Command;
+import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
+import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.runtime.NUMA;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.os.Platform;
@@ -90,10 +90,7 @@ public abstract class MongodArguments {
 		return false;
 	}
 
-	@Value.Default
-	public Storage replication() {
-		return new Storage();
-	}
+	public abstract Optional<Storage> replication();
 
 	@Value.Default
 	public boolean isConfigServer() {
@@ -162,9 +159,11 @@ public abstract class MongodArguments {
 		String bindIp = net.getBindIp();
 		builder.add("--bind_ip", (Objects.equals("localhost", bindIp) || bindIp==null) && version.enabled(Feature.NO_BIND_IP_TO_LOCALHOST) ? "127.0.0.1" : bindIp);
 
-		Storage replication = config.replication();
-		builder.addIf(replication.getReplSetName() != null,"--replSet",replication.getReplSetName());
-		builder.addIf(replication.getOplogSize() != 0,"--oplogSize",String.valueOf(replication.getOplogSize()));
+		if (config.replication().isPresent()) {
+			Storage replication = config.replication().get();
+			builder.addIf(replication.getReplSetName() != null, "--replSet", replication.getReplSetName());
+			builder.addIf(replication.getOplogSize() != 0, "--oplogSize", String.valueOf(replication.getOplogSize()));
+		}
 
 		builder.addIf(config.isConfigServer(),"--configsvr");
 		builder.addIf(config.isShardServer(),"--shardsvr");
@@ -175,7 +174,7 @@ public abstract class MongodArguments {
 	}
 
 	private static List<String> warpWithNumaSupport(Platform platform, List<String> commands) {
-		if (NUMA.isNUMA(new SupportConfig(Command.MongoD), platform)) {
+		if (NUMA.isNUMA(forCommand(Command.MongoD), platform)) {
 			if (platform.operatingSystem() == OS.Linux) {
 				List<String> ret = new ArrayList<>();
 				ret.add("numactl");
@@ -187,5 +186,13 @@ public abstract class MongodArguments {
 			}
 		}
 		return commands;
+	}
+
+	private static SupportConfig forCommand(Command command) {
+		return SupportConfig.builder()
+			.name(command.name())
+			.supportUrl("https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues\n")
+			.messageOnException((clazz,ex) -> null)
+			.build();
 	}
 }

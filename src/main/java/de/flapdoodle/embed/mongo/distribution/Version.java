@@ -276,11 +276,6 @@ public enum Version implements IFeatureAwareVersion, HasMongotoolsPackage {
 	}
 
 	@Override
-	public EnumSet<Feature> getFeatures() {
-		return EnumSet.noneOf(Feature.class);
-	}
-
-	@Override
 	public FeatureSet features() {
 		return features;
 	}
@@ -350,11 +345,6 @@ public enum Version implements IFeatureAwareVersion, HasMongotoolsPackage {
 		@Deprecated
 		public NumericVersion numericVersion() {
 			return _latest.numericVersion();
-		}
-
-		@Override
-		public EnumSet<Feature> getFeatures() {
-			return _latest.getFeatures();
 		}
 
 		@Override

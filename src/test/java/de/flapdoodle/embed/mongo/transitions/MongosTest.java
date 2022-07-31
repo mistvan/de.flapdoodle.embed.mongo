@@ -16,10 +16,8 @@ import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.transitions.Start;
 import org.bson.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.net.UnknownHostException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +31,7 @@ class MongosTest {
 	 * code for https://www.mongodb.com/docs/manual/tutorial/deploy-shard-cluster/
 	 */
 	@Test
-	public void clusterSample(@TempDir Path databaseDir) throws UnknownHostException {
+	public void clusterSample() throws UnknownHostException {
 		Version version= de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
 
 		String configServerReplicaSetName = "ConfigServerSet";
@@ -41,12 +39,12 @@ class MongosTest {
 
 		ImmutableMongodArguments configServerArguments = MongodArguments.defaults()
 			.withIsConfigServer(true)
-			.withReplication(new Storage(databaseDir.resolve("replicaSet").toString(), configServerReplicaSetName, 0));
+			.withReplication(Storage.of(configServerReplicaSetName, 0));
 
 		ImmutableMongodArguments shardServerArguments = MongodArguments.defaults()
 			.withIsShardServer(true)
 			.withUseNoJournal(false)
-			.withReplication(new Storage(databaseDir.resolve("shardSet").toString(), shardReplicaSetName, 0));
+			.withReplication(Storage.of(shardReplicaSetName, 0));
 
 		try (TransitionWalker.ReachedState<RunningMongodProcess> configServerOne = startMongod("mongod#c1",version, configServerArguments)) {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> configServerTwo = startMongod("mongod#c2", version, configServerArguments)) {

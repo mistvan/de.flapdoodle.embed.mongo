@@ -20,31 +20,22 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-public class Storage {
+import org.immutables.value.Value;
 
-	private final int oplogSize;
-	private final String replSetName;
-	private final String databaseDir;
+@Value.Immutable
+public abstract class Storage {
 
-	public Storage() {
-		this(null, null, 0);
-	}
-
-	public Storage(String databaseDir, String replSetName, int oplogSize) {
-		this.databaseDir = databaseDir;
-		this.replSetName = replSetName;
-		this.oplogSize = oplogSize;
-	}
-
+	@Value.Default
 	public int getOplogSize() {
-		return oplogSize;
+		return 0;
 	}
 
-	public String getReplSetName() {
-		return replSetName;
-	}
+	public abstract String getReplSetName();
 
-	public String getDatabaseDir() {
-		return databaseDir;
+	public static Storage of(String replSetName, int oplogSize) {
+		return ImmutableStorage.builder()
+			.replSetName(replSetName)
+			.oplogSize(oplogSize)
+			.build();
 	}
 }

@@ -3,7 +3,9 @@ package de.flapdoodle.embed.mongo.commands;
 import com.mongodb.ServerAddress;
 import org.immutables.value.Value;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 @Value.Immutable
 public abstract class MongoDumpArguments implements MongoToolsArguments  {

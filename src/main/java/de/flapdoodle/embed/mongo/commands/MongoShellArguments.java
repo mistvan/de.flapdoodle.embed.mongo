@@ -1,18 +1,10 @@
 package de.flapdoodle.embed.mongo.commands;
 
 import com.mongodb.ServerAddress;
-import de.flapdoodle.embed.mongo.config.MongoShellConfig;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.process.extract.ExtractedFileSet;
 import org.immutables.value.Value;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Arrays.asList;
 
 @Value.Immutable
 public abstract class MongoShellArguments implements MongoToolsArguments {

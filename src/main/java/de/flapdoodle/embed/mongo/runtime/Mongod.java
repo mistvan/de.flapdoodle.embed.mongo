@@ -20,39 +20,22 @@
  */
 package de.flapdoodle.embed.mongo.runtime;
 
-import de.flapdoodle.embed.mongo.config.MongoCmdOptions;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Storage;
-import de.flapdoodle.embed.mongo.config.SupportConfig;
-import de.flapdoodle.embed.mongo.packageresolver.Feature;
-import de.flapdoodle.embed.mongo.packageresolver.Command;
-import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.extract.ExtractedFileSet;
-import de.flapdoodle.embed.process.io.file.Files;
-import de.flapdoodle.embed.process.runtime.NUMA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
 
 /**
  *
  */
-public class Mongod extends AbstractMongo {
+public class Mongod {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Mongod.class);
 
@@ -121,116 +104,4 @@ public class Mongod extends AbstractMongo {
 		}
 		return defaultValue;
 	}
-
-	public static List<String> getCommandLine(MongodConfig config, ExtractedFileSet files, File dbDir)
-			throws UnknownHostException {
-		List<String> ret = new ArrayList<>(asList(Files.fileOf(files.baseDir(), files.executable()).getAbsolutePath(),
-				"--dbpath", "" + dbDir.getAbsolutePath()));
-
-		if (config.params() != null && !config.params().isEmpty()) {
-			for (Object key : config.params().keySet()) {
-				ret.addAll(asList("--setParameter", format("%s=%s", key, config.params().get(key))));
-			}
-		}
-		if (config.args() != null && !config.args().isEmpty()) {
-			for (String key : config.args().keySet()) {
-				ret.add(key);
-				String val = config.args().get(key);
-				if (val != null && !val.isEmpty()) {
-					ret.add(val);
-				}
-			}
-		}
-		if (config.cmdOptions().auth()) {
-			ret.add("--auth");
-		} else {
-			ret.add("--noauth");
-		}
-		if (!config.version().enabled(Feature.DISABLE_USE_PREALLOC)) {
-				if (config.cmdOptions().useNoPrealloc()) {
-						ret.add("--noprealloc");
-				}
-		}
-	if (!config.version().enabled(Feature.DISABLE_USE_SMALL_FILES)) {
-			if (config.cmdOptions().useSmallFiles()) {
-					ret.add("--smallfiles");
-			}
-	}
-		if (config.cmdOptions().useNoJournal() && !config.isConfigServer()) {
-			ret.add("--nojournal");
-		}
-		if (config.cmdOptions().master()) {
-			ret.add("--master");
-		}
-
-		if (config.version().enabled(Feature.STORAGE_ENGINE)) { 
-			if (config.cmdOptions().storageEngine().isPresent()) {
-				ret.add("--storageEngine");
-				ret.add(config.cmdOptions().storageEngine().get());
-			}
-		}
-
-		if (config.cmdOptions().isVerbose()) {
-			ret.add("-v");
-		}
-
-		applyDefaultOptions(config, ret);
-		applyNet(config, ret);
-
-		Storage replication = config.replication();
-		
-		if (replication.getReplSetName() != null) {
-			ret.add("--replSet");
-			ret.add(replication.getReplSetName());
-		}
-		if (replication.getOplogSize() != 0) {
-			ret.add("--oplogSize");
-			ret.add(String.valueOf(replication.getOplogSize()));
-		}
-		if (config.isConfigServer()) {
-			ret.add("--configsvr");
-		}
-		if (config.isShardServer()) {
-			ret.add("--shardsvr");
-		}
-		if (config.version().enabled(Feature.SYNC_DELAY)) {
-			applySyncDelay(ret, config.cmdOptions());
-		}
-		if (config.version().enabled(Feature.TEXT_SEARCH)) {
-			applyTextSearch(ret, config.cmdOptions());
-		}
-
-		return ret;
-	}
-
-	private static void applySyncDelay(List<String> ret, MongoCmdOptions cmdOptions) {
-		int syncDelay = cmdOptions.syncDelay();
-		if (!cmdOptions.useDefaultSyncDelay()) {
-			ret.add("--syncdelay=" + syncDelay);
-		}
-	}
-
-	private static void applyTextSearch(List<String> ret, MongoCmdOptions cmdOptions) {
-		if (cmdOptions.enableTextSearch()) {
-			ret.add("--setParameter");
-			ret.add("textSearchEnabled=true");
-		}
-	}
-
-	public static List<String> enhanceCommandLinePlattformSpecific(Distribution distribution, List<String> commands) {
-		if (NUMA.isNUMA(new SupportConfig(Command.MongoD), distribution.platform())) {
-			switch (distribution.platform().operatingSystem()) {
-			case Linux:
-				List<String> ret = new ArrayList<>();
-				ret.add("numactl");
-				ret.add("--interleave=all");
-				ret.addAll(commands);
-				return ret;
-			default:
-				LOGGER.warn("NUMA Plattform detected, but not supported.");
-			}
-		}
-		return commands;
-	}
-
 }

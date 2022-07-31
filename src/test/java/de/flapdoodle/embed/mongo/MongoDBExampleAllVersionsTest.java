@@ -20,17 +20,14 @@
  */
 package de.flapdoodle.embed.mongo;
 
-import com.mongodb.*;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -48,8 +45,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
-import static de.flapdoodle.embed.mongo.TestUtils.getCmdOptions;
 
 /**
  * Test whether a race condition occurs between setup and tear down of setting

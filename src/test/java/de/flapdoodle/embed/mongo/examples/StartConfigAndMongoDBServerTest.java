@@ -51,7 +51,7 @@ public class StartConfigAndMongoDBServerTest {
 		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = Mongod.instance().transitions(version)
 			.replace(Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
 				.withIsConfigServer(true)
-				.withReplication(new Storage(null, "testRepSet", 5000))))
+				.withReplication(Storage.of("testRepSet", 5000))))
 			.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 

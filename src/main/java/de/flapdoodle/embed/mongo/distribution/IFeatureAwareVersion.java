@@ -34,12 +34,6 @@ public interface IFeatureAwareVersion extends Version {
 
 	FeatureSet features();
 
-	/**
-	 *  leave this for spring compat
-	 */
-	@Deprecated
-	EnumSet<de.flapdoodle.embed.mongo.distribution.Feature> getFeatures();
-
 	@Deprecated
 	NumericVersion numericVersion();
 }

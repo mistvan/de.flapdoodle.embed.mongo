@@ -327,7 +327,7 @@ public class HowToDocTest {
 			public Transition<MongodArguments> mongodArguments() {
 				return Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
 					.withIsConfigServer(true)
-					.withReplication(new Storage(null, "testRepSet", 5000)));
+					.withReplication(Storage.of("testRepSet", 5000)));
 			}
 		};
 
