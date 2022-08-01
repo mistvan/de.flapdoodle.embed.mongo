@@ -18,15 +18,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.embed.mongo;
+package de.flapdoodle.embed.mongo.transitions;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.embed.mongo.Versions;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.transitions.Mongod;
-import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.CPUType;
 import de.flapdoodle.os.OS;
@@ -55,7 +54,7 @@ import java.util.Date;
  * @author m.joehren
  */
 @RunWith(value = Parameterized.class)
-public class MongoDBExampleAllVersionsTest {
+public class MongodRunAllVersionsTest {
 
 	@Parameters(name = "{0}")
 	public static java.util.Collection<Object[]> data() {
@@ -78,7 +77,6 @@ public class MongoDBExampleAllVersionsTest {
 	public IFeatureAwareVersion mongoVersion;
 
 	private TransitionWalker.ReachedState<RunningMongodProcess> running;
-	private static final String DATABASENAME = "mongo_test";
 
 	@Before
 	public void setUp() {

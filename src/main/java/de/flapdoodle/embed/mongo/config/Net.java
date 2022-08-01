@@ -46,11 +46,15 @@ public abstract class Net {
 	}
 
 	public static Net of(String bindIp, int port, boolean ipv6) {
-		return ImmutableNet.builder()
+		return builder()
 			.bindIp(bindIp)
 			.port(port)
 			.isIpv6(ipv6)
 			.build();
+	}
+
+	public static ImmutableNet.Builder builder() {
+		return ImmutableNet.builder();
 	}
 
 	public static Net defaults() {
@@ -59,7 +63,7 @@ public abstract class Net {
 			int freeServerPort = Network.freeServerPort(localHost);
 			boolean localhostIsIPv6 = Network.localhostIsIPv6();
 
-			return ImmutableNet.builder()
+			return builder()
 				.port(freeServerPort)
 				.isIpv6(localhostIsIPv6)
 				.build();
