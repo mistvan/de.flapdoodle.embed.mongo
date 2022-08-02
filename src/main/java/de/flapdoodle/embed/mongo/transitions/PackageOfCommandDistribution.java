@@ -3,10 +3,10 @@ package de.flapdoodle.embed.mongo.transitions;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
-import de.flapdoodle.embed.process.archives.ArchiveType;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.Package;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
+import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
@@ -33,23 +33,7 @@ public abstract class PackageOfCommandDistribution implements Transition<Package
 	@Value.Auxiliary
 	protected Package packageOf(Command command, Distribution distribution, DistributionBaseUrl baseUrl) {
 		DistributionPackage distPackage = legacyPackageResolverFactory().apply(command).packageFor(distribution);
-		return Package.of(archiveTypeOfLegacy(distPackage.archiveType()), distPackage.fileSet(),  baseUrl.value() /*"https://fastdl.mongodb.org"*/+distPackage.archivePath());
-	}
-
-	private static ArchiveType archiveTypeOfLegacy(de.flapdoodle.embed.process.distribution.ArchiveType archiveType) {
-		switch (archiveType) {
-			case EXE:
-				return ArchiveType.EXE;
-			case TBZ2:
-				return ArchiveType.TBZ2;
-			case TGZ:
-				return ArchiveType.TGZ;
-			case ZIP:
-				return ArchiveType.ZIP;
-			case TXZ:
-				return ArchiveType.TXZ;
-		}
-		throw new IllegalArgumentException("Could not map: "+archiveType);
+		return Package.of(distPackage.archiveType(), distPackage.fileSet(),  baseUrl.value() /*"https://fastdl.mongodb.org"*/+distPackage.archivePath());
 	}
 
 	@Value.Default
