@@ -26,7 +26,6 @@ import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.Package;
 import de.flapdoodle.embed.process.config.store.PackageResolver;
-import de.flapdoodle.embed.process.distribution.ArchiveType;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;

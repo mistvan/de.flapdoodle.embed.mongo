@@ -22,7 +22,7 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.store.Package;
-import de.flapdoodle.embed.process.nio.directories.PersistentDir;
+import de.flapdoodle.embed.process.io.directories.PersistentDir;
 import de.flapdoodle.embed.process.store.ContentHashExtractedFileSetStore;
 import de.flapdoodle.embed.process.store.DownloadCache;
 import de.flapdoodle.embed.process.store.ExtractedFileSetStore;
@@ -35,7 +35,6 @@ import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;

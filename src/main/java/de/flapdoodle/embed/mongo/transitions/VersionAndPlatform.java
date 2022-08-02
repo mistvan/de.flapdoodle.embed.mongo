@@ -26,7 +26,6 @@ import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Join;
 import de.flapdoodle.reverse.transitions.Start;
-import org.immutables.value.Value;
 
 public interface VersionAndPlatform {
 	default Transition<Platform> platform() {

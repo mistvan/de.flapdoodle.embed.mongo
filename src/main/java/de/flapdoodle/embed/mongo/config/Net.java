@@ -20,13 +20,13 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
+import de.flapdoodle.embed.process.runtime.Network;
+import org.immutables.value.Value;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
-
-import de.flapdoodle.embed.process.runtime.Network;
-import org.immutables.value.Value;
 
 @Value.Immutable
 public abstract class Net {

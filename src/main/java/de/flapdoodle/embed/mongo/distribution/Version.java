@@ -22,7 +22,6 @@ package de.flapdoodle.embed.mongo.distribution;
 
 import de.flapdoodle.embed.mongo.packageresolver.*;
 
-import java.util.EnumSet;
 import java.util.Optional;
 
 /**

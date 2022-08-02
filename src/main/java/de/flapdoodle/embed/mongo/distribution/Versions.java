@@ -24,7 +24,6 @@ import de.flapdoodle.embed.mongo.packageresolver.FeatureSet;
 import de.flapdoodle.embed.mongo.packageresolver.FeatureSetResolver;
 import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
 
-import java.util.EnumSet;
 import java.util.Objects;
 
 public class Versions {

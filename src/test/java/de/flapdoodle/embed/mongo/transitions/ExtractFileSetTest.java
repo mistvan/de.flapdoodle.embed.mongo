@@ -21,11 +21,10 @@
 package de.flapdoodle.embed.mongo.transitions;
 
 import com.google.common.collect.ImmutableMap;
-import de.flapdoodle.embed.process.nio.directories.PersistentDir;
+import de.flapdoodle.embed.process.io.directories.PersistentDir;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.StateLookup;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -33,7 +32,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ExtractFileSetTest {
 

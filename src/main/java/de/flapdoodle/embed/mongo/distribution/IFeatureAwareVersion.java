@@ -25,8 +25,6 @@ import de.flapdoodle.embed.mongo.packageresolver.FeatureSet;
 import de.flapdoodle.embed.mongo.packageresolver.NumericVersion;
 import de.flapdoodle.embed.process.distribution.Version;
 
-import java.util.EnumSet;
-
 public interface IFeatureAwareVersion extends Version {
 	default boolean enabled(Feature feature) {
 		return features().enabled(feature);

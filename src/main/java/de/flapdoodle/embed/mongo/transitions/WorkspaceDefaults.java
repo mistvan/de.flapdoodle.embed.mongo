@@ -21,7 +21,7 @@
 package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
-import de.flapdoodle.embed.process.nio.directories.TempDir;
+import de.flapdoodle.embed.process.io.directories.TempDir;
 import de.flapdoodle.embed.process.transitions.InitTempDirectory;
 import de.flapdoodle.embed.process.types.ProcessWorkingDir;
 import de.flapdoodle.reverse.State;
@@ -30,7 +30,6 @@ import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.types.Try;
-import org.immutables.value.Value;
 
 import java.io.File;
 import java.nio.file.Files;

@@ -29,12 +29,12 @@ import de.flapdoodle.embed.mongo.commands.ImmutableMongosArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.commands.MongosArguments;
 import de.flapdoodle.embed.mongo.config.Storage;
-import de.flapdoodle.embed.process.io.ProcessOutput;
 import de.flapdoodle.embed.process.distribution.Version;
+import de.flapdoodle.embed.process.io.ProcessOutput;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.transitions.Start;
-import org.bson.*;
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
 import java.net.UnknownHostException;
