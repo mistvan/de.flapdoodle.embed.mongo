@@ -23,7 +23,7 @@ package de.flapdoodle.embed.mongo.transitions;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.SupportConfig;
-import de.flapdoodle.embed.process.config.process.ProcessOutput;
+import de.flapdoodle.embed.process.io.ProcessOutput;
 import de.flapdoodle.embed.process.types.*;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.reverse.State;

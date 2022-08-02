@@ -22,7 +22,7 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.config.SupportConfig;
-import de.flapdoodle.embed.process.config.process.ProcessOutput;
+import de.flapdoodle.embed.process.io.ProcessOutput;
 import de.flapdoodle.embed.process.types.Name;
 import de.flapdoodle.embed.process.types.ProcessConfig;
 import de.flapdoodle.embed.process.types.ProcessEnv;
