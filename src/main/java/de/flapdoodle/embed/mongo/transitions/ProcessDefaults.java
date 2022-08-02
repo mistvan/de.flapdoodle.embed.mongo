@@ -2,16 +2,13 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.config.SupportConfig;
-import de.flapdoodle.embed.process.config.io.ProcessOutput;
-import de.flapdoodle.embed.process.nio.directories.TempDir;
+import de.flapdoodle.embed.process.config.process.ProcessOutput;
 import de.flapdoodle.embed.process.types.Name;
 import de.flapdoodle.embed.process.types.ProcessConfig;
 import de.flapdoodle.embed.process.types.ProcessEnv;
-import de.flapdoodle.embed.process.types.ProcessWorkingDir;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
-import de.flapdoodle.reverse.transitions.ImmutableDerive;
 import de.flapdoodle.reverse.transitions.ImmutableStart;
 import de.flapdoodle.reverse.transitions.Start;
 

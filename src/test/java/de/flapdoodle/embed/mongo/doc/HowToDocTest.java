@@ -37,7 +37,7 @@ import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.mongo.util.FileUtils;
 import de.flapdoodle.embed.process.config.DownloadConfig;
-import de.flapdoodle.embed.process.config.io.ProcessOutput;
+import de.flapdoodle.embed.process.config.process.ProcessOutput;
 import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
 import de.flapdoodle.embed.process.io.Processors;
 import de.flapdoodle.embed.process.nio.directories.PersistentDir;
@@ -173,11 +173,12 @@ public class HowToDocTest {
 			@Override
 			public Transition<ProcessOutput> processOutput() {
 				return Start.to(ProcessOutput.class)
-					.initializedWith(new ProcessOutput(
-						Processors.namedConsole("[mongod>]"),
-						Processors.namedConsole("[MONGOD>]"),
-						Processors.namedConsole("[console>]")
-					))
+					.initializedWith(ProcessOutput.builder()
+						.output(Processors.namedConsole("[mongod>]"))
+						.error(Processors.namedConsole("[MONGOD>]"))
+						.commands(Processors.namedConsole("[console>]"))
+						.build()
+					)
 					.withTransitionLabel("create named console");
 			}
 		};
@@ -195,12 +196,13 @@ public class HowToDocTest {
 			@Override
 			public Transition<ProcessOutput> processOutput() {
 				return Start.to(ProcessOutput.class)
-					.providedBy(Try.supplier(() -> new ProcessOutput(
-						Processors.named("[mongod>]",
-							new FileStreamProcessor(File.createTempFile("mongod", "log"))),
-						new FileStreamProcessor(File.createTempFile("mongod-error", "log")),
-						Processors.namedConsole("[console>]")
-					)).mapCheckedException(RuntimeException::new)
+					.providedBy(Try.supplier(() -> ProcessOutput.builder()
+								.output(Processors.named("[mongod>]",
+							new FileStreamProcessor(File.createTempFile("mongod", "log"))))
+							.error(new FileStreamProcessor(File.createTempFile("mongod-error", "log")))
+							.commands(Processors.namedConsole("[console>]"))
+						.build())
+					.mapCheckedException(RuntimeException::new)
 						::get)
 					.withTransitionLabel("create named console");
 			}
@@ -217,11 +219,7 @@ public class HowToDocTest {
 		Mongod mongod = new Mongod() {
 			@Override public Transition<ProcessOutput> processOutput() {
 				return Start.to(ProcessOutput.class)
-					.initializedWith(new ProcessOutput(
-						Processors.silent(),
-						Processors.silent(),
-						Processors.silent()
-					))
+					.initializedWith(ProcessOutput.silent())
 					.withTransitionLabel("no output");
 			}
 		};

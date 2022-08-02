@@ -28,7 +28,7 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.naming.HasLabel;
 import org.immutables.value.Value;
 
-@Value.Immutable
+@Value.Immutable                  
 public abstract class MongodStarter extends MongoServerStarter<RunningMongodProcess> implements HasLabel {
 
 	@Override
