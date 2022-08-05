@@ -66,6 +66,8 @@ There is a report on backward binary compatibility and API changes for the libra
 
 ## Howto
 
+[Usage](Howto.md)
+
 ### Maven
 
 Snapshots (Repository http://oss.sonatype.org/content/repositories/snapshots)
@@ -113,8 +115,6 @@ If you have any trouble in using them fell free to create an issue.
 - [Spring 2.5.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.5.x)
 - [Spring 2.6.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.6.x)
 - [Spring 2.7.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.7.x)
-
-[Usage](Howto.md)
 
 ----
 
