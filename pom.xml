@@ -13,7 +13,7 @@
 	<groupId>de.flapdoodle.embed</groupId>
 	<artifactId>de.flapdoodle.embed.mongo</artifactId>
 	<name>Flapdoodle Embedded MongoDB</name>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>4.0.0-beta-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
 	<description>A embedded mongodb ...</description>
@@ -120,9 +120,7 @@
 						</goals>
 						<configuration>
 							<rules>
-								<!--
 								<dependencyConvergence />
-								-->
 								<banDuplicateClasses>
 									<ignoreClasses>
 										<!-- example of ignoring one specific class -->
@@ -479,7 +477,7 @@
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
 			<artifactId>de.flapdoodle.embed.process</artifactId>
-			<version>4.0.0-SNAPSHOT</version>
+			<version>4.0.0-beta</version>
 		</dependency>
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
