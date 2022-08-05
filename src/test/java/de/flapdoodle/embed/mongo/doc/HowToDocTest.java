@@ -312,6 +312,7 @@ public class HowToDocTest {
 		};
 
 		// TODO replication config? replSetName, oplogSize?
+		// see MongosTest#clusterSample
 		recording.end();
 	}
 

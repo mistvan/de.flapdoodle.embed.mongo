@@ -27,6 +27,7 @@ import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.embed.process.io.Files;
 import de.flapdoodle.embed.process.io.directories.TempDir;
+import de.flapdoodle.embed.process.transitions.Directories;
 import de.flapdoodle.reverse.*;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
@@ -44,10 +45,10 @@ public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 
 	public Transition<DatabaseDir> databaseDir() {
 		return Derive.given(TempDir.class).state(DatabaseDir.class)
-			.with(tempDir -> {
-				DatabaseDir databaseDir = Try.get(() -> DatabaseDir.of(tempDir.createDirectory("mongod-database")));
-				return State.of(databaseDir, dir -> Try.run(() -> Files.deleteAll(dir.value())));
-			});
+			.with(Directories.deleteOnTearDown(
+				TempDir.createDirectoryWith("mongod-database"),
+				DatabaseDir::of
+			));
 	}
 
 	public MongodProcessArguments mongodProcessArguments() {
