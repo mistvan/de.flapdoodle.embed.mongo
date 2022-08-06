@@ -34,7 +34,7 @@ public class MongoShell implements WorkspaceDefaults, VersionAndPlatform, Proces
 		return workspaceDefaults()
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
-			.addAll(commandName())
+			.addAll(commandNames())
 			.addAll(extractFileSet())
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.Mongo).withTransitionLabel("provide Command"),

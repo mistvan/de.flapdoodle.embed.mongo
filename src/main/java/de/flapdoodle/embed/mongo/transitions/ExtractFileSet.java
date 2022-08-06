@@ -34,6 +34,7 @@ import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
+import org.immutables.value.Value;
 
 import java.nio.file.Paths;
 import java.util.Map;
@@ -41,10 +42,12 @@ import java.util.Optional;
 
 public interface ExtractFileSet {
 
+	@Value.Default
 	default Map<String, String> systemEnv() {
 		return System.getenv();
 	}
 
+	@Value.Default
 	default Transition<PersistentDir> persistentBaseDir() {
 		return Start.to(PersistentDir.class)
 			.providedBy(() -> Optional.ofNullable(systemEnv().get("EMBEDDED_MONGO_ARTIFACTS"))
@@ -53,6 +56,7 @@ public interface ExtractFileSet {
 				.orElseGet(PersistentDir.userHome(".embedmongo")));
 	}
 
+	@Value.Default
 	default Transition<DownloadCache> downloadCache() {
 		return Derive.given(PersistentDir.class)
 			.state(DownloadCache.class)
@@ -60,6 +64,7 @@ public interface ExtractFileSet {
 			.withTransitionLabel("downloadCache");
 	}
 
+	@Value.Default
 	default Transition<ExtractedFileSetStore> extractedFileSetStore() {
 		return Derive.given(PersistentDir.class)
 			.state(ExtractedFileSetStore.class)
@@ -67,19 +72,23 @@ public interface ExtractFileSet {
 			.withTransitionLabel("extractedFileSetStore");
 	}
 
+	@Value.Default
 	default DownloadPackage downloadPackage() {
 		return DownloadPackage.withDefaults();
 	}
 
+	@Value.Default
 	default Transition<ExtractedFileSet> extractPackage() {
 		return ExtractPackage.withDefaults()
 			.withExtractedFileSetStore(StateID.of(ExtractedFileSetStore.class));
 	}
 
+	@Value.Default
 	default Transition<Package> packageOfDistribution() {
 		return PackageOfCommandDistribution.withDefaults();
 	}
 
+	@Value.Auxiliary
 	default Transitions extractFileSet() {
 		return Transitions.from(
 			persistentBaseDir(),

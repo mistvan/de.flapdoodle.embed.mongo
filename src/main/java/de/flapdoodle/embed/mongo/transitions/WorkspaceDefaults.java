@@ -29,12 +29,15 @@ import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
+import org.immutables.value.Value;
 
 public interface WorkspaceDefaults {
+	@Value.Default
 	default InitTempDirectory initTempDirectory() {
 		return InitTempDirectory.withPlatformTempRandomSubDir();
 	}
 
+	@Value.Default
 	default Transition<ProcessWorkingDir> processWorkingDir() {
 		return Derive.given(TempDir.class)
 			.state(ProcessWorkingDir.class)
@@ -44,11 +47,13 @@ public interface WorkspaceDefaults {
 			);
 	}
 
+	@Value.Default
 	default Transition<DistributionBaseUrl> distributionBaseUrl() {
 		return Start.to(DistributionBaseUrl.class)
 			.initializedWith(DistributionBaseUrl.of("https://fastdl.mongodb.org"));
 	}
 
+	@Value.Auxiliary
 	default Transitions workspaceDefaults() {
 		return Transitions.from(initTempDirectory(), processWorkingDir(), distributionBaseUrl());
 	}

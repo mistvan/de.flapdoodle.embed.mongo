@@ -33,7 +33,7 @@ public class MongoImport implements WorkspaceDefaults, VersionAndPlatform, Proce
 		return workspaceDefaults()
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
-			.addAll(commandName())
+			.addAll(commandNames())
 			.addAll(extractFileSet())
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoImport).withTransitionLabel("provide Command"),

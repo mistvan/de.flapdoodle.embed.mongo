@@ -26,6 +26,15 @@ Mongod mongod = new Mongod() {
 };
 ```
 
+#### Customize by Builder
+
+```java
+Mongod mongod = Mongod.builder()
+  .distributionBaseUrl(Start.to(DistributionBaseUrl.class)
+    .initializedWith(DistributionBaseUrl.of("http://my.custom.download.domain")))
+  .build();
+```
+
 #### Customize by Replacement
 
 ```java

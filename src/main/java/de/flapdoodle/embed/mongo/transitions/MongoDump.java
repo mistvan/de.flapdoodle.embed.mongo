@@ -33,7 +33,7 @@ public class MongoDump implements WorkspaceDefaults, VersionAndPlatform, Process
 		return workspaceDefaults()
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
-			.addAll(commandName())
+			.addAll(commandNames())
 			.addAll(extractFileSet())
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoDump).withTransitionLabel("provide Command"),

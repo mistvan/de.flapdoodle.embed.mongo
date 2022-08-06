@@ -34,7 +34,7 @@ public class Mongos implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 		return workspaceDefaults()
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
-			.addAll(commandName())
+			.addAll(commandNames())
 			.addAll(extractFileSet())
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoS).withTransitionLabel("provide Command"),

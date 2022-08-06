@@ -34,7 +34,7 @@ public class MongoRestore implements WorkspaceDefaults, VersionAndPlatform, Proc
 		return workspaceDefaults()
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
-			.addAll(commandName())
+			.addAll(commandNames())
 			.addAll(extractFileSet())
 			.addAll(
 				Start.to(Command.class).initializedWith(Command.MongoRestore).withTransitionLabel("provide Command"),

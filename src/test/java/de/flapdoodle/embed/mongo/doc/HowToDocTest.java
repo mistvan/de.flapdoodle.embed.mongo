@@ -105,6 +105,19 @@ public class HowToDocTest {
 	}
 
 	@Test
+	public void customizeMongodByBuilder() {
+		recording.begin();
+		Mongod mongod = Mongod.builder()
+			.distributionBaseUrl(Start.to(DistributionBaseUrl.class)
+				.initializedWith(DistributionBaseUrl.of("http://my.custom.download.domain")))
+			.build();
+		recording.end();
+
+		assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
+			.isInstanceOf(RuntimeException.class);
+	}
+
+	@Test
 	public void customizeMongodByReplacement() {
 		recording.begin();
 		Transitions mongod = Mongod.instance()

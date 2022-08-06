@@ -31,24 +31,29 @@ import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.ImmutableStart;
 import de.flapdoodle.reverse.transitions.Start;
+import org.immutables.value.Value;
 
 import java.util.Collections;
 
 public interface ProcessDefaults {
+	@Value.Default
 	default ImmutableStart<ProcessConfig> processConfig() {
 		return Start.to(ProcessConfig.class).initializedWith(ProcessConfig.defaults()).withTransitionLabel("create default");
 	}
 
+	@Value.Default
 	default Transition<ProcessEnv> processEnv() {
 		return Start.to(ProcessEnv.class).initializedWith(ProcessEnv.of(Collections.emptyMap())).withTransitionLabel("create empty env");
 	}
 
+	@Value.Default
 	default Transition<ProcessOutput> processOutput() {
 		return Derive.given(Name.class).state(ProcessOutput.class)
 			.deriveBy(name -> ProcessOutput.namedConsole(name.value()))
 			.withTransitionLabel("create named console");
 	}
 
+	@Value.Default
 	default Transition<SupportConfig> supportConfig() {
 		return Derive.given(Command.class).state(SupportConfig.class)
 			.deriveBy(c -> SupportConfig.builder()
@@ -58,6 +63,7 @@ public interface ProcessDefaults {
 				.build()).withTransitionLabel("create default");
 	}
 
+	@Value.Auxiliary
 	default Transitions processDefaults() {
 		return Transitions.from(
 			processConfig(),

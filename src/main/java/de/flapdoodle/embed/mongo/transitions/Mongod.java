@@ -25,24 +25,27 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.distribution.Version;
-import de.flapdoodle.embed.process.io.Files;
 import de.flapdoodle.embed.process.io.directories.TempDir;
 import de.flapdoodle.embed.process.transitions.Directories;
 import de.flapdoodle.reverse.*;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
-import de.flapdoodle.types.Try;
+import org.immutables.value.Value;
 
+@Value.Immutable
 public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDefaults, CommandName, ExtractFileSet {
 
+	@Value.Default
 	public Transition<MongodArguments> mongodArguments() {
 		return Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults());
 	}
 
+	@Value.Default
 	public Transition<Net> net() {
 		return Start.to(Net.class).providedBy(Net::defaults);
 	}
 
+	@Value.Default
 	public Transition<DatabaseDir> databaseDir() {
 		return Derive.given(TempDir.class).state(DatabaseDir.class)
 			.with(Directories.deleteOnTearDown(
@@ -51,6 +54,7 @@ public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 			));
 	}
 
+	@Value.Default
 	public MongodProcessArguments mongodProcessArguments() {
 		return MongodProcessArguments.withDefaults();
 	}
@@ -59,11 +63,12 @@ public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 		return MongodStarter.withDefaults();
 	}
 
+	@Value.Auxiliary
 	public Transitions transitions(de.flapdoodle.embed.process.distribution.Version version) {
 		return workspaceDefaults()
 			.addAll(versionAndPlatform())
 			.addAll(processDefaults())
-			.addAll(commandName())
+			.addAll(commandNames())
 //			.addAll(extractedFileSetFor(StateID.of(ExtractedFileSet.class), StateID.of(Distribution.class), StateID.of(TempDir.class), StateID.of(Command.class), StateID.of(DistributionBaseUrl.class)))
 			.addAll(extractFileSet())
 			.addAll(
@@ -78,13 +83,18 @@ public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 			);
 	}
 
+	@Value.Auxiliary
 	public TransitionWalker.ReachedState<RunningMongodProcess> start(Version version) {
 		return transitions(version)
 			.walker()
 			.initState(StateID.of(RunningMongodProcess.class));
 	}
 
-	public static Mongod instance() {
-		return new Mongod();
+	public static ImmutableMongod instance() {
+		return builder().build();
+	}
+
+	public static ImmutableMongod.Builder builder() {
+		return ImmutableMongod.builder();
 	}
 }

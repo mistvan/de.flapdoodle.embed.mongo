@@ -10,6 +10,12 @@ ${testStandard}
 ${customizeMongodByOverride}
 ```
 
+#### Customize by Builder
+
+```java
+${customizeMongodByBuilder}
+```
+
 #### Customize by Replacement
 
 ```java

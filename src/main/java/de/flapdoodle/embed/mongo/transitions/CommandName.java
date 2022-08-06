@@ -22,13 +22,25 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.process.types.Name;
+import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
+import org.immutables.value.Value;
 
 public interface CommandName {
-	default Transitions commandName() {
+
+	@Value.Default
+	default Transition<Name> commandName() {
+		return Derive.given(Command.class)
+			.state(Name.class)
+			.deriveBy(c -> Name.of(c.commandName()))
+			.withTransitionLabel("name from command");
+	}
+
+	@Value.Auxiliary
+	default Transitions commandNames() {
 		return Transitions.from(
-			Derive.given(Command.class).state(Name.class).deriveBy(c -> Name.of(c.commandName())).withTransitionLabel("name from command")
+			commandName()
 		);
 	}
 
