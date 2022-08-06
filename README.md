@@ -75,7 +75,7 @@ Snapshots (Repository http://oss.sonatype.org/content/repositories/snapshots)
 	<dependency>
 		<groupId>de.flapdoodle.embed</groupId>
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
-		<version>4.0.1-SNAPSHOT</version>
+		<version>4.0.2-SNAPSHOT</version>
 	</dependency>
 
 ### Gradle
