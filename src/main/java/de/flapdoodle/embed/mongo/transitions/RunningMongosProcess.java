@@ -119,7 +119,8 @@ public class RunningMongosProcess extends RunningProcessImpl {
 
 	protected final boolean sendStopToMongoInstance() {
 		try {
-			return Mongod.sendShutdown(net.getServerAddress(), net.getPort());
+			return Mongod.sendShutdownLegacy(net.getServerAddress(), net.getPort())
+				|| Mongod.sendShutdown(net.getServerAddress(), net.getPort());
 		} catch (UnknownHostException e) {
 			LOGGER.error("sendStop", e);
 		}

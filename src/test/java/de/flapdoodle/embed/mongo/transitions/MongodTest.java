@@ -52,9 +52,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 class MongodTest {
@@ -141,6 +143,45 @@ class MongodTest {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
 				col.insertOne(new Document("testDoc", new Date()));
+			}
+		}
+	}
+
+	@Test
+	public void shutdownShouldWorkWithMongodbVersion6() throws UnknownHostException {
+		Version.Main version = Version.Main.V6_0;
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> outerMongod = Mongod.instance()
+			.withNet(Start.to(Net.class).initializedWith(Net.of("localhost", 23456, Network.localhostIsIPv6())))
+			.start(version)) {
+			try (MongoClient mongo = new MongoClient(outerMongod.current().getServerAddress())) {
+				MongoDatabase db = mongo.getDatabase("test");
+				MongoCollection<Document> col = db.getCollection("testCol");
+				col.insertOne(new Document("testDoc", new Date()));
+
+				MongoDatabase adminDB = mongo.getDatabase("admin");
+				System.out.println(outerMongod.current().getServerAddress());
+
+				if (version== Version.Main.V6_0 && false) {
+					try {
+						Document result = adminDB.runCommand(new Document()
+							.append("shutdown", 1)
+//							.append("force", true)
+							//.append("comment","-----------------------------------------------------------------------------------------------------------")
+						);
+					}
+					catch (Exception x) {
+						x.printStackTrace();
+					}
+				} else {
+					System.out.println("skip");
+				}
+
+
+//				MongoDatabase db = mongo.getDatabase("test");
+//				db.createCollection("testCol");
+//				MongoCollection<Document> col = db.getCollection("testColl");
+//				col.insertOne(new Document("testDoc", new Date()));
 			}
 		}
 	}
