@@ -71,7 +71,7 @@ public interface ExtractFileSet {
 			.deriveBy(baseDir -> new ContentHashExtractedFileSetStore(baseDir.value().resolve("fileSets")))
 			.withTransitionLabel("extractedFileSetStore");
 	}
-
+	
 	@Value.Default
 	default DownloadPackage downloadPackage() {
 		return DownloadPackage.withDefaults();

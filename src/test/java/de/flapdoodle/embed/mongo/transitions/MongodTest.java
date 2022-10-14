@@ -33,6 +33,8 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.io.progress.ProgressListeners;
+import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.os.*;
 import de.flapdoodle.reverse.StateID;
@@ -203,10 +205,12 @@ class MongodTest {
 	@ParameterizedTest
 	@MethodSource("testableDistributions")
 	public void extractArtifact(OS os, CommonArchitecture arch, Version.Main version) {
-		if (skipThisVersion(os, version, arch.bitSize())) {
-			Assume.assumeTrue(true);
-		}	else {
-			assertCanExtractArtifact(distributionOf(version, os, arch));
+		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+			if (skipThisVersion(os, version, arch.bitSize())) {
+				Assume.assumeTrue(true);
+			} else {
+				assertCanExtractArtifact(distributionOf(version, os, arch));
+			}
 		}
 	}
 
