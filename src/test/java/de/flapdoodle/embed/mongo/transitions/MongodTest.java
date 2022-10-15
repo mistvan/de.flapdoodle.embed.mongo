@@ -33,8 +33,6 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.process.distribution.Distribution;
-import de.flapdoodle.embed.process.io.progress.ProgressListeners;
-import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.os.*;
 import de.flapdoodle.reverse.StateID;
@@ -54,11 +52,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 class MongodTest {
@@ -205,12 +201,10 @@ class MongodTest {
 	@ParameterizedTest
 	@MethodSource("testableDistributions")
 	public void extractArtifact(OS os, CommonArchitecture arch, Version.Main version) {
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			if (skipThisVersion(os, version, arch.bitSize())) {
-				Assume.assumeTrue(true);
-			} else {
-				assertCanExtractArtifact(distributionOf(version, os, arch));
-			}
+		if (skipThisVersion(os, version, arch.bitSize())) {
+			Assume.assumeTrue(true);
+		} else {
+			assertCanExtractArtifact(distributionOf(version, os, arch));
 		}
 	}
 

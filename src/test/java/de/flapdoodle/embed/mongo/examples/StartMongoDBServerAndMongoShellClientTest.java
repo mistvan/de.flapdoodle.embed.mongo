@@ -27,7 +27,6 @@ import de.flapdoodle.embed.mongo.transitions.ExecutedMongoShellProcess;
 import de.flapdoodle.embed.mongo.transitions.MongoShell;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
-import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
@@ -49,23 +48,21 @@ public class StartMongoDBServerAndMongoShellClientTest {
 			.addScriptParameters("var hight=3","var width=2","function multip() { print('area ' + hight * width); }","multip()")
 			.build();
 
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			Transitions transitions = MongoShell.instance().transitions(version)
-				.replace(Start.to(MongoShellArguments.class).initializedWith(mongoShellArguments))
-				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
-					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Mongod.instance().transitions(version).walker()
-					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
-						.build()));
+		Transitions transitions = MongoShell.instance().transitions(version)
+			.replace(Start.to(MongoShellArguments.class).initializedWith(mongoShellArguments))
+			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+			.addAll(Mongod.instance().transitions(version).walker()
+				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+					.build()));
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
-				.initState(StateID.of(RunningMongodProcess.class))) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (TransitionWalker.ReachedState<ExecutedMongoShellProcess> executedShell = runningMongoD.initState(
-					StateID.of(ExecutedMongoShellProcess.class))) {
+			try (TransitionWalker.ReachedState<ExecutedMongoShellProcess> executedShell = runningMongoD.initState(
+				StateID.of(ExecutedMongoShellProcess.class))) {
 
-					assertThat(executedShell.current().returnCode()).isEqualTo(0);
-				}
+				assertThat(executedShell.current().returnCode()).isEqualTo(0);
 			}
 		}
 	}

@@ -24,7 +24,6 @@ import com.mongodb.ServerAddress;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
@@ -42,28 +41,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MongoDumpTest {
 	private static void dump(Version.Main version, MongoDumpArguments mongoDumpArguments, Runnable afterDump) {
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			Transitions transitions = MongoDump.instance().transitions(version)
-				.replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
-				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
-					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Mongod.instance().transitions(version).walker()
-					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
-						.build()));
+		Transitions transitions = MongoDump.instance().transitions(version)
+			.replace(Start.to(MongoDumpArguments.class).initializedWith(mongoDumpArguments))
+			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+			.addAll(Mongod.instance().transitions(version).walker()
+				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+					.build()));
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
-				.initState(StateID.of(RunningMongodProcess.class))) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (TransitionWalker.ReachedState<ExecutedMongoDumpProcess> executedDump = runningMongoD.initState(
-					StateID.of(ExecutedMongoDumpProcess.class))) {
+			try (TransitionWalker.ReachedState<ExecutedMongoDumpProcess> executedDump = runningMongoD.initState(
+				StateID.of(ExecutedMongoDumpProcess.class))) {
 
-					System.out.println("-------------------");
-					System.out.println("dump executed: "+executedDump.current().returnCode());
-					System.out.println("-------------------");
-				}
-
-				afterDump.run();
+				System.out.println("-------------------");
+				System.out.println("dump executed: "+executedDump.current().returnCode());
+				System.out.println("-------------------");
 			}
+
+			afterDump.run();
 		}
 	}
 

@@ -29,7 +29,6 @@ import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
@@ -78,33 +77,31 @@ class MongoImportTest {
 		Consumer<ServerAddress> afterImport
 	) throws UnknownHostException {
 
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
-			Transitions transitions = MongoImport.instance().transitions(version)
-				.replace(Start.to(MongoImportArguments.class).initializedWith(mongoImportArguments))
-				.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
-					.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
-				.addAll(Mongod.instance().transitions(version).walker()
-					.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
-						.build()));
+		Transitions transitions = MongoImport.instance().transitions(version)
+			.replace(Start.to(MongoImportArguments.class).initializedWith(mongoImportArguments))
+			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
+				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+			.addAll(Mongod.instance().transitions(version).walker()
+				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
+					.build()));
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
-				.initState(StateID.of(RunningMongodProcess.class))) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transitions.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
 
-				ServerAddress serverAddress = runningMongoD.current().getServerAddress();
+			ServerAddress serverAddress = runningMongoD.current().getServerAddress();
 
-				beforeImport.accept(serverAddress);
+			beforeImport.accept(serverAddress);
 
-				try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executedDump = runningMongoD.initState(
-					StateID.of(ExecutedMongoImportProcess.class))) {
-					System.out.println("import return code: " + executedDump.current().returnCode());
+			try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executedDump = runningMongoD.initState(
+				StateID.of(ExecutedMongoImportProcess.class))) {
+				System.out.println("import return code: " + executedDump.current().returnCode());
 
-					assertThat(executedDump.current().returnCode())
-						.describedAs("import successful")
-						.isEqualTo(0);
-				}
-
-				afterImport.accept(serverAddress);
+				assertThat(executedDump.current().returnCode())
+					.describedAs("import successful")
+					.isEqualTo(0);
 			}
+
+			afterImport.accept(serverAddress);
 		}
 	}
 

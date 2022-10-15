@@ -33,7 +33,6 @@ import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
 import de.flapdoodle.embed.mongo.transitions.MongoImport;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
-import de.flapdoodle.embed.process.io.progress.ProgressListeners;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
@@ -63,18 +62,15 @@ public class HowToUseTransitionsTest {
 		System.out.println(dot);
 		System.out.println("---------------------");
 
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+		for (int i = 0; i < 2; i++) {
+			try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
+				.initState(StateID.of(RunningMongodProcess.class))) {
 
-			for (int i = 0; i < 2; i++) {
-				try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
-					.initState(StateID.of(RunningMongodProcess.class))) {
-
-					try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
-						MongoDatabase db = mongo.getDatabase("test");
-						MongoCollection<Document> col = db.getCollection("testCol");
-						col.insertOne(new Document("testDoc", new Date()));
-						System.out.println("could store doc in database...");
-					}
+				try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+					MongoDatabase db = mongo.getDatabase("test");
+					MongoCollection<Document> col = db.getCollection("testCol");
+					col.insertOne(new Document("testDoc", new Date()));
+					System.out.println("could store doc in database...");
 				}
 			}
 		}
@@ -95,38 +91,35 @@ public class HowToUseTransitionsTest {
 
 		Version.Main version = Version.Main.PRODUCTION;
 
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = Mongod.instance().transitions(version)
+			.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = Mongod.instance().transitions(version)
-				.walker()
-				.initState(StateID.of(RunningMongodProcess.class))) {
+			Transitions transitions = MongoImport.instance().transitions(version)
+				.replace(Start.to(MongoImportArguments.class).initializedWith(arguments));
 
-				Transitions transitions = MongoImport.instance().transitions(version)
-					.replace(Start.to(MongoImportArguments.class).initializedWith(arguments));
+			String dot = Transitions.edgeGraphAsDot("mongoImport", transitions.asGraph());
+			System.out.println("---------------------");
+			System.out.println(dot);
+			System.out.println("---------------------");
 
-				String dot = Transitions.edgeGraphAsDot("mongoImport", transitions.asGraph());
-				System.out.println("---------------------");
-				System.out.println(dot);
-				System.out.println("---------------------");
+			Transitions withMongoDbServerAddress = transitions.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
 
-				Transitions withMongoDbServerAddress = transitions.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
+			try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executed = withMongoDbServerAddress.walker()
+				.initState(StateID.of(ExecutedMongoImportProcess.class))) {
 
-				try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executed = withMongoDbServerAddress.walker()
-					.initState(StateID.of(ExecutedMongoImportProcess.class))) {
+				assertThat(executed.current().returnCode())
+					.describedAs("mongo import was successful")
+					.isEqualTo(0);
+			}
 
-					assertThat(executed.current().returnCode())
-						.describedAs("mongo import was successful")
-						.isEqualTo(0);
-				}
+			try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
+				MongoDatabase db = mongo.getDatabase("importDatabase");
+				MongoCollection<Document> col = db.getCollection("importCollection");
 
-				try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
-					MongoDatabase db = mongo.getDatabase("importDatabase");
-					MongoCollection<Document> col = db.getCollection("importCollection");
+				ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
 
-					ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
-
-					assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
-				}
+				assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
 			}
 		}
 	}
@@ -157,27 +150,24 @@ public class HowToUseTransitionsTest {
 		System.out.println(dot);
 		System.out.println("---------------------");
 
-		try (ProgressListeners.RemoveProgressListener ignored = ProgressListeners.setProgressListener(new StandardConsoleProgressListener())) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = mongoImportTransitions.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = mongoImportTransitions.walker()
-				.initState(StateID.of(RunningMongodProcess.class))) {
+			try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> running = mongoD.initState(StateID.of(ExecutedMongoImportProcess.class))) {
+				System.out.println("import done: "+running.current().returnCode());
 
-				try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> running = mongoD.initState(StateID.of(ExecutedMongoImportProcess.class))) {
-					System.out.println("import done: "+running.current().returnCode());
+				assertThat(running.current().returnCode())
+					.describedAs("import successful")
+					.isEqualTo(0);
+			}
 
-					assertThat(running.current().returnCode())
-						.describedAs("import successful")
-						.isEqualTo(0);
-				}
+			try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
+				MongoDatabase db = mongo.getDatabase("importDatabase");
+				MongoCollection<Document> col = db.getCollection("importCollection");
 
-				try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
-					MongoDatabase db = mongo.getDatabase("importDatabase");
-					MongoCollection<Document> col = db.getCollection("importCollection");
+				ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
 
-					ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
-
-					assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
-				}
+				assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
 			}
 		}
 	}

@@ -23,6 +23,8 @@ package de.flapdoodle.embed.mongo.transitions;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.store.Package;
 import de.flapdoodle.embed.process.io.directories.PersistentDir;
+import de.flapdoodle.embed.process.io.progress.ProgressListener;
+import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.embed.process.store.ContentHashExtractedFileSetStore;
 import de.flapdoodle.embed.process.store.DownloadCache;
 import de.flapdoodle.embed.process.store.ExtractedFileSetStore;
@@ -78,6 +80,12 @@ public interface ExtractFileSet {
 	}
 
 	@Value.Default
+	default Transition<ProgressListener> progressListener() {
+		return Start.to(ProgressListener.class)
+			.providedBy(StandardConsoleProgressListener::new);
+	}
+
+	@Value.Default
 	default Transition<ExtractedFileSet> extractPackage() {
 		return ExtractPackage.withDefaults()
 			.withExtractedFileSetStore(StateID.of(ExtractedFileSetStore.class));
@@ -94,6 +102,7 @@ public interface ExtractFileSet {
 			persistentBaseDir(),
 			downloadCache(),
 			packageOfDistribution(),
+			progressListener(),
 			downloadPackage(),
 			extractedFileSetStore(),
 			extractPackage()
