@@ -36,7 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class RunningMongodProcess extends RunningProcessImpl {
@@ -130,26 +132,28 @@ public class RunningMongodProcess extends RunningProcessImpl {
 	public static RunningProcessFactory<RunningMongodProcess> factory(long startupTimeout, SupportConfig supportConfig, Platform platform, Net net) {
 		return (process, processOutput, pidFile, timeout) -> {
 
-			LogWatchStreamProcessor logWatch = new LogWatchStreamProcessor(successMessage(), knownFailureMessages(),
-				StreamToLineProcessor.wrap(processOutput.output()));
-			ReaderProcessor output = Processors.connect(process.getReader(), logWatch);
+//			LogWatchStreamProcessor logWatch = new LogWatchStreamProcessor(successMessage(), knownFailureMessages(),
+//				StreamToLineProcessor.wrap(processOutput.output()));
+			SuccessMessageLineListener logWatch = SuccessMessageLineListener.of(successMessage(), knownFailureMessages(), "error");
+
+			ReaderProcessor output = Processors.connect(process.getReader(), new ListeningStreamProcessor(StreamToLineProcessor.wrap(processOutput.output()), logWatch::inspect));
 			ReaderProcessor error = Processors.connect(process.getError(), StreamToLineProcessor.wrap(processOutput.error()));
 			Runnable closeAllOutputs = () -> ReaderProcessor.abortAll(output, error);
 
 			logWatch.waitForResult(startupTimeout);
-			if (logWatch.isInitWithSuccess()) {
-				int pid = Mongod.getMongodProcessId(logWatch.getOutput(), -1);
+			if (logWatch.successMessageFound()) {
+				int pid = Mongod.getMongodProcessId(logWatch.allLines(), -1);
 				return new RunningMongodProcess(process, pidFile, timeout, closeAllOutputs, supportConfig, platform, net, processOutput.commands(), pid);
 
 			} else {
-				String failureFound = logWatch.getFailureFound() != null
-					? logWatch.getFailureFound()
+				String failureFound = logWatch.errorMessage().isPresent()
+					? logWatch.errorMessage().get()
 					: "\n" +
 						"----------------------\n" +
 						"Hmm.. no failure message.. \n" +
 						"...the cause must be somewhere in the process output\n" +
 						"----------------------\n" +
-						""+logWatch.getOutput();
+						""+logWatch.allLines();
 
 				return Try.<RunningMongodProcess, RuntimeException>supplier(() -> {
 					throw new RuntimeException("Could not start process: "+failureFound);
@@ -161,18 +165,19 @@ public class RunningMongodProcess extends RunningProcessImpl {
 		};
 	}
 
-	private static String successMessage() {
+	private static List<String> successMessage() {
 		// old: waiting for connections on port
 		// since 4.4.5: Waiting for connections
-		return "aiting for connections";
+		return Arrays.asList("aiting for connections");
 	}
 
-	private static Set<String> knownFailureMessages() {
-		HashSet<String> ret = new HashSet<>();
-		ret.add("failed errno");
-		ret.add("ERROR:");
-		ret.add("error command line");
-		return ret;
+	private static List<String> knownFailureMessages() {
+		return Arrays.asList(
+			"(?<error>failed errno)",
+			"ERROR:(?<error>.*)",
+			"(?<error>error command line)",
+			"(?<error>Address already in use)"
+		);
 	}
 
 }

@@ -108,7 +108,7 @@ class MongodTest {
 	}
 
 	@Test
-	public void testStartMongodOnNonFreePort() {
+	public void startMongodOnNonFreePort() {
 		Net net = Net.defaults();
 
 		Mongod mongod = new Mongod() {
@@ -121,7 +121,10 @@ class MongodTest {
 		try (TransitionWalker.ReachedState<RunningMongodProcess> outerMongod = mongod.start(Version.Main.PRODUCTION)) {
 			Assertions.assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
 				.isInstanceOf(RuntimeException.class)
-				.hasMessage("error on transition to State(de.flapdoodle.embed.mongo.transitions.RunningMongodProcess), rollback");
+				.hasMessage("error on transition to State(de.flapdoodle.embed.mongo.transitions.RunningMongodProcess), rollback")
+				.hasCauseInstanceOf(RuntimeException.class)
+				.cause()
+				.hasMessage("Could not start process: Address already in use");
 		}
 	}
 
@@ -160,26 +163,18 @@ class MongodTest {
 				MongoDatabase adminDB = mongo.getDatabase("admin");
 				System.out.println(outerMongod.current().getServerAddress());
 
-				if (version== Version.Main.V6_0 && false) {
+				boolean asThisIsHowShutdownIsSendToTheDBAndWeShouldDoIt = false;
+
+				if (asThisIsHowShutdownIsSendToTheDBAndWeShouldDoIt) {
 					try {
 						Document result = adminDB.runCommand(new Document()
 							.append("shutdown", 1)
-//							.append("force", true)
-							//.append("comment","-----------------------------------------------------------------------------------------------------------")
 						);
 					}
 					catch (Exception x) {
 						x.printStackTrace();
 					}
-				} else {
-					System.out.println("skip");
 				}
-
-
-//				MongoDatabase db = mongo.getDatabase("test");
-//				db.createCollection("testCol");
-//				MongoCollection<Document> col = db.getCollection("testColl");
-//				col.insertOne(new Document("testDoc", new Date()));
 			}
 		}
 	}
