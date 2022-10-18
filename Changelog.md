@@ -1,5 +1,9 @@
 ### Changelog
 
+### 4.0.6
+
+- better error handling
+
 ### 4.0.5
 
 - dep update
