@@ -20,7 +20,6 @@
  */
 package de.flapdoodle.embed.mongo.commands;
 
-import com.mongodb.ServerAddress;
 import org.immutables.value.Value;
 
 import java.util.List;

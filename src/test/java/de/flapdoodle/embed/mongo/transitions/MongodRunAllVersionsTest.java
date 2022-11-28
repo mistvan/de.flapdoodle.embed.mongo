@@ -24,6 +24,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.Versions;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.distribution.Distribution;
@@ -96,7 +97,7 @@ public class MongodRunAllVersionsTest {
 
 	@Test
 	public void testInsert1() throws UnknownHostException {
-		try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+		try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 			MongoDatabase db = mongo.getDatabase("test");
 			db.createCollection("testCol");
 			MongoCollection<Document> col = db.getCollection("testCol");
@@ -106,11 +107,16 @@ public class MongodRunAllVersionsTest {
 
 	@Test
 	public void testInsert2() throws UnknownHostException {
-		try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+		try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 			MongoDatabase db = mongo.getDatabase("test");
 			db.createCollection("testCol");
 			MongoCollection<Document> col = db.getCollection("testCol");
 			col.insertOne(new Document("testDoc", new Date()));
 		}
 	}
+
+	private com.mongodb.ServerAddress serverAddress(ServerAddress serverAddress) {
+		return new com.mongodb.ServerAddress(serverAddress.getHost(), serverAddress.getPort());
+	}
+
 }

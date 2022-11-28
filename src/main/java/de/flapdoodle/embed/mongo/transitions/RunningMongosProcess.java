@@ -20,7 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.transitions;
 
-import com.mongodb.ServerAddress;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.runtime.Mongod;
 import de.flapdoodle.embed.process.config.SupportConfig;
@@ -69,7 +69,7 @@ public class RunningMongosProcess extends RunningProcessImpl {
 	}
 
 	public ServerAddress getServerAddress() throws UnknownHostException {
-		return new ServerAddress(net.getServerAddress(), net.getPort());
+		return ServerAddress.of(net.getServerAddress(), net.getPort());
 	}
 
 	@Override

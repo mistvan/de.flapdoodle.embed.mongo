@@ -23,13 +23,12 @@ package de.flapdoodle.embed.mongo.transitions;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -44,6 +43,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MongoImportTest {
@@ -118,7 +118,7 @@ class MongoImportTest {
 
 	private static Consumer<ServerAddress> onTestCollection(Consumer<MongoCollection<Document>> onCollection) {
 		return serverAddress -> {
-			try (MongoClient mongo = new MongoClient(serverAddress)) {
+			try (MongoClient mongo = new MongoClient(serverAddress(serverAddress))) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 

@@ -22,12 +22,8 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import com.google.common.collect.ImmutableMap;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
-import de.flapdoodle.embed.mongo.commands.ImmutableMongodArguments;
-import de.flapdoodle.embed.mongo.commands.ImmutableMongosArguments;
-import de.flapdoodle.embed.mongo.commands.MongodArguments;
-import de.flapdoodle.embed.mongo.commands.MongosArguments;
+import de.flapdoodle.embed.mongo.commands.*;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.process.distribution.Version;
 import de.flapdoodle.embed.process.io.ProcessOutput;
@@ -43,6 +39,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MongosTest {
@@ -88,7 +85,7 @@ class MongosTest {
 
 						try (TransitionWalker.ReachedState<RunningMongosProcess> mongosConfigClusterServer = startMongos("mongos#c", version, mongosConfigClusterArguments)) {
 
-							try(MongoClient client = new MongoClient(mongosConfigClusterServer.current().getServerAddress())) {
+							try(MongoClient client = new MongoClient(serverAddress(mongosConfigClusterServer.current().getServerAddress()))) {
 								MongoDatabase adminDb = client.getDatabase("admin");
 								Document result = adminDb.runCommand(new Document(ImmutableMap.of(
 									"addShard", shardReplicaSetName + "/" + shardServerOne.current().getServerAddress() + "," + shardServerTwo.current().getServerAddress()
@@ -111,7 +108,7 @@ class MongosTest {
 			members.add(new Document(ImmutableMap.of("_id",idx++,"host",other.toString())));
 		}
 
-		try (MongoClient client = new MongoClient(one)) {
+		try (MongoClient client = new MongoClient(serverAddress(one))) {
 			MongoDatabase adminDB = client.getDatabase("admin");
 			Document result = adminDB.runCommand(new Document("replSetInitiate", new Document(
 				configServer

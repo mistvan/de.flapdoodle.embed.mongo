@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ShardServerMongoDBTest {
@@ -45,7 +46,7 @@ public class ShardServerMongoDBTest {
             .withIsShardServer(true)))
           .walker()
           .initState(StateID.of(RunningMongodProcess.class))) {
-            try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+            try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
                 List<String> arguments = mongo.getDatabase("admin")
                   .runCommand(new Document("getCmdLineOpts", 1))
                   .getList("argv", String.class);
@@ -54,5 +55,4 @@ public class ShardServerMongoDBTest {
             }
         }
     }
-
 }

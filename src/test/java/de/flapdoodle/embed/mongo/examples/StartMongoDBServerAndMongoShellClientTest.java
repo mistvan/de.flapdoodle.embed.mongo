@@ -20,14 +20,13 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import com.mongodb.ServerAddress;
 import de.flapdoodle.embed.mongo.commands.MongoShellArguments;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoShellProcess;
 import de.flapdoodle.embed.mongo.transitions.MongoShell;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
-import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;

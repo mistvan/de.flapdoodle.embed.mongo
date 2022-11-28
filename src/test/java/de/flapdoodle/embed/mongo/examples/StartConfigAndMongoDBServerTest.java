@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.UnknownHostException;
 
+import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StartConfigAndMongoDBServerTest {
@@ -55,7 +56,7 @@ public class StartConfigAndMongoDBServerTest {
 			.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+			try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
 				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
 			}
 
@@ -68,7 +69,7 @@ public class StartConfigAndMongoDBServerTest {
 				.walker()
 				.initState(StateID.of(RunningMongosProcess.class))) {
 
-				try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+				try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
 					assertThat(mongo.listDatabaseNames()).contains("admin","config","local");
 				}
 

@@ -20,11 +20,10 @@
  */
 package de.flapdoodle.embed.mongo.transitions;
 
-import com.mongodb.ServerAddress;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoDumpArguments;
 import de.flapdoodle.embed.mongo.commands.MongoDumpArguments;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;

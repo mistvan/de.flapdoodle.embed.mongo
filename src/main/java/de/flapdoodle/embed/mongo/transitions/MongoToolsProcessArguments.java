@@ -20,8 +20,8 @@
  */
 package de.flapdoodle.embed.mongo.transitions;
 
-import com.mongodb.ServerAddress;
 import de.flapdoodle.embed.mongo.commands.MongoToolsArguments;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.process.types.ProcessArguments;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;

@@ -22,12 +22,12 @@ package de.flapdoodle.embed.mongo.doc;
 
 import com.google.common.io.Resources;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.commands.MongosArguments;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -62,6 +62,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.util.Date;
 
+import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -75,7 +76,7 @@ public class HowToDocTest {
 		recording.begin();
 
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().start(Version.Main.PRODUCTION)) {
-			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
 				col.insertOne(new Document("testDoc", new Date()));
@@ -238,7 +239,7 @@ public class HowToDocTest {
 		};
 
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
 				col.insertOne(new Document("testDoc", new Date()));
@@ -347,10 +348,11 @@ public class HowToDocTest {
 
 			ServerAddress serverAddress = runningMongod.current().getServerAddress();
 
-			try (MongoClient mongo = new MongoClient(serverAddress)) {
+			try (MongoClient mongo = new MongoClient(serverAddress(serverAddress))) {
 				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
 			}
 
+			com.mongodb.ServerAddress x;
 			Mongos mongos = new Mongos() {
 				@Override public Start<MongosArguments> mongosArguments() {
 					return Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
@@ -361,7 +363,7 @@ public class HowToDocTest {
 			};
 
 			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = mongos.start(version)) {
-				try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+				try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
 					assertThat(mongo.listDatabaseNames()).contains("admin", "config", "local");
 				}
 			}
@@ -408,7 +410,7 @@ public class HowToDocTest {
 	}
 
 	private static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) throws UnknownHostException {
-		try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+		try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 			MongoDatabase db = mongo.getDatabase("test");
 			MongoCollection<Document> col = db.getCollection("testCol");
 			col.insertOne(new Document("testDoc", new Date()));

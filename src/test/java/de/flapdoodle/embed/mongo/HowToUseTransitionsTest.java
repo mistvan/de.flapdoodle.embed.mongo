@@ -23,17 +23,16 @@ package de.flapdoodle.embed.mongo;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
+import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
 import de.flapdoodle.embed.mongo.transitions.MongoImport;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
-import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -49,6 +48,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HowToUseTransitionsTest {
@@ -66,7 +66,7 @@ public class HowToUseTransitionsTest {
 			try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
 				.initState(StateID.of(RunningMongodProcess.class))) {
 
-				try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+				try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 					MongoDatabase db = mongo.getDatabase("test");
 					MongoCollection<Document> col = db.getCollection("testCol");
 					col.insertOne(new Document("testDoc", new Date()));
@@ -113,7 +113,7 @@ public class HowToUseTransitionsTest {
 					.isEqualTo(0);
 			}
 
-			try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
+			try (MongoClient mongo = new MongoClient(serverAddress(mongoD.current().getServerAddress()))) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 
@@ -161,7 +161,7 @@ public class HowToUseTransitionsTest {
 					.isEqualTo(0);
 			}
 
-			try (MongoClient mongo = new MongoClient(mongoD.current().getServerAddress())) {
+			try (MongoClient mongo = new MongoClient(serverAddress(mongoD.current().getServerAddress()))) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 
