@@ -3,7 +3,7 @@
 ```java
 
 try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().start(Version.Main.PRODUCTION)) {
-  try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+  try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
     MongoDatabase db = mongo.getDatabase("test");
     MongoCollection<Document> col = db.getCollection("testCol");
     col.insertOne(new Document("testDoc", new Date()));
@@ -139,7 +139,7 @@ Mongod mongod = new Mongod() {
 };
 
 try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-  try (MongoClient mongo = new MongoClient(running.current().getServerAddress())) {
+  try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
     MongoDatabase db = mongo.getDatabase("test");
     MongoCollection<Document> col = db.getCollection("testCol");
     col.insertOne(new Document("testDoc", new Date()));
@@ -245,10 +245,11 @@ try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.
 
   ServerAddress serverAddress = runningMongod.current().getServerAddress();
 
-  try (MongoClient mongo = new MongoClient(serverAddress)) {
+  try (MongoClient mongo = new MongoClient(serverAddress(serverAddress))) {
     mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
   }
 
+  com.mongodb.ServerAddress x;
   Mongos mongos = new Mongos() {
     @Override public Start<MongosArguments> mongosArguments() {
       return Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
@@ -259,7 +260,7 @@ try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.
   };
 
   try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = mongos.start(version)) {
-    try (MongoClient mongo = new MongoClient(runningMongod.current().getServerAddress())) {
+    try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
       assertThat(mongo.listDatabaseNames()).contains("admin", "config", "local");
     }
   }
