@@ -478,12 +478,12 @@
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
 			<artifactId>de.flapdoodle.embed.process</artifactId>
-			<version>4.0.8-beta</version>
+			<version>4.0.9-beta</version>
 		</dependency>
 		<dependency>
 			<groupId>de.flapdoodle.embed</groupId>
 			<artifactId>de.flapdoodle.embed.mongo.packageresolver</artifactId>
-			<version>1.0.12</version>
+			<version>1.0.13</version>
 			<exclusions>
 				<exclusion>
 					<groupId>de.flapdoodle.embed</groupId>
@@ -494,7 +494,7 @@
 		<dependency>
 			<groupId>de.flapdoodle</groupId>
 			<artifactId>de.flapdoodle.os</artifactId>
-			<version>1.2.3</version>
+			<version>1.2.4</version>
 		</dependency>
 		<!--
 		<dependency>
