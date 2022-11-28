@@ -1,5 +1,10 @@
 ### Changelog
 
+### 4.0.9
+
+- dep updates
+- mongo driver dependency removed
+
 ### 4.0.7
 
 - dep updates
