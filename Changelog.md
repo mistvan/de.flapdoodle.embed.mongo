@@ -1,5 +1,9 @@
 ### Changelog
 
+### 4.1.0
+
+- first stable release after refactoring
+
 ### 4.0.9
 
 - dep updates

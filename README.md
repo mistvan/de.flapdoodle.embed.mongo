@@ -5,8 +5,7 @@
 [![Build Status](https://travis-ci.org/flapdoodle-oss/de.flapdoodle.embed.mongo.svg?branch=embed-mongo-4.x)](https://travis-ci.org/flapdoodle-oss/de.flapdoodle.embed.mongo)
 [![Maven Central](https://img.shields.io/maven-central/v/de.flapdoodle.embed/de.flapdoodle.embed.mongo.svg)](https://maven-badges.herokuapp.com/maven-central/de.flapdoodle.embed/de.flapdoodle.embed.mongo)
 
-We are now a github organization. You are invited to participate.
-Starting with version 2 we are going to support only java 8 or higher. If you are looking for the older version you can find it in the 1.7 branch.
+We are a github organization. You are invited to participate. Every version < 4.x.x is considered as legacy.
 
 # Embedded MongoDB
 
@@ -31,10 +30,6 @@ Embedded MongoDB will provide a platform neutral way for running mongodb in unit
 
 We use http://www.apache.org/licenses/LICENSE-2.0
 
-## We need your help?
-
-Poll: [Which MongoDB version should stay supported?](https://docs.google.com/forms/d/1Iu8Gy4W0dPfwsE2czoPJAGtYijjmfcZISgb7pU-dZ9U/viewform?usp=send_form)
-
 ## Dependencies
 
 ### Build on top of
@@ -49,57 +44,17 @@ Poll: [Which MongoDB version should stay supported?](https://docs.google.com/for
 - in a Scala/specs2 specification using [specs2-embedmongo](https://github.com/athieriot/specs2-embedmongo)
 - in Scala tests using [scalatest-embedmongo](https://github.com/SimplyScala/scalatest-embedmongo)
 
-### Comments about Embedded MongoDB in the Wild
-
-- http://stackoverflow.com/questions/6437226/embedded-mongodb-when-running-integration-tests
-- http://blog.diabol.se/?p=390
-
-### Other MongoDB Stuff
-
-- https://github.com/thiloplanz/jmockmongo - mongodb mocking
-- https://github.com/lordofthejars/nosql-unit - extended nosql unit testing
-- https://github.com/jirutka/embedmongo-spring - Spring Factory Bean for EmbedMongo
-
-### Backward binary compatibility and API changes
-
-There is a report on backward binary compatibility and API changes for the library: https://abi-laboratory.pro/java/tracker/timeline/de.flapdoodle.embed.mongo/ -> thanks @lvc
-
 ## Howto
 
 [Usage](Howto.md)
 
 ### Maven
 
-Snapshots (Repository http://oss.sonatype.org/content/repositories/snapshots)
-
 	<dependency>
 		<groupId>de.flapdoodle.embed</groupId>
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
 		<version>4.0.10-beta-SNAPSHOT</version>
 	</dependency>
-
-### Gradle
-
-Make sure you have mavenCentral() in your repositories or that your enterprise/local server proxies the maven central repository.
-
-	dependencies {
-		testCompile group: "de.flapdoodle.embed", name: "de.flapdoodle.embed.mongo", version: "4.0.10-beta-SNAPSHOT"
-	}
-
-### Build from source
-
-When you fork or clone our branch you should always be able to build the library by running
-
-	mvn package
-
-### Changelog
-
-[Changelog](Changelog.md)
-
-### Supported Versions
-
-Versions: some older, a stable and a development version
-Support for Linux, Windows and MacOSX.
 
 ### Spring Integration
 
@@ -116,10 +71,6 @@ If you have any trouble in using them fell free to create an issue.
 - [Spring 2.7.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.7.x--embed-mongo-4.x)
 - [Spring 3.0.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-3.0.x--embed-mongo-4.x)
 
-----
+### Changelog
 
-YourKit is kindly supporting open source projects with its full-featured Java Profiler.
-YourKit, LLC is the creator of innovative and intelligent tools for profiling
-Java and .NET applications. Take a look at YourKit's leading software products:
-<a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
-<a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.
+[Changelog](Changelog.md)
