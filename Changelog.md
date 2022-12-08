@@ -1,5 +1,9 @@
 ### Changelog
 
+### 4.1.1
+
+- user.home problem in docker like setups fixed
+
 ### 4.1.0
 
 - first stable release after refactoring
