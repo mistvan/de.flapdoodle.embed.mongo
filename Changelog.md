@@ -1,5 +1,9 @@
 ### Changelog
 
+### 4.2.0
+
+- little api change
+
 ### 4.1.3
 
 - fixed stupid bug
