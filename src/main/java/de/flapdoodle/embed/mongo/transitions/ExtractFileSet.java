@@ -36,9 +36,14 @@ import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.types.Try;
 import org.immutables.value.Value;
 
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFileAttributes;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,10 +57,16 @@ public interface ExtractFileSet {
 	@Value.Default
 	default Transition<PersistentDir> persistentBaseDir() {
 		return Start.to(PersistentDir.class)
-			.providedBy(() -> Optional.ofNullable(systemEnv().get("EMBEDDED_MONGO_ARTIFACTS"))
-				.map(Paths::get)
-				.map(PersistentDir::of)
-				.orElseGet(PersistentDir.userHome(".embedmongo")));
+			.providedBy(() -> {
+				PersistentDir dir = Optional.ofNullable(systemEnv().get("EMBEDDED_MONGO_ARTIFACTS"))
+					.map(Paths::get)
+					.map(PersistentDir::of)
+					.orElseGet(PersistentDir.userHome(".embedmongo"));
+				if (Files.notExists(dir.value(), LinkOption.NOFOLLOW_LINKS)) {
+					Try.run(() -> Files.createDirectories(dir.value()));
+				}
+				return dir;
+			});
 	}
 
 	@Value.Default

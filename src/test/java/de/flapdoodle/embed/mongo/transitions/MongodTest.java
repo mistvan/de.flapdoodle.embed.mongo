@@ -33,7 +33,9 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.io.directories.PersistentDir;
 import de.flapdoodle.embed.process.runtime.Network;
+import de.flapdoodle.embed.process.store.ExtractedFileSetStore;
 import de.flapdoodle.os.*;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.Transition;
@@ -42,7 +44,9 @@ import de.flapdoodle.reverse.transitions.Start;
 import org.assertj.core.api.Assertions;
 import org.bson.Document;
 import org.junit.Assume;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,6 +55,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +66,19 @@ import static org.junit.Assert.assertNotNull;
 
 class MongodTest {
 	private static final Logger logger = LoggerFactory.getLogger(MongodTest.class.getName());
+
+	@Test
+	public void mustCreateBaseDirToInitFileSetStore(@TempDir Path tempDir) throws IOException {
+		Path baseDir = tempDir.resolve(".embedmongo");
+		Files.createDirectories(baseDir);
+		
+		try (TransitionWalker.ReachedState<ExtractedFileSetStore> withfileSetStore = Mongod.instance()
+			.withPersistentBaseDir(Start.to(PersistentDir.class)
+				.initializedWith(PersistentDir.of(baseDir)))
+			.transitions(Version.Main.V5_0).walker().initState(StateID.of(ExtractedFileSetStore.class))) {
+
+		}
+	}
 
 	@Test
 	public void testStartStopTenTimesWithNewMongoExecutable() throws IOException {
