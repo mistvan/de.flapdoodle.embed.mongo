@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.transitions;
 
+import de.flapdoodle.embed.mongo.types.SystemEnv;
 import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.config.store.Package;
 import de.flapdoodle.embed.process.io.directories.PersistentDir;
@@ -50,23 +51,19 @@ import java.util.Optional;
 public interface ExtractFileSet {
 
 	@Value.Default
-	default Map<String, String> systemEnv() {
-		return System.getenv();
+	default Transition<SystemEnv> systemEnv() {
+		return Start.to(SystemEnv.class)
+			.providedBy(() -> SystemEnv.of(System.getenv()));
 	}
 
 	@Value.Default
 	default Transition<PersistentDir> persistentBaseDir() {
-		return Start.to(PersistentDir.class)
-			.providedBy(() -> {
-				PersistentDir dir = Optional.ofNullable(systemEnv().get("EMBEDDED_MONGO_ARTIFACTS"))
-					.map(Paths::get)
-					.map(PersistentDir::of)
-					.orElseGet(PersistentDir.userHome(".embedmongo"));
-				if (Files.notExists(dir.value(), LinkOption.NOFOLLOW_LINKS)) {
-					Try.run(() -> Files.createDirectories(dir.value()));
-				}
-				return dir;
-			});
+		return Derive.given(SystemEnv.class)
+			.state(PersistentDir.class)
+			.deriveBy(systemEnv -> Optional.ofNullable(systemEnv.value().get("EMBEDDED_MONGO_ARTIFACTS"))
+				.map(Paths::get)
+				.map(PersistentDir::of)
+				.orElseGet(PersistentDir.inUserHome(".embedmongo")));
 	}
 
 	@Value.Default
@@ -110,6 +107,7 @@ public interface ExtractFileSet {
 	@Value.Auxiliary
 	default Transitions extractFileSet() {
 		return Transitions.from(
+			systemEnv(),
 			persistentBaseDir(),
 			downloadCache(),
 			packageOfDistribution(),

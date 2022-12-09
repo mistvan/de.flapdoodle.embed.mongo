@@ -20,6 +20,7 @@
  */
 package de.flapdoodle.embed.mongo.transitions;
 
+import com.google.common.collect.ImmutableMap;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -32,6 +33,7 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.Feature;
+import de.flapdoodle.embed.mongo.types.SystemEnv;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.io.directories.PersistentDir;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -62,10 +64,33 @@ import java.util.Date;
 import java.util.List;
 
 import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 class MongodTest {
 	private static final Logger logger = LoggerFactory.getLogger(MongodTest.class.getName());
+
+	@Test
+	public void useEnvVariableForFileSetStore(@TempDir Path tempDir) throws IOException {
+		Path persistentDirInEnv = tempDir.resolve(".embedmongoENV");
+		Files.createDirectory(persistentDirInEnv);
+
+		ImmutableMongod mongodInstance = Mongod.instance()
+			.withSystemEnv(Start.to(SystemEnv.class)
+				.initializedWith(SystemEnv.of(ImmutableMap.of("EMBEDDED_MONGO_ARTIFACTS", persistentDirInEnv.toString()))));
+
+		try (TransitionWalker.ReachedState<PersistentDir> withPersistenDir = mongodInstance
+			.transitions(Version.Main.V5_0).walker().initState(StateID.of(PersistentDir.class))) {
+
+			Path expected = tempDir.resolve(".embedmongoENV");
+
+			assertThat(withPersistenDir.current().value())
+				.isEqualTo(expected);
+			assertThat(expected)
+				.exists()
+				.isDirectory();
+		}
+	}
 
 	@Test
 	public void mustCreateBaseDirToInitFileSetStore(@TempDir Path tempDir) throws IOException {
@@ -77,6 +102,9 @@ class MongodTest {
 				.initializedWith(PersistentDir.of(baseDir)))
 			.transitions(Version.Main.V5_0).walker().initState(StateID.of(ExtractedFileSetStore.class))) {
 
+			assertThat(baseDir.resolve("fileSets"))
+				.exists()
+				.isDirectory();
 		}
 	}
 
