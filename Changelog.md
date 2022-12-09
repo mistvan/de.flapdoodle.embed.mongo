@@ -1,5 +1,9 @@
 ### Changelog
 
+### 4.1.2
+
+- fixed stupid bug
+
 ### 4.1.1
 
 - user.home problem in docker like setups fixed
