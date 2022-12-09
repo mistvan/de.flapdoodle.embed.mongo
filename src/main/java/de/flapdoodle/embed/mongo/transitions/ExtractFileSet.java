@@ -63,7 +63,8 @@ public interface ExtractFileSet {
 			.deriveBy(systemEnv -> Optional.ofNullable(systemEnv.value().get("EMBEDDED_MONGO_ARTIFACTS"))
 				.map(Paths::get)
 				.map(PersistentDir::of)
-				.orElseGet(PersistentDir.inUserHome(".embedmongo")));
+				.orElseGet(PersistentDir.inUserHome(".embedmongo")
+					.mapCheckedException(RuntimeException::new)::get));
 	}
 
 	@Value.Default
