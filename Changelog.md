@@ -1,5 +1,9 @@
 ### Changelog
 
+### 4.3.0
+
+- dep updates, debian 12 support
+
 ### 4.2.0
 
 - little api change
