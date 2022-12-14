@@ -50,7 +50,7 @@ public class StartMongoDBServerAndMongoShellClientTest {
 		Transitions transitions = MongoShell.instance().transitions(version)
 			.replace(Start.to(MongoShellArguments.class).initializedWith(mongoShellArguments))
 			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
-				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapToUncheckedException(RuntimeException::new)))
 			.addAll(Mongod.instance().transitions(version).walker()
 				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 					.build()));

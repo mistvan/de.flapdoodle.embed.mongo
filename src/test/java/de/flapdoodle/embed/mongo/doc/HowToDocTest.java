@@ -210,14 +210,13 @@ public class HowToDocTest {
 			@Override
 			public Transition<ProcessOutput> processOutput() {
 				return Start.to(ProcessOutput.class)
-					.providedBy(Try.supplier(() -> ProcessOutput.builder()
+					.providedBy(Try.<ProcessOutput, IOException>supplier(() -> ProcessOutput.builder()
 								.output(Processors.named("[mongod>]",
 							new FileStreamProcessor(File.createTempFile("mongod", "log"))))
 							.error(new FileStreamProcessor(File.createTempFile("mongod-error", "log")))
 							.commands(Processors.namedConsole("[console>]"))
 						.build())
-					.mapCheckedException(RuntimeException::new)
-						::get)
+					.mapToUncheckedException(RuntimeException::new))
 					.withTransitionLabel("create named console");
 			}
 		};
@@ -389,7 +388,7 @@ public class HowToDocTest {
 				.importFile(jsonFile)
 				.build()))
 			.addAll(Derive.given(RunningMongodProcess.class).state(ServerAddress.class)
-				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapCheckedException(RuntimeException::new)::apply))
+				.deriveBy(Try.function(RunningMongodProcess::getServerAddress).mapToUncheckedException(RuntimeException::new)))
 			.addAll(Mongod.instance().transitions(version).walker()
 				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 					.build()));

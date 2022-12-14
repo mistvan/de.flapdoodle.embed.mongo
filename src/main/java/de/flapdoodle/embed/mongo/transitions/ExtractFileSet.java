@@ -64,7 +64,7 @@ public interface ExtractFileSet {
 				.map(Paths::get)
 				.map(PersistentDir::of)
 				.orElseGet(PersistentDir.inUserHome(".embedmongo")
-					.mapCheckedException(RuntimeException::new)::get));
+					.mapToUncheckedException(RuntimeException::new)));
 	}
 
 	@Value.Default
