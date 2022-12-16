@@ -1,5 +1,9 @@
 ### Changelog
 
+### 4.3.2
+
+- dep updates, archive hash cache speedup
+
 ### 4.3.0
 
 - dep updates, debian 12 support
