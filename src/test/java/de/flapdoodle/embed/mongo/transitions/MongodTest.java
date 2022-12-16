@@ -34,6 +34,7 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.mongo.packageresolver.Feature;
 import de.flapdoodle.embed.mongo.types.SystemEnv;
+import de.flapdoodle.embed.process.archives.ExtractedFileSet;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.embed.process.io.directories.PersistentDir;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -46,7 +47,6 @@ import de.flapdoodle.reverse.transitions.Start;
 import org.assertj.core.api.Assertions;
 import org.bson.Document;
 import org.junit.Assume;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -129,6 +129,28 @@ class MongodTest {
 					DBCollection col = db.createCollection("testCol", new BasicDBObject());
 					col.save(new BasicDBObject("testDoc", new Date()));
 				}
+			}
+		}
+	}
+
+	@Test
+	public void perfTest() throws IOException {
+		int loops = 100;
+
+		Mongod mongod = new Mongod() {
+			@Override public Transition<MongodArguments> mongodArguments() {
+				return Start.to(MongodArguments.class)
+					.initializedWith(MongodArguments.defaults()
+						.withUseNoPrealloc(true)
+						.withUseSmallFiles(true));
+			}
+		};
+
+		for (int i = 0; i < loops; i++) {
+//			logger.info("Loop: {}", i);
+			try (TransitionWalker.ReachedState<ExtractedFileSet> fileSet = mongod.transitions(Version.Main.PRODUCTION)
+				.walker().initState(StateID.of(ExtractedFileSet.class))) {
+				
 			}
 		}
 	}
