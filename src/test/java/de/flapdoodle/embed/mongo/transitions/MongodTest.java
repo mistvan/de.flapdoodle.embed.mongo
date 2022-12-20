@@ -40,10 +40,12 @@ import de.flapdoodle.embed.process.io.directories.PersistentDir;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.store.ExtractedFileSetStore;
 import de.flapdoodle.os.*;
+import de.flapdoodle.reverse.Listener;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.types.Pair;
 import org.assertj.core.api.Assertions;
 import org.bson.Document;
 import org.junit.Assume;
@@ -62,6 +64,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -153,6 +156,68 @@ class MongodTest {
 				
 			}
 		}
+	}
+
+	@Test
+	public void measureTimeSpend() throws IOException {
+		Mongod mongod = Mongod.instance()
+			.withMongodArguments(Start.to(MongodArguments.class)
+				.initializedWith(MongodArguments.defaults()
+					.withUseNoPrealloc(true)
+					.withUseSmallFiles(true)))
+//			.withProcessOutput(Start.to(ProcessOutput.class)
+//				.initializedWith(ProcessOutput.silent()))
+			;
+
+		Supplier<Long> timeStamp=System::currentTimeMillis;
+		List<Pair<StateID<?>, Long>> timeline=new ArrayList<>();
+
+		Listener listener=new Listener() {
+			@Override public <T> void onStateReached(StateID<T> stateID, T value) {
+				timeline.add(Pair.of(stateID, timeStamp.get()));
+			}
+
+			@Override public <T> void onStateTearDown(StateID<T> stateID, T value) {
+				timeline.add(Pair.of(stateID, timeStamp.get()));
+			}
+		};
+
+		timeline.add(Pair.of(StateID.of(Void.class),timeStamp.get()));
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.transitions(Version.Main.PRODUCTION)
+			.walker()
+			.initState(StateID.of(RunningMongodProcess.class), listener)) {
+			try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
+				DB db = mongo.getDB("test");
+				DBCollection col = db.createCollection("testCol", new BasicDBObject());
+				col.save(new BasicDBObject("testDoc", new Date()));
+			}
+		}
+
+		timeline.add(Pair.of(StateID.of(Void.class),timeStamp.get()));
+
+		int lastEntryOffset=timeline.size()-1;
+
+		long start=timeline.get(0).second();
+		long end=timeline.get(lastEntryOffset).second();
+
+		String columnFormat="| %-25s | %4s | %4s | %5s |%n";
+		System.out.println("---------------------------------------------------");
+		System.out.printf(columnFormat,"State","up","down","<->");
+		System.out.println("---------------------------------------------------");
+		for (int i = 0; i < timeline.size()/2; i++) {
+			Pair<StateID<?>, Long> startEntry = timeline.get(i);
+			Pair<StateID<?>, Long> endEntry = timeline.get(lastEntryOffset-i);
+			long timeSpendOnStart=startEntry.second()-start;
+			long timeSpendOnTeardown=end-endEntry.second();
+			long timeStateIsActive=endEntry.second()-startEntry.second();
+
+			System.out.printf(columnFormat, startEntry.first().type().getSimpleName(), timeSpendOnStart, timeSpendOnTeardown, timeStateIsActive);
+
+			end=endEntry.second();
+			start=startEntry.second();
+		}
+		System.out.println("---------------------------------------------------");
 	}
 
 	@Test

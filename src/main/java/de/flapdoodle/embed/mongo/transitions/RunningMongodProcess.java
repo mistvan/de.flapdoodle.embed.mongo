@@ -37,9 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class RunningMongodProcess extends RunningProcessImpl {
 
@@ -134,15 +132,25 @@ public class RunningMongodProcess extends RunningProcessImpl {
 
 //			LogWatchStreamProcessor logWatch = new LogWatchStreamProcessor(successMessage(), knownFailureMessages(),
 //				StreamToLineProcessor.wrap(processOutput.output()));
+			LOGGER.trace("setup logWatch");
 			SuccessMessageLineListener logWatch = SuccessMessageLineListener.of(successMessage(), knownFailureMessages(), "error");
 
+			LOGGER.trace("connect io");
 			ReaderProcessor output = Processors.connect(process.getReader(), new ListeningStreamProcessor(StreamToLineProcessor.wrap(processOutput.output()), logWatch::inspect));
 			ReaderProcessor error = Processors.connect(process.getError(), StreamToLineProcessor.wrap(processOutput.error()));
-			Runnable closeAllOutputs = () -> ReaderProcessor.abortAll(output, error);
+			Runnable closeAllOutputs = () -> {
+				LOGGER.trace("ReaderProcessor.abortAll");
+				ReaderProcessor.abortAll(output, error);
+				LOGGER.trace("ReaderProcessor.abortAll done");
+			};
 
+			LOGGER.trace("waitForResult");
 			logWatch.waitForResult(startupTimeout);
+			LOGGER.trace("check if successMessageFound");
 			if (logWatch.successMessageFound()) {
+				LOGGER.trace("getMongodProcessId");
 				int pid = Mongod.getMongodProcessId(logWatch.allLines(), -1);
+				LOGGER.trace("return RunningMongodProcess");
 				return new RunningMongodProcess(process, pidFile, timeout, closeAllOutputs, supportConfig, platform, net, processOutput.commands(), pid);
 
 			} else {
@@ -176,7 +184,8 @@ public class RunningMongodProcess extends RunningProcessImpl {
 			"(?<error>failed errno)",
 			"ERROR:(?<error>.*)",
 			"(?<error>error command line)",
-			"(?<error>Address already in use)"
+			"(?<error>Address already in use)",
+			"(?<error>error while loading shared libraries:.*)"
 		);
 	}
 
