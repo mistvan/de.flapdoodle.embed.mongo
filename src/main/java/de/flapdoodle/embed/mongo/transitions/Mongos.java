@@ -28,7 +28,9 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Start;
+import org.immutables.value.Value;
 
+@Value.Immutable
 public class Mongos implements WorkspaceDefaults, VersionAndPlatform, ProcessDefaults, CommandName, ExtractFileSet {
 	public Transitions transitions(de.flapdoodle.embed.process.distribution.Version version) {
 		return workspaceDefaults()
@@ -57,9 +59,11 @@ public class Mongos implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 			.initState(StateID.of(RunningMongosProcess.class));
 	}
 
-	public static Mongos instance() {
-		return new Mongos();
+	public static ImmutableMongos instance() {
+		return builder().build();
 	}
 
-
+	public static ImmutableMongos.Builder builder() {
+		return ImmutableMongos.builder();
+	}
 }

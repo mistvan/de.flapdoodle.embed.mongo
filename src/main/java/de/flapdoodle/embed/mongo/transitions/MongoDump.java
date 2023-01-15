@@ -27,7 +27,9 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Start;
+import org.immutables.value.Value;
 
+@Value.Immutable
 public class MongoDump implements WorkspaceDefaults, VersionAndPlatform, ProcessDefaults, CommandName, ExtractFileSet {
 	public Transitions transitions(de.flapdoodle.embed.process.distribution.Version version) {
 		return workspaceDefaults()
@@ -50,8 +52,12 @@ public class MongoDump implements WorkspaceDefaults, VersionAndPlatform, Process
 			.initState(StateID.of(ExecutedMongoDumpProcess.class));
 	}
 
-	public static MongoDump instance() {
-		return new MongoDump();
+	public static ImmutableMongoDump instance() {
+		return builder().build();
+	}
+
+	public static ImmutableMongoDump.Builder builder() {
+		return ImmutableMongoDump.builder();
 	}
 
 }

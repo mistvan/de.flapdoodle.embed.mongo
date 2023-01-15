@@ -27,7 +27,9 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Start;
+import org.immutables.value.Value;
 
+@Value.Immutable
 public class MongoShell implements WorkspaceDefaults, VersionAndPlatform, ProcessDefaults, CommandName, ExtractFileSet {
 
 	public Transitions transitions(de.flapdoodle.embed.process.distribution.Version version) {
@@ -51,8 +53,11 @@ public class MongoShell implements WorkspaceDefaults, VersionAndPlatform, Proces
 			.initState(StateID.of(ExecutedMongoShellProcess.class));
 	}
 
-	public static MongoShell instance() {
-		return new MongoShell();
+	public static ImmutableMongoShell instance() {
+		return builder().build();
 	}
 
+	public static ImmutableMongoShell.Builder builder() {
+		return ImmutableMongoShell.builder();
+	}
 }

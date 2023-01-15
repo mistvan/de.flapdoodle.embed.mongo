@@ -82,7 +82,8 @@ Mongod mongod = new Mongod() {
   @Override
   public Transition<PersistentDir> persistentBaseDir() {
     return Start.to(PersistentDir.class)
-      .providedBy(PersistentDir.userHome(".embeddedMongodbCustomPath"));
+      .providedBy(PersistentDir.inUserHome(".embeddedMongodbCustomPath")
+        .mapToUncheckedException(RuntimeException::new));
   }
 };
 ```

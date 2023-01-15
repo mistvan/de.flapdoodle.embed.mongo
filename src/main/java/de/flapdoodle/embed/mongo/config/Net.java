@@ -38,6 +38,11 @@ public abstract class Net {
 	public abstract boolean isIpv6();
 
 	@Value.Auxiliary
+	public Net withPort(int port) {
+		return ImmutableNet.copyOf(this).withPort(port);
+	}
+
+	@Value.Auxiliary
 	public InetAddress getServerAddress() throws UnknownHostException {
 		if (getBindIp().isPresent()) {
 			return InetAddress.getByName(getBindIp().get());
