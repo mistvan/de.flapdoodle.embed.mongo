@@ -49,7 +49,7 @@ class MongosTest {
 	 */
 	@Test
 	public void clusterSample() throws UnknownHostException {
-		Version version= de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
+		Version version= de.flapdoodle.embed.mongo.distribution.Version.Main.V5_0;
 
 		String configServerReplicaSetName = "ConfigServerSet";
 		String shardReplicaSetName = "ShardSet";
