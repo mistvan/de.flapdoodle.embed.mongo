@@ -58,7 +58,10 @@ ${testCustomOutputToConsolePrefix}
 ...
 ${testCustomOutputToFile}
 ...
+```
 
+```java
+${testCustomOutputToFile.FileStreamProcessor}
 ```
 
 #### ... to null device
@@ -116,6 +119,16 @@ ${testMongosAndMongod}
 ### Import JSON file with mongoimport command
 ```java
 ${importJsonIntoMongoDB}
+```
+                      
+### User/Roles setup
+
+```java
+${setupUserAndRoles}
+```
+
+```java
+${setupUserAndRoles.EnableAuthentication}
 ```
 
 ----

@@ -84,10 +84,10 @@ public class Mongod implements WorkspaceDefaults, VersionAndPlatform, ProcessDef
 	}
 
 	@Value.Auxiliary
-	public TransitionWalker.ReachedState<RunningMongodProcess> start(Version version) {
+	public TransitionWalker.ReachedState<RunningMongodProcess> start(Version version, Listener... listener) {
 		return transitions(version)
 			.walker()
-			.initState(StateID.of(RunningMongodProcess.class));
+			.initState(StateID.of(RunningMongodProcess.class), listener);
 	}
 
 	public static ImmutableMongod instance() {

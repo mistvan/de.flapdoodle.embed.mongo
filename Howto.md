@@ -125,7 +125,39 @@ Mongod mongod = new Mongod() {
   }
 };
 ...
+```
 
+```java
+// ...
+public class FileStreamProcessor implements StreamProcessor {
+
+  private final FileOutputStream outputStream;
+
+  public FileStreamProcessor(File file) throws FileNotFoundException {
+    outputStream = new FileOutputStream(file);
+  }
+
+  @Override
+  public void process(String block) {
+    try {
+      outputStream.write(block.getBytes());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override
+  public void onProcessed() {
+    try {
+      outputStream.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+}
+// ...
+// <-
 ```
 
 #### ... to null device
@@ -299,6 +331,200 @@ try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongoD = transit
   }
 }
 
+```
+                      
+### User/Roles setup
+
+```java
+
+Listener withRunningMongod = EnableAuthentication.of("i-am-admin", "admin-password")
+  .withEntries(
+    EnableAuthentication.role("test-db", "test-collection", "can-list-collections")
+      .withActions("listCollections"),
+    EnableAuthentication.user("test-db", "read-only", "user-password")
+      .withRoles("can-list-collections", "read")
+  ).withRunningMongod();
+
+try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance()
+  .withMongodArguments(
+    Start.to(MongodArguments.class)
+      .initializedWith(MongodArguments.defaults().withAuth(true)))
+  .start(Version.Main.PRODUCTION, withRunningMongod)) {
+
+  try (MongoClient mongo = new MongoClient(
+    serverAddress(running.current().getServerAddress()),
+    MongoCredential.createCredential("i-am-admin", "admin", "admin-password".toCharArray()),
+    MongoClientOptions.builder().build())) {
+
+    MongoDatabase db = mongo.getDatabase("test-db");
+    MongoCollection<Document> col = db.getCollection("test-collection");
+    col.insertOne(new Document("testDoc", new Date()));
+  }
+
+  try (MongoClient mongo = new MongoClient(
+    serverAddress(running.current().getServerAddress()),
+    MongoCredential.createCredential("read-only", "test-db", "user-password".toCharArray()),
+    MongoClientOptions.builder().build())) {
+
+    MongoDatabase db = mongo.getDatabase("test-db");
+    MongoCollection<Document> col = db.getCollection("test-collection");
+    assertThat(col.countDocuments()).isEqualTo(1L);
+
+    assertThatThrownBy(() -> col.insertOne(new Document("testDoc", new Date())))
+      .isInstanceOf(MongoCommandException.class)
+      .message().contains("not authorized on test-db");
+  }
+}
+
+```
+
+```java
+@Value.Immutable
+public abstract class EnableAuthentication {
+  private static Logger LOGGER= LoggerFactory.getLogger(EnableAuthentication.class);
+
+  @Value.Parameter
+  protected abstract String adminUser();
+  @Value.Parameter
+  protected abstract String adminPassword();
+
+  @Value.Default
+  protected List<Entry> entries() {
+    return Collections.emptyList();
+  }
+
+  public interface Entry {
+
+  }
+
+  @Value.Immutable
+  public interface Role extends Entry {
+    @Value.Parameter
+    String database();
+    @Value.Parameter
+    String collection();
+    @Value.Parameter
+    String name();
+    List<String> actions();
+  }
+
+  @Value.Immutable
+  public interface User extends Entry {
+    @Value.Parameter
+    String database();
+    @Value.Parameter
+    String username();
+    @Value.Parameter
+    String password();
+    List<String> roles();
+  }
+
+  @Value.Auxiliary
+  public Listener withRunningMongod() {
+    StateID<RunningMongodProcess> expectedState = StateID.of(RunningMongodProcess.class);
+
+    return Listener.typedBuilder()
+      .onStateReached(expectedState, running -> {
+          final ServerAddress address = serverAddress(running);
+
+        // Create admin user.
+        try (final MongoClient clientWithoutCredentials = new MongoClient(address)) {
+          runCommand(
+            clientWithoutCredentials.getDatabase("admin"),
+            commandCreateUser(adminUser(), adminPassword(), Arrays.asList("root"))
+          );
+        }
+
+        final MongoCredential credentialAdmin =
+          MongoCredential.createCredential(adminUser(), "admin", adminPassword().toCharArray());
+
+        // create roles and users
+        try (final MongoClient clientAdmin = new MongoClient(address, credentialAdmin, MongoClientOptions.builder().build())) {
+          entries().forEach(entry -> {
+            if (entry instanceof Role) {
+              Role role = (Role) entry;
+              MongoDatabase db = clientAdmin.getDatabase(role.database());
+              runCommand(db, commandCreateRole(role.database(), role.collection(), role.name(), role.actions()));
+            }
+            if (entry instanceof User) {
+              User user = (User) entry;
+              MongoDatabase db = clientAdmin.getDatabase(user.database());
+              runCommand(db, commandCreateUser(user.username(), user.password(), user.roles()));
+            }
+          });
+        }
+
+      })
+      .onStateTearDown(expectedState, running -> {
+        final ServerAddress address = serverAddress(running);
+
+        final MongoCredential credentialAdmin =
+          MongoCredential.createCredential(adminUser(), "admin", adminPassword().toCharArray());
+
+        try (final MongoClient clientAdmin = new MongoClient(address, credentialAdmin, MongoClientOptions.builder().build())) {
+          try {
+            // if success there will be no answer, the connection just closes..
+            runCommand(
+              clientAdmin.getDatabase("admin"),
+              new Document("shutdown", 1)
+            );
+          } catch (MongoSocketReadException mx) {
+            LOGGER.debug("shutdown completed by closing stream");
+          }
+        }
+      })
+      .build();
+  }
+
+  private static void runCommand(MongoDatabase db, Document document) {
+    Document result = db.runCommand(document);
+    boolean success = result.get("ok", Double.class) == 1.0d;
+    Preconditions.checkArgument(success, "runCommand %s failed: %s", document, result);
+  }
+
+  private static Document commandCreateRole(
+    String database,
+    String collection,
+    String roleName,
+    List<String> actions
+  ) {
+    return new Document("createRole", roleName)
+      .append("privileges", Collections.singletonList(
+          new Document("resource",
+            new Document("db", database)
+              .append("collection", collection))
+            .append("actions", actions)
+        )
+      ).append("roles", Collections.emptyList());
+  }
+
+  static Document commandCreateUser(
+    final String username,
+    final String password,
+    final List<String> roles
+  ) {
+    return new Document("createUser", username)
+      .append("pwd", password)
+      .append("roles", roles);
+  }
+
+  private static ServerAddress serverAddress(RunningMongodProcess running) {
+    de.flapdoodle.embed.mongo.commands.ServerAddress serverAddress = running.getServerAddress();
+    return new ServerAddress(serverAddress.getHost(), serverAddress.getPort());
+  }
+
+  public static ImmutableRole role(String database, String collection, String name) {
+    return ImmutableRole.of(database, collection, name);
+  }
+
+  public static ImmutableUser user(String database, String username, String password) {
+    return ImmutableUser.of(database, username, password);
+  }
+
+  public static ImmutableEnableAuthentication of(String adminUser, String adminPassword) {
+    return ImmutableEnableAuthentication.of(adminUser,adminPassword);
+  }
+}
 ```
 
 ----

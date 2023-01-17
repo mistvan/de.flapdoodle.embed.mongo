@@ -137,6 +137,14 @@ public abstract class MongodArguments {
 		config.params().forEach((key, val) -> builder.add("--setParameter", format("%s=%s", key, val)));
 		config.args().forEach(builder::add);
 
+		if (config.auth()) {
+			LOGGER.info(
+				"\n---------------------------------------\n"
+					+ "hint: auth==true starts mongod with authorization enabled, which, if started from scratch must fail, as a "
+					+ "connect is only possible for known user.\n"
+					+ "---------------------------------------\n");
+		}
+
 		builder.add(config.auth() ? "--auth" : "--noauth");
 
 		builder.addIf(!version.enabled(Feature.DISABLE_USE_PREALLOC) && config.useNoPrealloc(), "--noprealloc");

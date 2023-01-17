@@ -22,6 +22,9 @@ package de.flapdoodle.embed.mongo.doc;
 
 import com.google.common.io.Resources;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCommandException;
+import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
@@ -31,6 +34,7 @@ import de.flapdoodle.embed.mongo.commands.ServerAddress;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.examples.EnableAuthentication;
 import de.flapdoodle.embed.mongo.examples.FileStreamProcessor;
 import de.flapdoodle.embed.mongo.transitions.*;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
@@ -408,6 +412,54 @@ public class HowToDocTest {
 
 		recording.end();
 	}
+
+	@Test
+	public void setupUserAndRoles() {
+		recording.include(EnableAuthentication.class, Includes.WithoutImports, Includes.WithoutPackage, Includes.Trim);
+		recording.begin();
+
+		Listener withRunningMongod = EnableAuthentication.of("i-am-admin", "admin-password")
+			.withEntries(
+				EnableAuthentication.role("test-db", "test-collection", "can-list-collections")
+					.withActions("listCollections"),
+				EnableAuthentication.user("test-db", "read-only", "user-password")
+					.withRoles("can-list-collections", "read")
+			).withRunningMongod();
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance()
+			.withMongodArguments(
+				Start.to(MongodArguments.class)
+					.initializedWith(MongodArguments.defaults().withAuth(true)))
+			.start(Version.Main.PRODUCTION, withRunningMongod)) {
+
+			try (MongoClient mongo = new MongoClient(
+				serverAddress(running.current().getServerAddress()),
+				MongoCredential.createCredential("i-am-admin", "admin", "admin-password".toCharArray()),
+				MongoClientOptions.builder().build())) {
+
+				MongoDatabase db = mongo.getDatabase("test-db");
+				MongoCollection<Document> col = db.getCollection("test-collection");
+				col.insertOne(new Document("testDoc", new Date()));
+			}
+
+			try (MongoClient mongo = new MongoClient(
+				serverAddress(running.current().getServerAddress()),
+				MongoCredential.createCredential("read-only", "test-db", "user-password".toCharArray()),
+				MongoClientOptions.builder().build())) {
+
+				MongoDatabase db = mongo.getDatabase("test-db");
+				MongoCollection<Document> col = db.getCollection("test-collection");
+				assertThat(col.countDocuments()).isEqualTo(1L);
+
+				assertThatThrownBy(() -> col.insertOne(new Document("testDoc", new Date())))
+					.isInstanceOf(MongoCommandException.class)
+					.message().contains("not authorized on test-db");
+			}
+		}
+
+		recording.end();
+	}
+
 
 	private static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) throws UnknownHostException {
 		try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
