@@ -140,8 +140,7 @@ public abstract class MongodArguments {
 		if (config.auth()) {
 			LOGGER.info(
 				"\n---------------------------------------\n"
-					+ "hint: auth==true starts mongod with authorization enabled, which, if started from scratch must fail, as a "
-					+ "connect is only possible for known user.\n"
+					+ "hint: auth==true starts mongod with authorization enabled.\n"
 					+ "---------------------------------------\n");
 		}
 

@@ -356,7 +356,6 @@ public class HowToDocTest {
 				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
 			}
 
-			com.mongodb.ServerAddress x;
 			Mongos mongos = new Mongos() {
 				@Override public Start<MongosArguments> mongosArguments() {
 					return Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
@@ -367,8 +366,8 @@ public class HowToDocTest {
 			};
 
 			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = mongos.start(version)) {
-				try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
-					assertThat(mongo.listDatabaseNames()).contains("admin", "config", "local");
+				try (MongoClient mongo = new MongoClient(serverAddress(runningMongos.current().getServerAddress()))) {
+					assertThat(mongo.listDatabaseNames()).contains("admin", "config");
 				}
 			}
 		}

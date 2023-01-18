@@ -51,6 +51,8 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 	private final InetAddress serverAddress;
 	private final int port;
 
+	private boolean shutDownCommandAlreadyExecuted=false;
+
 	protected RunningMongoProcess(
 		String commandName,
 		ProcessControl process,
@@ -62,7 +64,6 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 		Net net,
 		StreamProcessor commandOutput,
 		int mongoProcessId
-//		boolean withAuthEnabled
 	) {
 		super(process, pidFile, timeout, onStop);
 		this.commandName = commandName;
@@ -91,7 +92,7 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 	private void stopInternal() {
 		if (isAlive()) {
 			LOGGER.debug("try to stop "+commandName);
-			if (!sendStopToMongoInstance()) {
+			if (!shutDownCommandAlreadyExecuted && !sendStopToMongoInstance()) {
 				LOGGER.warn("could not stop "+commandName+" with db command, try next");
 				if (!sendKillToProcess()) {
 					LOGGER.warn("could not stop "+commandName+", try next");
@@ -128,6 +129,10 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 	protected final boolean sendStopToMongoInstance() {
 		return Mongod.sendShutdownLegacy(serverAddress, port)
 			|| Mongod.sendShutdown(serverAddress, port);
+	}
+
+	public void shutDownCommandAlreadyExecuted() {
+		this.shutDownCommandAlreadyExecuted = true;
 	}
 
 	interface InstanceFactory<T extends RunningMongoProcess> {

@@ -281,7 +281,6 @@ try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.
     mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
   }
 
-  com.mongodb.ServerAddress x;
   Mongos mongos = new Mongos() {
     @Override public Start<MongosArguments> mongosArguments() {
       return Start.to(MongosArguments.class).initializedWith(MongosArguments.defaults()
@@ -292,8 +291,8 @@ try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.
   };
 
   try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = mongos.start(version)) {
-    try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
-      assertThat(mongo.listDatabaseNames()).contains("admin", "config", "local");
+    try (MongoClient mongo = new MongoClient(serverAddress(runningMongos.current().getServerAddress()))) {
+      assertThat(mongo.listDatabaseNames()).contains("admin", "config");
     }
   }
 }
@@ -466,11 +465,13 @@ public abstract class EnableAuthentication {
             // if success there will be no answer, the connection just closes..
             runCommand(
               clientAdmin.getDatabase("admin"),
-              new Document("shutdown", 1)
+              new Document("shutdown", 1).append("force", true)
             );
           } catch (MongoSocketReadException mx) {
             LOGGER.debug("shutdown completed by closing stream");
           }
+
+          running.shutDownCommandAlreadyExecuted();
         }
       })
       .build();

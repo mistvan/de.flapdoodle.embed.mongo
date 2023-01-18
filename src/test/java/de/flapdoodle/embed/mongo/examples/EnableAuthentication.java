@@ -122,11 +122,13 @@ public abstract class EnableAuthentication {
 						// if success there will be no answer, the connection just closes..
 						runCommand(
 							clientAdmin.getDatabase("admin"),
-							new Document("shutdown", 1)
+							new Document("shutdown", 1).append("force", true)
 						);
 					} catch (MongoSocketReadException mx) {
 						LOGGER.debug("shutdown completed by closing stream");
 					}
+
+					running.shutDownCommandAlreadyExecuted();
 				}
 			})
 			.build();
