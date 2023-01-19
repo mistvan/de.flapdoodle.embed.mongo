@@ -135,7 +135,12 @@ public abstract class MongodArguments {
 		builder.add(/*executable.toAbsolutePath().toString(),*/ "--dbpath", dbDirectory.toAbsolutePath().toString());
 
 		config.params().forEach((key, val) -> builder.add("--setParameter", format("%s=%s", key, val)));
-		config.args().forEach(builder::add);
+		config.args().forEach((key, val) -> {
+			builder.add(key);
+			if (!val.isEmpty()) {
+				builder.add(val);
+			}
+		});
 
 		if (config.auth()) {
 			LOGGER.info(
