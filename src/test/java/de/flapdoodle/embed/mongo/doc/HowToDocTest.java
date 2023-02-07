@@ -41,9 +41,11 @@ import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.mongo.util.FileUtils;
 import de.flapdoodle.embed.process.config.DownloadConfig;
+import de.flapdoodle.embed.process.config.TimeoutConfig;
 import de.flapdoodle.embed.process.io.ProcessOutput;
 import de.flapdoodle.embed.process.io.Processors;
 import de.flapdoodle.embed.process.io.directories.PersistentDir;
+import de.flapdoodle.embed.process.net.DownloadToPath;
 import de.flapdoodle.embed.process.net.HttpProxyFactory;
 import de.flapdoodle.embed.process.runtime.Network;
 import de.flapdoodle.embed.process.transitions.DownloadPackage;
@@ -62,9 +64,12 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Proxy;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.Optional;
 
 import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,7 +81,7 @@ public class HowToDocTest {
 	public static final Recording recording = Recorder.with("Howto.md", TabSize.spaces(2));
 
 	@Test
-	public void testStandard() throws IOException {
+	public void testStandard() {
 		recording.begin();
 
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().start(Version.Main.PRODUCTION)) {
@@ -152,7 +157,7 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomProxy() throws UnknownHostException {
+	public void testCustomProxy() {
 		recording.begin();
 		Mongod mongod = new Mongod() {
 			@Override
@@ -169,7 +174,28 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomizeArtifactStorage() throws UnknownHostException {
+	public void testCustomDownloader() {
+		recording.begin();
+		DownloadToPath custom = new DownloadToPath() {
+			@Override
+			public void download(URL url, Path destination,
+				Optional<Proxy> proxy, String userAgent, TimeoutConfig timeoutConfig,
+				DownloadCopyListener copyListener) throws IOException {
+				// download url to destination
+			}
+		};
+
+		Mongod mongod = Mongod.instance()
+			.withDownloadPackage(DownloadPackage.withDefaults()
+				.withDownloadToPath(custom));
+		recording.end();
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
+			assertRunningMongoDB(running);
+		}
+	}
+
+	@Test
+	public void testCustomizeArtifactStorage() {
 		recording.begin();
 		Mongod mongod = new Mongod() {
 			@Override
@@ -186,7 +212,7 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomOutputToConsolePrefix() throws UnknownHostException {
+	public void testCustomOutputToConsolePrefix() {
 		recording.begin();
 		Mongod mongod = new Mongod() {
 			@Override
@@ -208,7 +234,7 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomOutputToFile() throws IOException {
+	public void testCustomOutputToFile() {
 		recording.include(FileStreamProcessor.class, Includes.WithoutImports, Includes.WithoutPackage, Includes.Trim);
 		recording.begin();
 		Mongod mongod = new Mongod() {
@@ -232,7 +258,7 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testDefaultOutputToNone() throws IOException {
+	public void testDefaultOutputToNone() {
 		recording.begin();
 		Mongod mongod = new Mongod() {
 			@Override public Transition<ProcessOutput> processOutput() {
@@ -321,7 +347,7 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testCustomDatabaseDirectory(@TempDir Path customDatabaseDir) throws UnknownHostException, IOException {
+	public void testCustomDatabaseDirectory(@TempDir Path customDatabaseDir) {
 		recording.begin();
 		Mongod mongod = new Mongod() {
 			@Override public Transition<DatabaseDir> databaseDir() {
@@ -335,7 +361,7 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testMongosAndMongod() throws UnknownHostException {
+	public void testMongosAndMongod() {
 		recording.begin();
 		Version.Main version = Version.Main.PRODUCTION;
 
@@ -460,7 +486,7 @@ public class HowToDocTest {
 	}
 
 
-	private static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) throws UnknownHostException {
+	private static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) {
 		try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 			MongoDatabase db = mongo.getDatabase("test");
 			MongoCollection<Document> col = db.getCollection("testCol");

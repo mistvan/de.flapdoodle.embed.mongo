@@ -76,6 +76,22 @@ Mongod mongod = new Mongod() {
 };
 ```
 
+### Customize Downloader Implementation
+```java
+DownloadToPath custom = new DownloadToPath() {
+  @Override
+  public void download(URL url, Path destination,
+    Optional<Proxy> proxy, String userAgent, TimeoutConfig timeoutConfig,
+    DownloadCopyListener copyListener) throws IOException {
+    // download url to destination
+  }
+};
+
+Mongod mongod = Mongod.instance()
+  .withDownloadPackage(DownloadPackage.withDefaults()
+    .withDownloadToPath(custom));
+```
+
 ### Customize Artifact Storage
 ```java
 Mongod mongod = new Mongod() {

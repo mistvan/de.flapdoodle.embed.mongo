@@ -41,6 +41,11 @@ ${testCustomizeDownloadURL}
 ${testCustomProxy}
 ```
 
+### Customize Downloader Implementation
+```java
+${testCustomDownloader}
+```
+
 ### Customize Artifact Storage
 ```java
 ${testCustomizeArtifactStorage}
