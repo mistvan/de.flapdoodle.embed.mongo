@@ -29,6 +29,7 @@ import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.process.config.SupportConfig;
 import de.flapdoodle.embed.process.runtime.NUMA;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.OSType;
 import de.flapdoodle.os.Platform;
 import org.immutables.value.Value;
 import org.slf4j.Logger;
@@ -189,7 +190,7 @@ public abstract class MongodArguments {
 
 	private static List<String> warpWithNumaSupport(Platform platform, List<String> commands) {
 		if (NUMA.isNUMA(forCommand(Command.MongoD), platform)) {
-			if (platform.operatingSystem() == OS.Linux) {
+			if (platform.operatingSystem().type() == OSType.Linux) {
 				List<String> ret = new ArrayList<>();
 				ret.add("numactl");
 				ret.add("--interleave=all");

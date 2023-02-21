@@ -23,10 +23,9 @@ package de.flapdoodle.embed.mongo.transitions;
 import de.flapdoodle.embed.mongo.packageresolver.Command;
 import de.flapdoodle.embed.mongo.packageresolver.PlatformPackageResolver;
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
-import de.flapdoodle.embed.process.config.store.DistributionPackage;
 import de.flapdoodle.embed.process.config.store.Package;
-import de.flapdoodle.embed.process.config.store.PackageResolver;
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.embed.process.distribution.PackageResolver;
 import de.flapdoodle.reverse.State;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.StateLookup;
@@ -51,8 +50,8 @@ public abstract class PackageOfCommandDistribution implements Transition<Package
 
 	@Value.Auxiliary
 	protected Package packageOf(Command command, Distribution distribution, DistributionBaseUrl baseUrl) {
-		DistributionPackage distPackage = legacyPackageResolverFactory().apply(command).packageFor(distribution);
-		return Package.of(distPackage.archiveType(), distPackage.fileSet(),  baseUrl.value() /*"https://fastdl.mongodb.org"*/+distPackage.archivePath());
+		Package relativePackage = legacyPackageResolverFactory().apply(command).packageFor(distribution);
+		return Package.of(relativePackage.archiveType(), relativePackage.fileSet(),  baseUrl.value() /*"https://fastdl.mongodb.org"*/+relativePackage.url());
 	}
 
 	@Value.Default

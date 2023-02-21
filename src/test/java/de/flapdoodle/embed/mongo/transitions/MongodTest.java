@@ -316,7 +316,7 @@ class MongodTest {
 
 	private static List<Arguments> testableDistributions() {
 		ArrayList<Arguments> ret = new ArrayList<>();
-		for (OS os : OS.values()) {
+		for (OS os : CommonOS.values()) {
 			// there is no generic linux version of mongodb after 3.6
 			// so we should use linux dists instead
 			for (CommonArchitecture arc : CommonArchitecture.values()) {
@@ -356,17 +356,17 @@ class MongodTest {
 			return true;
 		}
 
-		if ((os == OS.OS_X) && (bitsize == BitSize.B32)) {
+		if ((os.type() == OSType.OS_X) && (bitsize == BitSize.B32)) {
 			// there is no osx 32bit version for v2.2.1 and above, so we dont check
 			return true;
 		}
-		if ((os == OS.Solaris)  && ((bitsize == BitSize.B32) || version.enabled(Feature.NO_SOLARIS_SUPPORT))) {
+		if ((os.type() == OSType.Solaris)  && ((bitsize == BitSize.B32) || version.enabled(Feature.NO_SOLARIS_SUPPORT))) {
 			return true;
 		}
-		if (os == OS.FreeBSD) {
+		if (os.type() == OSType.FreeBSD) {
 			return true;
 		}
-		if (os == OS.Windows) {
+		if (os.type() == OSType.Windows) {
 			// there is no windows 2008 version for 1.8.5
 			return version.asInDownloadPath().equals(Version.V1_8_5.asInDownloadPath());
 		}

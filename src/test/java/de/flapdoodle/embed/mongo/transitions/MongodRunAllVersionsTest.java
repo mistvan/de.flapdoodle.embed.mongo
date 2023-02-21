@@ -29,7 +29,9 @@ import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.distribution.Distribution;
 import de.flapdoodle.os.CPUType;
+import de.flapdoodle.os.CommonOS;
 import de.flapdoodle.os.OS;
+import de.flapdoodle.os.OSType;
 import de.flapdoodle.reverse.TransitionWalker;
 import org.bson.Document;
 import org.junit.After;
@@ -82,8 +84,8 @@ public class MongodRunAllVersionsTest {
 	@Before
 	public void setUp() {
 
-		final Distribution distribution = Distribution.detectFor(mongoVersion);
-		if (distribution.platform().operatingSystem() == OS.Linux && distribution.platform().architecture().cpuType() == CPUType.ARM) {
+		final Distribution distribution = Distribution.detectFor(CommonOS.list(), mongoVersion);
+		if (distribution.platform().operatingSystem().type() == OSType.Linux && distribution.platform().architecture().cpuType() == CPUType.ARM) {
 			Assume.assumeTrue("Mongodb supports Linux ARM64 since 3.4.0", mongoVersion.numericVersion().isNewerOrEqual(3, 4, 0));
 		}
 

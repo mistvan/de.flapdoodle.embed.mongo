@@ -21,6 +21,7 @@
 package de.flapdoodle.embed.mongo.transitions;
 
 import de.flapdoodle.embed.process.distribution.Distribution;
+import de.flapdoodle.os.CommonOS;
 import de.flapdoodle.os.Platform;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.Transitions;
@@ -31,7 +32,7 @@ import org.immutables.value.Value;
 public interface VersionAndPlatform {
 	@Value.Default
 	default Transition<Platform> platform() {
-		return Start.to(Platform.class).providedBy(Platform::detect);
+		return Start.to(Platform.class).providedBy(() -> Platform.detect(CommonOS.list()));
 	}
 
 	@Value.Default
