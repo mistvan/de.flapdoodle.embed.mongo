@@ -1,8 +1,8 @@
 package de.flapdoodle.embed.mongo.scenario;
 
 import com.mongodb.*;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.checks.Preconditions;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -12,14 +12,10 @@ import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.transitions.Start;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,16 +36,11 @@ public class AccessControlAndListCollectionsActionTest {
 	private final String rolename = "issue-442-role";
 	private final String action = "listCollections";
 
-	/*
-mongodb_uri_without_auth="mongodb://localhost:27017/"
-mongodb_uri_with_auth="mongodb://${username}:${pwd}@localhost:27017/?authMechanism=SCRAM-SHA-1&authSource=${db_name}"
- */
-
 	/**
 	 * see https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues/442#issuecomment-1438370904
 	 */
 	@Test
-	void workingSample(@TempDir Path temp) throws IOException {
+	void createUserAndCollectionsWithoutAuthFirst(@TempDir Path temp) throws IOException {
 		int port = de.flapdoodle.net.Net.freeServerPort();
 		Version.Main version = Version.Main.V4_4;
 
@@ -61,31 +52,29 @@ mongodb_uri_with_auth="mongodb://${username}:${pwd}@localhost:27017/?authMechani
 			.databaseDir(Start.to(DatabaseDir.class).initializedWith(DatabaseDir.of(databaseDir)))
 			.build();
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> started = mongodWithoutAuth
-			.start(version)) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> started = mongodWithoutAuth.start(version)) {
 
 			ServerAddress serverAddress = getServerAddress(started);
 
 			// mongodb-create-collections-without-auth
-			try (final MongoClient without_auth = new MongoClient(serverAddress)) {
+			try (final MongoClient without_auth = mongoClient(serverAddress)) {
 				MongoDatabase database = without_auth.getDatabase(db_name);
 				database.getCollection(coll_name_1).insertOne(new Document().append("field 1", "value 1"));
 				database.getCollection(coll_name_2).insertOne(new Document().append("field 2", "value 2"));
 			}
 
 			// mongodb-create-user-and-role-without-auth
-			try (final MongoClient without_auth = new MongoClient(serverAddress)) {
-				MongoDatabase database = without_auth.getDatabase(db_name);
-				database.runCommand(new Document("createRole", rolename)
+			try (final MongoClient without_auth = mongoClient(serverAddress)) {
+				runCommand(without_auth, db_name, new Document("createRole", rolename)
 					.append("privileges", Arrays.asList(
 						new Document("resource",
 							new Document("db", db_name)
-								.append("collection",""))
+								.append("collection", ""))
 							.append("actions", Arrays.asList(action))
 					))
-						.append("roles", Arrays.asList()));
+					.append("roles", Arrays.asList()));
 
-				database.runCommand(new Document("createUser", username)
+				runCommand(without_auth, db_name, new Document("createUser", username)
 					.append("pwd", pwd)
 					.append("roles", Arrays.asList(
 						new Document()
@@ -95,30 +84,23 @@ mongodb_uri_with_auth="mongodb://${username}:${pwd}@localhost:27017/?authMechani
 			}
 
 			// create admin user to call shutdown
-			try (final MongoClient without_auth = new MongoClient(serverAddress)) {
-				MongoDatabase database = without_auth.getDatabase("admin");
-				database.runCommand(new Document("createUser", username)
+			try (final MongoClient without_auth = mongoClient(serverAddress)) {
+				runCommand(without_auth, "admin", new Document("createUser", username)
 					.append("pwd", pwd)
 					.append("roles", Arrays.asList("root")));
 			}
 		}
 
 		ImmutableMongod mongodWithAuth = mongodWithoutAuth.withMongodArguments(Start.to(MongodArguments.class)
-			.initializedWith(MongodArguments.defaults()
-				.withAuth(true)));
+			.initializedWith(MongodArguments.defaults().withAuth(true)));
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> started = mongodWithAuth
-			.start(version)) {
+		try (TransitionWalker.ReachedState<RunningMongodProcess> started = mongodWithAuth.start(version)) {
 
 			ServerAddress serverAddress = getServerAddress(started);
 
 			// mongodb-list-collections-with-auth
-			final MongoCredential credentials =
-				MongoCredential.createCredential(username, db_name, pwd.toCharArray());
-
-			try (final MongoClient with_auth = new MongoClient(serverAddress, credentials, MongoClientOptions.builder().build())) {
-				MongoDatabase database = with_auth.getDatabase(db_name);
-				Document result = database.runCommand(new Document().append("listCollections", 1));
+			try (final MongoClient with_auth = mongoClient(serverAddress, credential(username, db_name, pwd))) {
+				Document result = runCommand(with_auth,db_name, new Document("listCollections", 1));
 
 				assertThat(result).containsEntry("ok", 1.0);
 				assertThat(result)
@@ -136,17 +118,10 @@ mongodb_uri_with_auth="mongodb://${username}:${pwd}@localhost:27017/?authMechani
 			finally {
 
 				// shutdown db
-				final MongoCredential credentialAdmin =
-					MongoCredential.createCredential(username, "admin", pwd.toCharArray());
-
-				try (final MongoClient clientAdmin = new MongoClient(serverAddress, credentialAdmin, MongoClientOptions.builder().build())) {
+				try (final MongoClient clientAdmin = mongoClient(serverAddress, credential(username, "admin", pwd))) {
 					try {
-
-						clientAdmin.getDatabase("admin").runCommand(
-							new Document("shutdown", 1).append("force", true)
-						);
+						runCommand(clientAdmin,"admin", new Document("shutdown", 1).append("force", true));
 						fail("should not reach this point");
-
 					}
 					catch (MongoSocketReadException ex) {
 						assertThat(ex).hasMessageContaining("Prematurely reached end of stream");
@@ -156,6 +131,110 @@ mongodb_uri_with_auth="mongodb://${username}:${pwd}@localhost:27017/?authMechani
 				}
 			}
 		}
+	}
+
+	@Test
+	void createUserAndCollectionsWithAuthInSingleRun(@TempDir Path temp) throws IOException {
+		int port = de.flapdoodle.net.Net.freeServerPort();
+		Version.Main version = Version.Main.V4_4;
+
+		Path databaseDir = temp.resolve("database");
+		Files.createDirectory(databaseDir);
+
+		ImmutableMongod mongodWithoutAuth = Mongod.builder()
+			.net(Start.to(Net.class).initializedWith(Net.defaults().withPort(port)))
+//			.databaseDir(Start.to(DatabaseDir.class).initializedWith(DatabaseDir.of(databaseDir)))
+			.mongodArguments(Start.to(MongodArguments.class)
+				.initializedWith(MongodArguments.defaults().withAuth(true)))
+			.build();
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> started = mongodWithoutAuth.start(version)) {
+			ServerAddress serverAddress = getServerAddress(started);
+
+			// create admin user to call shutdown
+			try (final MongoClient without_auth = mongoClient(serverAddress)) {
+				runCommand(without_auth, "admin", new Document("createUser", username)
+					.append("pwd", pwd)
+					.append("roles", Arrays.asList("root")));
+			}
+
+			// mongodb-create-user-and-role-without-auth
+			try (final MongoClient withadmin_auth = mongoClient(serverAddress, credential(username, "admin", pwd))) {
+				runCommand(withadmin_auth, db_name, new Document("createRole", rolename)
+					.append("privileges", Arrays.asList(
+						new Document("resource",
+							new Document("db", db_name)
+								.append("collection", ""))
+							.append("actions", Arrays.asList(action))
+					))
+					.append("roles", Arrays.asList()));
+
+				runCommand(withadmin_auth, db_name, new Document("createUser", username)
+					.append("pwd", pwd)
+					.append("roles", Arrays.asList(
+						new Document()
+							.append("role", rolename)
+							.append("db", db_name)
+					)));
+			}
+
+			// mongodb-create-collections-without-auth
+			try (final MongoClient withadmin_auth = mongoClient(serverAddress, credential(username, "admin", pwd))) {
+				MongoDatabase database = withadmin_auth.getDatabase(db_name);
+				database.getCollection(coll_name_1).insertOne(new Document().append("field 1", "value 1"));
+				database.getCollection(coll_name_2).insertOne(new Document().append("field 2", "value 2"));
+			}
+
+			try (final MongoClient with_auth = mongoClient(serverAddress, credential(username, db_name, pwd))) {
+				Document result = runCommand(with_auth,db_name, new Document("listCollections", 1));
+
+				assertThat(result).containsEntry("ok", 1.0);
+				assertThat(result)
+					.extracting(doc -> doc.get("cursor"), as(MAP))
+					.containsKey("firstBatch")
+					.extracting(cursor -> cursor.get("firstBatch"), as(LIST))
+					.hasSize(2)
+					.anySatisfy(collection -> assertThat(collection)
+						.isInstanceOfSatisfying(Document.class, col -> assertThat(col)
+							.extracting(c -> c.get("name")).isEqualTo(coll_name_1)))
+					.anySatisfy(collection -> assertThat(collection)
+						.isInstanceOfSatisfying(Document.class, col -> assertThat(col)
+							.extracting(c -> c.get("name")).isEqualTo(coll_name_2)));
+			}
+			finally {
+				// shutdown db               k
+				try (final MongoClient clientAdmin = mongoClient(serverAddress, credential(username, "admin", pwd))) {
+					try {
+						runCommand(clientAdmin,"admin", new Document("shutdown", 1).append("force", true));
+						fail("should not reach this point");
+					}
+					catch (MongoSocketReadException ex) {
+						assertThat(ex).hasMessageContaining("Prematurely reached end of stream");
+					}
+
+					started.current().shutDownCommandAlreadyExecuted();
+				}
+			}
+		}
+	}
+
+	private static Document runCommand(MongoClient client, String database, Document command) {
+		Document result = client.getDatabase(database).runCommand(command);
+		Preconditions.checkArgument(result.containsKey("ok"),"command %s failed with: %s", command, result);
+		Preconditions.checkArgument(Double.valueOf(1.0).equals(result.get("ok")),"command %s failed with: %s", command, result);
+		return result;
+	}
+
+	private static MongoCredential credential(String username, String database, String password) {
+		return MongoCredential.createCredential(username, database, password.toCharArray());
+	}
+
+	private static MongoClient mongoClient(ServerAddress serverAddress) {
+		return new MongoClient(serverAddress);
+	}
+
+	private static MongoClient mongoClient(ServerAddress serverAddress, MongoCredential credential) {
+		return new MongoClient(serverAddress, credential, MongoClientOptions.builder().build());
 	}
 
 	private static ServerAddress getServerAddress(
