@@ -45,8 +45,9 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 - in Scala tests using [scalatest-embedmongo](https://github.com/SimplyScala/scalatest-embedmongo)
 
 ## Howto
-
-[Usage](Howto.md)
+                    
+- [Use Cases](docs/UseCases.md)
+- [Customizations](docs/Howto.md)
 
 ### Maven
 

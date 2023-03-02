@@ -18,9 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.flapdoodle.embed.mongo;
+package de.flapdoodle.embed.mongo.doc;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -39,52 +38,59 @@ import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.testdoc.Recorder;
+import de.flapdoodle.testdoc.Recording;
+import de.flapdoodle.testdoc.TabSize;
 import de.flapdoodle.types.Try;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.io.File;
-import java.net.UnknownHostException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
 import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HowToUseTransitionsTest {
+public class UseCasesTest {
+
+	@RegisterExtension
+	public static final Recording recording = Recorder.with("UseCases.md", TabSize.spaces(2));
 
 	@Test
-	public void startMongoD() throws UnknownHostException {
+	public void startMongoD() {
+		recording.begin();
 		Transitions transitions = Mongod.instance().transitions(Version.Main.PRODUCTION);
 
-		String dot = Transitions.edgeGraphAsDot("mongod", transitions.asGraph());
-		System.out.println("---------------------");
-		System.out.println(dot);
-		System.out.println("---------------------");
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
 
-		for (int i = 0; i < 2; i++) {
-			try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
-				.initState(StateID.of(RunningMongodProcess.class))) {
-
-				try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
-					MongoDatabase db = mongo.getDatabase("test");
-					MongoCollection<Document> col = db.getCollection("testCol");
-					col.insertOne(new Document("testDoc", new Date()));
-					System.out.println("could store doc in database...");
-				}
+			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+				recording.end();
+				MongoDatabase db = mongo.getDatabase("test");
+				MongoCollection<Document> col = db.getCollection("testCol");
+				col.insertOne(new Document("testDoc", new Date()));
+				assertThat(col.countDocuments()).isEqualTo(1L);
+				recording.begin();
 			}
 		}
+
+		recording.end();
+		String dot = Transitions.edgeGraphAsDot("mongod", transitions.asGraph());
+		recording.file("graph.svg", "UseCase-Mongod.svg", asSvg(dot));
 	}
 
 	@Test
-	public void startMongoImport() throws UnknownHostException {
-
-		File jsonFile = new File(Thread.currentThread().getContextClassLoader().getResource("sample.json").getFile());
-
-		ImmutableMongoImportArguments arguments = MongoImportArguments.builder()
+	public void startMongoImport() {
+		recording.begin();
+		MongoImportArguments arguments = MongoImportArguments.builder()
 			.databaseName("importDatabase")
 			.collectionName("importCollection")
-			.importFile(jsonFile.getAbsolutePath())
+			.importFile(Resources.getResource("sample.json").getFile())
 			.isJsonArray(true)
 			.upsertDocuments(true)
 			.build();
@@ -95,37 +101,41 @@ public class HowToUseTransitionsTest {
 			.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			Transitions transitions = MongoImport.instance().transitions(version)
-				.replace(Start.to(MongoImportArguments.class).initializedWith(arguments));
+			Transitions mongoImportTransitions = MongoImport.instance()
+				.transitions(version)
+				.replace(Start.to(MongoImportArguments.class).initializedWith(arguments))
+				.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
 
-			String dot = Transitions.edgeGraphAsDot("mongoImport", transitions.asGraph());
-			System.out.println("---------------------");
-			System.out.println(dot);
-			System.out.println("---------------------");
-
-			Transitions withMongoDbServerAddress = transitions.addAll(Start.to(ServerAddress.class).initializedWith(mongoD.current().getServerAddress()));
-
-			try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executed = withMongoDbServerAddress.walker()
+			try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> executed = mongoImportTransitions.walker()
 				.initState(StateID.of(ExecutedMongoImportProcess.class))) {
-
+				recording.end();
 				assertThat(executed.current().returnCode())
 					.describedAs("mongo import was successful")
 					.isEqualTo(0);
+
+				String dot = Transitions.edgeGraphAsDot("mongoImport", mongoImportTransitions.asGraph());
+				recording.file("graph.svg", "UseCase-MongoImport.svg", asSvg(dot));
+
+				recording.begin();
 			}
 
 			try (MongoClient mongo = new MongoClient(serverAddress(mongoD.current().getServerAddress()))) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 
-				ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
+				ArrayList<String> names = col.find()
+					.map(doc -> doc.getString("name"))
+					.into(new ArrayList<>());
 
-				assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
+				assertThat(names).containsExactlyInAnyOrder("Cassandra", "HBase", "MongoDB");
 			}
 		}
+		recording.end();
 	}
 
 	@Test
-	public void startMongoImportAsOneTransition() throws UnknownHostException {
+	public void startMongoImportAsOneTransition() {
+		recording.begin();
 		ImmutableMongoImportArguments arguments = MongoImportArguments.builder()
 			.databaseName("importDatabase")
 			.collectionName("importCollection")
@@ -144,31 +154,44 @@ public class HowToUseTransitionsTest {
 				.asTransitionTo(TransitionMapping.builder("mongod", StateID.of(RunningMongodProcess.class))
 					.build()));
 
-
-		String dot = Transitions.edgeGraphAsDot("mongoImport", mongoImportTransitions.asGraph());
-		System.out.println("---------------------");
-		System.out.println(dot);
-		System.out.println("---------------------");
-
 		try (TransitionWalker.ReachedState<RunningMongodProcess> mongoD = mongoImportTransitions.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 
 			try (TransitionWalker.ReachedState<ExecutedMongoImportProcess> running = mongoD.initState(StateID.of(ExecutedMongoImportProcess.class))) {
-				System.out.println("import done: "+running.current().returnCode());
-
+				recording.end();
 				assertThat(running.current().returnCode())
 					.describedAs("import successful")
 					.isEqualTo(0);
+				recording.begin();
 			}
 
 			try (MongoClient mongo = new MongoClient(serverAddress(mongoD.current().getServerAddress()))) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 
-				ArrayList<Object> names = Lists.newArrayList(col.find().map(doc -> doc.get("name")));
+				ArrayList<String> names = col.find()
+					.map(doc -> doc.getString("name"))
+					.into(new ArrayList<>());
 
-				assertThat(names).containsExactlyInAnyOrder("Cassandra","HBase","MongoDB");
+				assertThat(names).containsExactlyInAnyOrder("Cassandra", "HBase", "MongoDB");
 			}
+		}
+		recording.end();
+
+		String dot = Transitions.edgeGraphAsDot("mongoimport", mongoImportTransitions.asGraph());
+		recording.file("graph.svg", "UseCase-Mongod-MongoImport.svg", asSvg(dot));
+	}
+
+	private byte[] asSvg(String dot) {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			Graphviz.fromString(dot)
+//				.width(3200)
+				.render(Format.SVG_STANDALONE)
+				.toOutputStream(os);
+			return os.toByteArray();
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

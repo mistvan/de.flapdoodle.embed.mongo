@@ -176,7 +176,7 @@
                         <exclude>**/examples/**</exclude>
                     </excludes>
                     <systemPropertyVariables>
-                        <de.flapdoodle.testdoc.destination>${project.basedir}</de.flapdoodle.testdoc.destination>
+                        <de.flapdoodle.testdoc.destination>${project.basedir}/docs</de.flapdoodle.testdoc.destination>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -451,6 +451,22 @@
             <artifactId>de.flapdoodle.testdoc</artifactId>
             <version>1.6.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+            <version>0.18.1</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
