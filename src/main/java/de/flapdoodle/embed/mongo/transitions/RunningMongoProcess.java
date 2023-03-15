@@ -145,7 +145,7 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 //			LogWatchStreamProcessor logWatch = new LogWatchStreamProcessor(successMessage(), knownFailureMessages(),
 //				StreamToLineProcessor.wrap(processOutput.output()));
 			LOGGER.trace("setup logWatch");
-			SuccessMessageLineListener logWatch = SuccessMessageLineListener.of(successMessage(), knownFailureMessages(), "error");
+			SuccessMessageLineListener logWatch = errorMessageAwareLogWatch();
 
 			LOGGER.trace("connect io");
 			ReaderProcessor output = Processors.connect(process.getReader(), new ListeningStreamProcessor(StreamToLineProcessor.wrap(processOutput.output()), logWatch::inspect));
@@ -187,6 +187,11 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 		};
 	}
 
+	// VisibleForTesting
+	static SuccessMessageLineListener errorMessageAwareLogWatch() {
+		return SuccessMessageLineListener.of(successMessage(), knownFailureMessages(), "error");
+	}
+
 	private static List<String> successMessage() {
 		// old: waiting for connections on port
 		// since 4.4.5: Waiting for connections
@@ -199,7 +204,10 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 			"ERROR:(?<error>.*)",
 			"(?<error>error command line)",
 			"(?<error>Address already in use)",
-			"(?<error>error while loading shared libraries:.*)"
+			"(?<error>error while loading shared libraries:.*)",
+			"(?<error>SSLEAY32.dll was not found)",
+			"(?<error>LIBEAY32.dll was not found)",
+			"(?<error>the code execution cannot proceed because.*)"
 		);
 	}
 
