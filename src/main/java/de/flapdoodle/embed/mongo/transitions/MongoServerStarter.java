@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2011
- *   Michael Mosmann <michael@mosmann.de>
- *   Martin Jöhren <m.joehren@googlemail.com>
+ * Michael Mosmann <michael@mosmann.de>
+ * Martin Jöhren <m.joehren@googlemail.com>
  *
  * with contributions from
- * 	konstantin-ba@github,Archimedes Trajano	(trajano@github)
+ * konstantin-ba@github,Archimedes Trajano	(trajano@github)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -116,13 +116,17 @@ public abstract class MongoServerStarter<T extends RunningProcess> implements Tr
 		try {
 			RunningProcessFactory<T> factory = factory(20000, supportConfig, platform, net);
 
-			T running = RunningProcess.start(factory, processWorkingDir,  fileSet.executable(), arguments, environment, processConfig,
+			T running = RunningProcess.start(factory, processWorkingDir, fileSet.executable(), arguments, environment, processConfig,
 				processOutput, supportConfig);
 
 			return State.of(running, RunningProcess::stop);
 		}
 		catch (IOException ix) {
-			throw new RuntimeException("could not start process", ix);
+			String hint = "";
+			if (ix.getMessage().contains("Bad CPU type in executable")) {
+				hint = " - " + platform.toString();
+			}
+			throw new RuntimeException("could not start process" + hint, ix);
 		}
 	}
 
