@@ -48,9 +48,23 @@ Transitions mongod = Mongod.instance()
 
 All artifacts are cached. Even so the extracted results.
 
-### Unit Tests
+### Customize Server Port
 
-TODO
+Warning: maybe not as stable, as expected.
+
+#### ... by hand
+```java
+int port = Network.getFreeServerPort();
+```
+
+#### ... or with fixed value
+```java
+Mongod mongod = Mongod.builder()
+  .net(Start.to(Net.class).initializedWith(Net.defaults()
+    .withPort(12345)))
+  .build();
+```
+
 
 ### Customize Download URL
 
@@ -206,15 +220,6 @@ version = Version.Main.V2_2;
 version = Version.Main.PRODUCTION;
 // uses latest supported development version
 version = Version.Main.DEVELOPMENT;
-```
-
-### Use Free Server Port
-
-  Warning: maybe not as stable, as expected.
-
-#### ... by hand
-```java
-int port = Network.getFreeServerPort();
 ```
 
 ### Command Line Post Processing

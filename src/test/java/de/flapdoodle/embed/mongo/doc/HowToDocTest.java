@@ -31,6 +31,7 @@ import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.commands.MongosArguments;
 import de.flapdoodle.embed.mongo.commands.ServerAddress;
+import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -66,7 +67,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Optional;
@@ -138,6 +138,26 @@ public class HowToDocTest {
 
 		assertThatThrownBy(() -> mongod.walker().initState(StateID.of(RunningMongodProcess.class)))
 			.isInstanceOf(RuntimeException.class);
+	}
+
+	@Test
+	public void testFreeServerPort() throws IOException {
+		recording.begin();
+		int port = Network.getFreeServerPort();
+		recording.end();
+	}
+
+	@Test
+	public void customizeNetworkPort() {
+		recording.begin();
+		Mongod mongod = Mongod.builder()
+			.net(Start.to(Net.class).initializedWith(Net.defaults()
+				.withPort(12345)))
+			.build();
+		recording.end();
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
+			assertRunningMongoDB(running);
+		}
 	}
 
 	@Test
@@ -291,13 +311,6 @@ public class HowToDocTest {
 		version = Version.Main.PRODUCTION;
 		// uses latest supported development version
 		version = Version.Main.DEVELOPMENT;
-		recording.end();
-	}
-
-	@Test
-	public void testFreeServerPort() throws IOException {
-		recording.begin();
-		int port = Network.getFreeServerPort();
 		recording.end();
 	}
 

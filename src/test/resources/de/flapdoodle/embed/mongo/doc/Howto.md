@@ -26,9 +26,20 @@ ${customizeMongodByReplacement}
 
 All artifacts are cached. Even so the extracted results.
 
-### Unit Tests
+### Customize Server Port
 
-TODO
+Warning: maybe not as stable, as expected.
+
+#### ... by hand
+```java
+${testFreeServerPort}
+```
+
+#### ... or with fixed value
+```java
+${customizeNetworkPort}
+```
+
 
 ### Customize Download URL
 
@@ -77,15 +88,6 @@ ${testDefaultOutputToNone}
 ### Main Versions
 ```java
 ${testMainVersions}
-```
-
-### Use Free Server Port
-
-  Warning: maybe not as stable, as expected.
-
-#### ... by hand
-```java
-${testFreeServerPort}
 ```
 
 ### Command Line Post Processing
