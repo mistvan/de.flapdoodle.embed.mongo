@@ -51,7 +51,12 @@ public abstract class PackageOfCommandDistribution implements Transition<Package
 	@Value.Auxiliary
 	protected Package packageOf(Command command, Distribution distribution, DistributionBaseUrl baseUrl) {
 		Package relativePackage = legacyPackageResolverFactory().apply(command).packageFor(distribution);
-		return Package.of(relativePackage.archiveType(), relativePackage.fileSet(),  baseUrl.value() /*"https://fastdl.mongodb.org"*/+relativePackage.url());
+		return Package.builder()
+			.archiveType(relativePackage.archiveType())
+			.fileSet(relativePackage.fileSet())
+			.url(baseUrl.value() /*"https://fastdl.mongodb.org"*/+relativePackage.url())
+			.hint(relativePackage.hint())
+			.build();
 	}
 
 	@Value.Default

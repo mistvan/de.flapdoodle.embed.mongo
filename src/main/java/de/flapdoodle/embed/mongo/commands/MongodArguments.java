@@ -154,7 +154,7 @@ public abstract class MongodArguments {
 
 		builder.addIf(!version.enabled(Feature.DISABLE_USE_PREALLOC) && config.useNoPrealloc(), "--noprealloc");
 		builder.addIf(!version.enabled(Feature.DISABLE_USE_SMALL_FILES) && config.useSmallFiles(), "--smallfiles");
-		builder.addIf(config.useNoJournal() && !config.isConfigServer(),"--nojournal");
+		builder.addIf(!version.enabled(Feature.JOURNAL_ALWAYS_ON) && config.useNoJournal() && !config.isConfigServer(),"--nojournal");
 		builder.addIf(config.master(),"--master");
 
 		if (config.storageEngine().isPresent()) {

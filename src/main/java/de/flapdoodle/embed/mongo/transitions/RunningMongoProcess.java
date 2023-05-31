@@ -149,7 +149,7 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 
 			LOGGER.trace("connect io");
 			ReaderProcessor output = Processors.connect(process.getReader(), new ListeningStreamProcessor(StreamToLineProcessor.wrap(processOutput.output()), logWatch::inspect));
-			ReaderProcessor error = Processors.connect(process.getError(), StreamToLineProcessor.wrap(processOutput.error()));
+			ReaderProcessor error = Processors.connect(process.getError(), new ListeningStreamProcessor(StreamToLineProcessor.wrap(processOutput.error()), logWatch::inspect));
 			Runnable closeAllOutputs = () -> {
 				LOGGER.trace("ReaderProcessor.abortAll");
 				ReaderProcessor.abortAll(output, error);
@@ -203,6 +203,7 @@ public abstract class RunningMongoProcess extends RunningProcessImpl {
 			"(?<error>failed errno)",
 			"ERROR:(?<error>.*)",
 			"(?<error>error command line)",
+			"(?<error>Error parsing command line:.*)",
 			"(?<error>Address already in use)",
 			"(?<error>error while loading shared libraries:.*)",
 			"(?<error>SSLEAY32.dll was not found)",
