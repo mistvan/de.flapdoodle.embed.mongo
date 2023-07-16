@@ -256,7 +256,7 @@ class MongodTest {
 		try (TransitionWalker.ReachedState<RunningMongodProcess> outerMongod = mongod.start(Version.Main.PRODUCTION)) {
 			Assertions.assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
 				.isInstanceOf(RuntimeException.class)
-				.hasMessage("error on transition to State(de.flapdoodle.embed.mongo.transitions.RunningMongodProcess), rollback")
+				.hasMessageContaining("rollback after error on transition to State(de.flapdoodle.embed.mongo.transitions.RunningMongodProcess)")
 				.hasCauseInstanceOf(RuntimeException.class)
 				.cause()
 				.hasMessage("Could not start process: Address already in use");

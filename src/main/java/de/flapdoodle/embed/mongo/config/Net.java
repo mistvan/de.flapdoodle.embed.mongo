@@ -20,7 +20,6 @@
  */
 package de.flapdoodle.embed.mongo.config;
 
-import de.flapdoodle.embed.process.runtime.Network;
 import org.immutables.value.Value;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public abstract class Net {
 		if (getBindIp().isPresent()) {
 			return InetAddress.getByName(getBindIp().get());
 		}
-		return Network.getLocalHost();
+		return de.flapdoodle.net.Net.getLocalHost();
 	}
 
 	public static Net of(String bindIp, int port, boolean ipv6) {
@@ -64,9 +63,9 @@ public abstract class Net {
 
 	public static Net defaults() {
 		try {
-			InetAddress localHost = Network.getLocalHost();
-			int freeServerPort = Network.freeServerPort(localHost);
-			boolean localhostIsIPv6 = Network.localhostIsIPv6();
+			InetAddress localHost = de.flapdoodle.net.Net.getLocalHost();
+			int freeServerPort = de.flapdoodle.net.Net.freeServerPort(localHost);
+			boolean localhostIsIPv6 = de.flapdoodle.net.Net.localhostIsIPv6();
 
 			return builder()
 				.port(freeServerPort)
