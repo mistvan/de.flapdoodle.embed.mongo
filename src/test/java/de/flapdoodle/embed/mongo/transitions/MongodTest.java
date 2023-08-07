@@ -49,6 +49,7 @@ import de.flapdoodle.types.Pair;
 import org.assertj.core.api.Assertions;
 import org.bson.Document;
 import org.junit.Assume;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -264,6 +265,7 @@ class MongodTest {
 	}
 
 	@Test
+	@Disabled("does not run on ubuntu>=22.x because 3.6 uses libssl.so.1.0.0")
 	public void startLegacyMongodWichDontSupportBindIpArgument() throws IOException {
 		Net net = Net.of("localhost",
 			Network.freeServerPort(Network.getLocalHost()),
@@ -331,7 +333,7 @@ class MongodTest {
 	@ParameterizedTest
 	@MethodSource("testableDistributions")
 	public void extractArtifact(OS os, CommonArchitecture arch, Version.Main version) {
-		if (skipThisVersion(os, version, arch.bitSize())) {
+		if (skipThisVersion(os, version, arch.cpuType(), arch.bitSize())) {
 			Assume.assumeTrue(true);
 		} else {
 			assertCanExtractArtifact(distributionOf(version, os, arch));
@@ -351,13 +353,16 @@ class MongodTest {
 		}
 	}
 
-	private static boolean skipThisVersion(OS os, IFeatureAwareVersion version, BitSize bitsize) {
+	private static boolean skipThisVersion(OS os, IFeatureAwareVersion version, CPUType cpuType, BitSize bitsize) {
 		if (version.enabled(Feature.ONLY_64BIT) && bitsize==BitSize.B32) {
 			return true;
 		}
 
 		if ((os.type() == OSType.OS_X) && (bitsize == BitSize.B32)) {
 			// there is no osx 32bit version for v2.2.1 and above, so we dont check
+			return true;
+		}
+		if (os.type() == OSType.OS_X && cpuType==CPUType.ARM) {
 			return true;
 		}
 		if ((os.type() == OSType.Solaris)  && ((bitsize == BitSize.B32) || version.enabled(Feature.NO_SOLARIS_SUPPORT))) {
@@ -367,6 +372,7 @@ class MongodTest {
 			return true;
 		}
 		if (os.type() == OSType.Windows) {
+			if (cpuType==CPUType.ARM) return true;
 			// there is no windows 2008 version for 1.8.5
 			return version.asInDownloadPath().equals(Version.V1_8_5.asInDownloadPath());
 		}
