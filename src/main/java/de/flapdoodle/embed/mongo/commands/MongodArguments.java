@@ -62,6 +62,16 @@ public abstract class MongodArguments {
 	}
 
 	@Value.Default
+	public int verbosityLevel() {
+		return 1;
+	}
+
+	@Value.Default
+	public boolean isQuiet() {
+		return false;
+	}
+
+	@Value.Default
 	public boolean useNoPrealloc() {
 		return true;
 	}
@@ -161,7 +171,13 @@ public abstract class MongodArguments {
 			builder.addIf(version.enabled(Feature.STORAGE_ENGINE), "--storageEngine", config.storageEngine().get());
 		}
 
-		builder.addIf(config.isVerbose(),"-v");
+//		if (!version.enabled())
+		if (version.enabled(Feature.VERBOSITY_LEVEL)) {
+			builder.addIf(config.isVerbose(), "-" + verbosityLevelAsString(config.verbosityLevel()));
+		} else {
+			builder.addIf(config.isVerbose(), "-v");
+		}
+		builder.addIf(config.isQuiet(),"--quiet");
 
 		builder.addIf(!version.enabled(Feature.NO_HTTP_INTERFACE_ARG),"--nohttpinterface");
 
@@ -186,6 +202,20 @@ public abstract class MongodArguments {
 		builder.addIf(version.enabled(Feature.TEXT_SEARCH) && config.enableTextSearch(),"--setParameter","textSearchEnabled=true");
 
 		return builder.build();
+	}
+
+	private static String verbosityLevelAsString(int level) {
+		switch (level) {
+			case 2:
+				return "vv";
+			case 3:
+				return "vvv";
+			case 4:
+				return "vvvv";
+			case 5:
+				return "vvvvv";
+		}
+		return "v";
 	}
 
 	private static List<String> warpWithNumaSupport(Platform platform, List<String> commands) {

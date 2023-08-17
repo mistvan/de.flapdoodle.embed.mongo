@@ -70,7 +70,8 @@ public class AccessControlAndListCollectionsActionTest {
 		return Stream.of(
 			Arguments.of(Version.Main.V4_4),
 			Arguments.of(Version.Main.V5_0),
-			Arguments.of(Version.Main.V6_0)
+			Arguments.of(Version.Main.V6_0),
+			Arguments.of(Version.Main.V7_0_RC)
 		);
 	}
 

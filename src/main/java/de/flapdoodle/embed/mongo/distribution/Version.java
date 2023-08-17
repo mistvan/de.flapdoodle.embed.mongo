@@ -265,27 +265,27 @@ public enum Version implements IFeatureAwareVersion, HasMongotoolsPackage {
 	private final String specificVersion;
 	private final FeatureSet features;
 	private final NumericVersion numericVersion;
-	private final MongotoolsVersion.Main mongodumpVersion;
+	private final MongotoolsVersion.Main mongoToolsVersion;
 
 		Version(String vName) {
 				this.specificVersion = vName;
 				this.features = FeatureSetResolver.defaultInstance()
 					.featuresOf(de.flapdoodle.embed.process.distribution.Version.of(specificVersion));
 				this.numericVersion = NumericVersion.of(vName);
-				this.mongodumpVersion = null;
+				this.mongoToolsVersion = null;
 		}
 
-		Version(String vName, MongotoolsVersion.Main mongodumpVersion) {
+		Version(String vName, MongotoolsVersion.Main mongoToolsVersion) {
 				this.specificVersion = vName;
 				this.features = FeatureSetResolver.defaultInstance()
 					.featuresOf(de.flapdoodle.embed.process.distribution.Version.of(specificVersion));
 				this.numericVersion = NumericVersion.of(vName);
-				this.mongodumpVersion = mongodumpVersion;
+				this.mongoToolsVersion = mongoToolsVersion;
 		}
 
 		@Override
 		public Optional<MongotoolsVersion.Main> mongotoolsVersion() {
-				return Optional.ofNullable(mongodumpVersion);
+				return Optional.ofNullable(mongoToolsVersion);
 		}
 		@Override
 	public String asInDownloadPath() {
@@ -385,7 +385,7 @@ public enum Version implements IFeatureAwareVersion, HasMongotoolsPackage {
 		}
 
 		@Override
-			public Optional<MongotoolsVersion.Main> mongotoolsVersion() {
+		public Optional<? extends de.flapdoodle.embed.process.distribution.Version> mongotoolsVersion() {
 					return _latest instanceof HasMongotoolsPackage
 							? ((HasMongotoolsPackage) _latest).mongotoolsVersion()
 							: Optional.empty();
