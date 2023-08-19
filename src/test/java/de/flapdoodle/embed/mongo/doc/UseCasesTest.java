@@ -36,6 +36,7 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.Transitions;
+import de.flapdoodle.reverse.graph.TransitionGraph;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
 import de.flapdoodle.testdoc.Recorder;
@@ -80,7 +81,7 @@ public class UseCasesTest {
 		}
 
 		recording.end();
-		String dot = Transitions.edgeGraphAsDot("mongod", transitions.asGraph());
+		String dot = TransitionGraph.edgeGraphAsDot("mongod", transitions);
 		recording.file("graph.svg", "UseCase-Mongod.svg", asSvg(dot));
 	}
 
@@ -113,7 +114,7 @@ public class UseCasesTest {
 					.describedAs("mongo import was successful")
 					.isEqualTo(0);
 
-				String dot = Transitions.edgeGraphAsDot("mongoImport", mongoImportTransitions.asGraph());
+				String dot = TransitionGraph.edgeGraphAsDot("mongoImport", mongoImportTransitions);
 				recording.file("graph.svg", "UseCase-MongoImport.svg", asSvg(dot));
 
 				recording.begin();
@@ -178,7 +179,7 @@ public class UseCasesTest {
 		}
 		recording.end();
 
-		String dot = Transitions.edgeGraphAsDot("mongoimport", mongoImportTransitions.asGraph());
+		String dot = TransitionGraph.edgeGraphAsDot("mongoimport", mongoImportTransitions);
 		recording.file("graph.svg", "UseCase-Mongod-MongoImport.svg", asSvg(dot));
 	}
 
