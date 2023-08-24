@@ -509,7 +509,7 @@
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo.packageresolver</artifactId>
-            <version>4.9.0</version>
+            <version>4.9.1</version>
         </dependency>
     </dependencies>
 </project>
