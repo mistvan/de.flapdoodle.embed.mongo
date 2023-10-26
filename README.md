@@ -54,7 +54,7 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 	<dependency>
 		<groupId>de.flapdoodle.embed</groupId>
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
-		<version>4.9.2</version>
+		<version>4.9.3</version>
 	</dependency>
 
 ### Spring Integration
@@ -72,3 +72,4 @@ If you have any trouble in using them fell free to create an issue.
 - [Spring 2.6.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.6.x)
 - [Spring 2.7.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.7.x)
 - [Spring 3.0.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-3.0.x)
+- [Spring 3.1.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-3.1.x)
