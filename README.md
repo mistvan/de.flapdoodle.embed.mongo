@@ -66,7 +66,7 @@ It should behave mostly like the original spring integration, but there are some
 - version in 'spring.mongodb.embedded.version' is used in package resolver and is not matched against version enum.
 - 'spring.mongodb.embedded.features' is not supported (not the way to change the config of mongodb)
 
-If you have any trouble in using them fell free to create an issue.
+If you have any trouble in using them feel free to create an issue.
 
 - [Spring 2.5.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.5.x)
 - [Spring 2.6.x](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-2.6.x)
