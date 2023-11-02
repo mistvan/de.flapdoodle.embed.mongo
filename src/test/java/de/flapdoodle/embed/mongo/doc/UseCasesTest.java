@@ -32,6 +32,7 @@ import de.flapdoodle.embed.mongo.transitions.ExecutedMongoImportProcess;
 import de.flapdoodle.embed.mongo.transitions.MongoImport;
 import de.flapdoodle.embed.mongo.transitions.Mongod;
 import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.TransitionMapping;
 import de.flapdoodle.reverse.TransitionWalker;
@@ -48,11 +49,15 @@ import guru.nidi.graphviz.engine.Graphviz;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -83,6 +88,43 @@ public class UseCasesTest {
 		recording.end();
 		String dot = TransitionGraph.edgeGraphAsDot("mongod", transitions);
 		recording.file("graph.svg", "UseCase-Mongod.svg", asSvg(dot));
+	}
+
+	@Test
+	public void startMongoDWithPersistentDatabase(@TempDir Path tempDir) throws IOException {
+		Path persistentDir = tempDir.resolve("mongo-db-" + UUID.randomUUID());
+		Files.createDirectory(persistentDir);
+
+		recording.begin();
+		Transitions transitions = Mongod.instance()
+			.withDatabaseDir(Start.to(DatabaseDir.class)
+				.initializedWith(DatabaseDir.of(persistentDir)))
+			.transitions(Version.Main.PRODUCTION);
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
+
+			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+				MongoDatabase db = mongo.getDatabase("test");
+				MongoCollection<Document> col = db.getCollection("testCol");
+				col.insertOne(new Document("testDoc", new Date()));
+				assertThat(col.countDocuments()).isEqualTo(1L);
+			}
+		}
+
+		try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
+			.initState(StateID.of(RunningMongodProcess.class))) {
+
+			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+				MongoDatabase db = mongo.getDatabase("test");
+				MongoCollection<Document> col = db.getCollection("testCol");
+				assertThat(col.countDocuments()).isEqualTo(1L);
+			}
+		}
+
+		recording.end();
+		String dot = TransitionGraph.edgeGraphAsDot("mongod", transitions);
+		recording.file("graph.svg", "UseCase-Mongod-PersistentDir.svg", asSvg(dot));
 	}
 
 	@Test
@@ -182,6 +224,7 @@ public class UseCasesTest {
 		String dot = TransitionGraph.edgeGraphAsDot("mongoimport", mongoImportTransitions);
 		recording.file("graph.svg", "UseCase-Mongod-MongoImport.svg", asSvg(dot));
 	}
+
 
 	private byte[] asSvg(String dot) {
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {

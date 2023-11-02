@@ -17,6 +17,39 @@ try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.w
 ```
 
 ![start mongod](UseCase-Mongod.svg)
+
+## start mongod with persistent database
+
+```java
+Transitions transitions = Mongod.instance()
+  .withDatabaseDir(Start.to(DatabaseDir.class)
+    .initializedWith(DatabaseDir.of(persistentDir)))
+  .transitions(Version.Main.PRODUCTION);
+
+try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
+  .initState(StateID.of(RunningMongodProcess.class))) {
+
+  try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+    MongoDatabase db = mongo.getDatabase("test");
+    MongoCollection<Document> col = db.getCollection("testCol");
+    col.insertOne(new Document("testDoc", new Date()));
+    assertThat(col.countDocuments()).isEqualTo(1L);
+  }
+}
+
+try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
+  .initState(StateID.of(RunningMongodProcess.class))) {
+
+  try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+    MongoDatabase db = mongo.getDatabase("test");
+    MongoCollection<Document> col = db.getCollection("testCol");
+    assertThat(col.countDocuments()).isEqualTo(1L);
+  }
+}
+
+```
+
+![start mongod](UseCase-Mongod-PersistentDir.svg)
                
 ## json import with mongoimport into mongod
 

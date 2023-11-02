@@ -7,6 +7,14 @@ ${startMongoD}
 ```
 
 ![start mongod](${startMongoD.graph.svg})
+
+## start mongod with persistent database
+
+```java
+${startMongoDWithPersistentDatabase}
+```
+
+![start mongod](${startMongoDWithPersistentDatabase.graph.svg})
                
 ## json import with mongoimport into mongod
 
