@@ -55,12 +55,14 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 	<dependency>
 		<groupId>de.flapdoodle.embed</groupId>
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
-		<version>4.9.3</version>
+		<version>4.10.0</version>
 	</dependency>
 
 ### Changelog
 
 #### Unreleased
+
+#### 4.10.0
 
 - customize package resolving
 - use user info in download base url as basic auth information ([see](docs/Customizations.md#customize-download-url))
