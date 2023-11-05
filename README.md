@@ -63,7 +63,7 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 #### Unreleased
 
 - customize package resolving
-- use user info in download base url as basic auth information 
+- use user info in download base url as basic auth information ([see](docs/Customizations.md#customize-download-url))
 
 #### 4.9.3
 
