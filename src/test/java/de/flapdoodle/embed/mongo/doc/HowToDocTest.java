@@ -141,167 +141,6 @@ public class HowToDocTest {
 	}
 
 	@Test
-	public void testFreeServerPort() throws IOException {
-		recording.begin();
-		int port = Network.getFreeServerPort();
-		recording.end();
-	}
-
-	@Test
-	public void customizeNetworkPort() {
-		recording.begin();
-		Mongod mongod = Mongod.builder()
-			.net(Start.to(Net.class).initializedWith(Net.defaults()
-				.withPort(12345)))
-			.build();
-		recording.end();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			assertRunningMongoDB(running);
-		}
-	}
-
-	@Test
-	public void testCustomizeDownloadURL() {
-		recording.begin();
-		Mongod mongod = new Mongod() {
-			@Override
-			public Transition<DistributionBaseUrl> distributionBaseUrl() {
-				return Start.to(DistributionBaseUrl.class)
-					.initializedWith(DistributionBaseUrl.of("http://my.custom.download.domain"));
-			}
-		};
-		recording.end();
-
-		assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
-			.isInstanceOf(RuntimeException.class);
-	}
-
-	@Test
-	public void testCustomProxy() {
-		recording.begin();
-		Mongod mongod = new Mongod() {
-			@Override
-			public DownloadPackage downloadPackage() {
-				return DownloadPackage.withDefaults()
-					.withDownloadConfig(DownloadConfig.defaults()
-						.withProxyFactory(new HttpProxyFactory("fooo", 1234)));
-			}
-		};
-		recording.end();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			assertRunningMongoDB(running);
-		}
-	}
-
-	@Test
-	public void testCustomDownloader() {
-		recording.begin();
-		DownloadToPath custom = new DownloadToPath() {
-			@Override
-			public void download(URL url, Path destination,
-				Optional<Proxy> proxy, String userAgent, TimeoutConfig timeoutConfig,
-				DownloadCopyListener copyListener) throws IOException {
-				// download url to destination
-			}
-		};
-
-		Mongod mongod = Mongod.instance()
-			.withDownloadPackage(DownloadPackage.withDefaults()
-				.withDownloadToPath(custom));
-		recording.end();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			assertRunningMongoDB(running);
-		}
-	}
-
-	@Test
-	public void testCustomizeArtifactStorage() {
-		recording.begin();
-		Mongod mongod = new Mongod() {
-			@Override
-			public Transition<PersistentDir> persistentBaseDir() {
-				return Start.to(PersistentDir.class)
-					.providedBy(PersistentDir.inUserHome(".embeddedMongodbCustomPath")
-						.mapToUncheckedException(RuntimeException::new));
-			}
-		};
-		recording.end();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			assertRunningMongoDB(running);
-		}
-	}
-
-	@Test
-	public void testCustomOutputToConsolePrefix() {
-		recording.begin();
-		Mongod mongod = new Mongod() {
-			@Override
-			public Transition<ProcessOutput> processOutput() {
-				return Start.to(ProcessOutput.class)
-					.initializedWith(ProcessOutput.builder()
-						.output(Processors.namedConsole("[mongod>]"))
-						.error(Processors.namedConsole("[MONGOD>]"))
-						.commands(Processors.namedConsole("[console>]"))
-						.build()
-					)
-					.withTransitionLabel("create named console");
-			}
-		};
-		recording.end();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			assertRunningMongoDB(running);
-		}
-	}
-
-	@Test
-	public void testCustomOutputToFile() {
-		recording.include(FileStreamProcessor.class, Includes.WithoutImports, Includes.WithoutPackage, Includes.Trim);
-		recording.begin();
-		Mongod mongod = new Mongod() {
-			@Override
-			public Transition<ProcessOutput> processOutput() {
-				return Start.to(ProcessOutput.class)
-					.providedBy(Try.<ProcessOutput, IOException>supplier(() -> ProcessOutput.builder()
-								.output(Processors.named("[mongod>]",
-							new FileStreamProcessor(File.createTempFile("mongod", "log"))))
-							.error(new FileStreamProcessor(File.createTempFile("mongod-error", "log")))
-							.commands(Processors.namedConsole("[console>]"))
-						.build())
-					.mapToUncheckedException(RuntimeException::new))
-					.withTransitionLabel("create named console");
-			}
-		};
-		recording.end();
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			assertRunningMongoDB(running);
-		}
-	}
-
-	@Test
-	public void testDefaultOutputToNone() {
-		recording.begin();
-		Mongod mongod = new Mongod() {
-			@Override public Transition<ProcessOutput> processOutput() {
-				return Start.to(ProcessOutput.class)
-					.initializedWith(ProcessOutput.silent())
-					.withTransitionLabel("no output");
-			}
-		};
-
-		try (TransitionWalker.ReachedState<RunningMongodProcess> running = mongod.start(Version.Main.PRODUCTION)) {
-			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
-				MongoDatabase db = mongo.getDatabase("test");
-				MongoCollection<Document> col = db.getCollection("testCol");
-				col.insertOne(new Document("testDoc", new Date()));
-				recording.end();
-				assertThat(col.countDocuments()).isEqualTo(1L);
-				recording.begin();
-			}
-		}
-		recording.end();
-	}
-
-	@Test
 	public void testMainVersions() {
 		recording.begin();
 		IFeatureAwareVersion version = Version.V2_2_5;
@@ -356,20 +195,6 @@ public class HowToDocTest {
 			.isDirectory()
 			.isDirectoryContaining(path -> path.getFileName().toString().startsWith("WiredTiger.lock"));
 
-		recording.end();
-	}
-
-	@Test
-	public void testCustomDatabaseDirectory(@TempDir Path customDatabaseDir) {
-		recording.begin();
-		Mongod mongod = new Mongod() {
-			@Override public Transition<DatabaseDir> databaseDir() {
-				return Start.to(DatabaseDir.class).initializedWith(DatabaseDir.of(customDatabaseDir));
-			}
-		};
-
-		// TODO replication config? replSetName, oplogSize?
-		// see MongosTest#clusterSample
 		recording.end();
 	}
 
@@ -499,7 +324,7 @@ public class HowToDocTest {
 	}
 
 
-	private static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) {
+	protected static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) {
 		try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
 			MongoDatabase db = mongo.getDatabase("test");
 			MongoCollection<Document> col = db.getCollection("testCol");

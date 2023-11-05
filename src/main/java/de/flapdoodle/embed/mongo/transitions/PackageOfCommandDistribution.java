@@ -44,13 +44,13 @@ public abstract class PackageOfCommandDistribution implements Transition<Package
 	}
 
 	@Value.Default
-	protected Function<Command, PackageResolver> legacyPackageResolverFactory() {
+	protected Function<Command, PackageResolver> commandPackageResolver() {
 		return PlatformPackageResolver::new;
 	}
 
 	@Value.Auxiliary
 	protected Package packageOf(Command command, Distribution distribution, DistributionBaseUrl baseUrl) {
-		Package relativePackage = legacyPackageResolverFactory().apply(command).packageFor(distribution);
+		Package relativePackage = commandPackageResolver().apply(command).packageFor(distribution);
 		return Package.builder()
 			.archiveType(relativePackage.archiveType())
 			.fileSet(relativePackage.fileSet())

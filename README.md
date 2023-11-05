@@ -47,7 +47,8 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 ## Howto
                     
 - [Use Cases](docs/UseCases.md)
-- [Customizations](docs/Howto.md)
+- [Basics](docs/Howto.md)
+- [Customizations](docs/Customizations.md)
 
 ### Maven
 
@@ -56,6 +57,16 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
 		<version>4.9.3</version>
 	</dependency>
+
+### Changelog
+
+#### Unrelease
+
+- customize package resolving
+
+#### 4.9.3
+
+- all the good stuff
 
 ### Spring Integration
 
