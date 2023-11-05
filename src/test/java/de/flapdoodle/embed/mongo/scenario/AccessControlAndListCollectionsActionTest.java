@@ -71,7 +71,7 @@ public class AccessControlAndListCollectionsActionTest {
 			Arguments.of(Version.Main.V4_4),
 			Arguments.of(Version.Main.V5_0),
 			Arguments.of(Version.Main.V6_0),
-			Arguments.of(Version.Main.V7_0_RC)
+			Arguments.of(Version.Main.V7_0)
 		);
 	}
 
