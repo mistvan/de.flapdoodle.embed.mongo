@@ -97,6 +97,22 @@ public class CustomizationsTest {
 	}
 
 	@Test
+	public void useBasicAuthInDownloadUrl() {
+		recording.begin();
+		Mongod mongod = new Mongod() {
+			@Override
+			public Transition<DistributionBaseUrl> distributionBaseUrl() {
+				return Start.to(DistributionBaseUrl.class)
+					.initializedWith(DistributionBaseUrl.of("http://user:password@my.custom.download.domain"));
+			}
+		};
+		recording.end();
+
+		assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
+			.isInstanceOf(RuntimeException.class);
+	}
+
+	@Test
 	public void testCustomProxy() {
 		recording.begin();
 		Mongod mongod = new Mongod() {

@@ -29,6 +29,18 @@ Mongod mongod = new Mongod() {
   }
 };
 ```
+    
+You can provide basic auth information if needed:
+
+```java
+Mongod mongod = new Mongod() {
+  @Override
+  public Transition<DistributionBaseUrl> distributionBaseUrl() {
+    return Start.to(DistributionBaseUrl.class)
+      .initializedWith(DistributionBaseUrl.of("http://user:password@my.custom.download.domain"));
+  }
+};
+``` 
 
 ## Customize Proxy for Download
 ```java

@@ -20,6 +20,12 @@ ${customizeNetworkPort}
 ```java
 ${testCustomizeDownloadURL}
 ```
+    
+You can provide basic auth information if needed:
+
+```java
+${useBasicAuthInDownloadUrl}
+``` 
 
 ## Customize Proxy for Download
 ```java
