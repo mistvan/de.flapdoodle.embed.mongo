@@ -62,6 +62,10 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 
 #### Unreleased
 
+#### 4.10.1
+
+- debian 12/13 package resolver bugfix
+
 #### 4.10.0
 
 - customize package resolving
