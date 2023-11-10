@@ -45,6 +45,7 @@ import de.flapdoodle.reverse.StateID;
 import de.flapdoodle.reverse.Transition;
 import de.flapdoodle.reverse.TransitionWalker;
 import de.flapdoodle.reverse.transitions.Start;
+import de.flapdoodle.reverse.types.TypeNames;
 import de.flapdoodle.types.Pair;
 import org.assertj.core.api.Assertions;
 import org.bson.Document;
@@ -213,7 +214,7 @@ class MongodTest {
 			long timeSpendOnTeardown=end-endEntry.second();
 			long timeStateIsActive=endEntry.second()-startEntry.second();
 
-			System.out.printf(columnFormat, startEntry.first().type().getSimpleName(), timeSpendOnStart, timeSpendOnTeardown, timeStateIsActive);
+			System.out.printf(columnFormat, TypeNames.typeName(startEntry.first().type()), timeSpendOnStart, timeSpendOnTeardown, timeStateIsActive);
 
 			end=endEntry.second();
 			start=startEntry.second();
@@ -257,7 +258,7 @@ class MongodTest {
 		try (TransitionWalker.ReachedState<RunningMongodProcess> outerMongod = mongod.start(Version.Main.PRODUCTION)) {
 			Assertions.assertThatThrownBy(() -> mongod.start(Version.Main.PRODUCTION))
 				.isInstanceOf(RuntimeException.class)
-				.hasMessageContaining("rollback after error on transition to State(de.flapdoodle.embed.mongo.transitions.RunningMongodProcess)")
+				.hasMessageContaining("rollback after error on transition to State(RunningMongodProcess)")
 				.hasCauseInstanceOf(RuntimeException.class)
 				.cause()
 				.hasMessage("Could not start process: Address already in use");
