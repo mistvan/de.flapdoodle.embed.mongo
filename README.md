@@ -55,12 +55,16 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 	<dependency>
 		<groupId>de.flapdoodle.embed</groupId>
 		<artifactId>de.flapdoodle.embed.mongo</artifactId>
-		<version>4.10.0</version>
+		<version>4.10.2</version>
 	</dependency>
 
 ### Changelog
 
 #### Unreleased
+
+#### 4.10.2
+
+- package resolver dep upgrade
 
 #### 4.10.1
 
