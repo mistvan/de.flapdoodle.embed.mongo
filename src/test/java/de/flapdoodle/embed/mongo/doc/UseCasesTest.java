@@ -21,7 +21,8 @@
 package de.flapdoodle.embed.mongo.doc;
 
 import com.google.common.io.Resources;
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
@@ -75,7 +76,8 @@ public class UseCasesTest {
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+			com.mongodb.ServerAddress serverAddress = serverAddress(running.current().getServerAddress());
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 				recording.end();
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
@@ -104,7 +106,8 @@ public class UseCasesTest {
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+			com.mongodb.ServerAddress serverAddress = serverAddress(running.current().getServerAddress());
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
 				col.insertOne(new Document("testDoc", new Date()));
@@ -115,7 +118,8 @@ public class UseCasesTest {
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = transitions.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+			com.mongodb.ServerAddress serverAddress = serverAddress(running.current().getServerAddress());
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
 				assertThat(col.countDocuments()).isEqualTo(1L);
@@ -162,7 +166,8 @@ public class UseCasesTest {
 				recording.begin();
 			}
 
-			try (MongoClient mongo = new MongoClient(serverAddress(mongoD.current().getServerAddress()))) {
+			com.mongodb.ServerAddress serverAddress = serverAddress(mongoD.current().getServerAddress());
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 
@@ -208,7 +213,8 @@ public class UseCasesTest {
 				recording.begin();
 			}
 
-			try (MongoClient mongo = new MongoClient(serverAddress(mongoD.current().getServerAddress()))) {
+			com.mongodb.ServerAddress serverAddress = serverAddress(mongoD.current().getServerAddress());
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 

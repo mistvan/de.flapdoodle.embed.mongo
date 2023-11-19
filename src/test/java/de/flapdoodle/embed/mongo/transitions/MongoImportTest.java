@@ -22,7 +22,8 @@ package de.flapdoodle.embed.mongo.transitions;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.ImmutableMongoImportArguments;
@@ -118,7 +119,8 @@ class MongoImportTest {
 
 	private static Consumer<ServerAddress> onTestCollection(Consumer<MongoCollection<Document>> onCollection) {
 		return serverAddress -> {
-			try (MongoClient mongo = new MongoClient(serverAddress(serverAddress))) {
+			com.mongodb.ServerAddress serverAddress1 = serverAddress(serverAddress);
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress1)) {
 				MongoDatabase db = mongo.getDatabase("importDatabase");
 				MongoCollection<Document> col = db.getCollection("importCollection");
 

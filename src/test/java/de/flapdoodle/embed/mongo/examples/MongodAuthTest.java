@@ -22,11 +22,15 @@ package de.flapdoodle.embed.mongo.examples;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.embed.mongo.client.AuthenticationSetup;
+import de.flapdoodle.embed.mongo.client.ClientActions;
+import de.flapdoodle.embed.mongo.client.SyncClientAdapter;
+import de.flapdoodle.embed.mongo.client.UsernamePassword;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -41,9 +45,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static de.flapdoodle.embed.mongo.MongoClientUtil.mongoClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MongodAuthTest {
@@ -62,7 +66,7 @@ public class MongodAuthTest {
 		try (final TransitionWalker.ReachedState<RunningMongodProcess> running = startMongod(true)) {
 			final ServerAddress address = getServerAddress(running);
 
-			try (final MongoClient clientWithoutCredentials = new MongoClient(address)) {
+			try (final MongoClient clientWithoutCredentials = MongoClients.create("mongodb://" + address)) {
 				// do nothing
 			}
 		}
@@ -71,12 +75,13 @@ public class MongodAuthTest {
 	@Test
 	public void customRole() {
 		String roleName = "listColls";
-		Listener withRunningMongod = EnableAuthentication.of(USERNAME_ADMIN, PASSWORD_ADMIN)
+
+		Listener withRunningMongod = ClientActions.setupAuthentication(new SyncClientAdapter(), DB_ADMIN, AuthenticationSetup.of(UsernamePassword.of(USERNAME_ADMIN, PASSWORD_ADMIN))
 			.withEntries(
-				EnableAuthentication.role(DB_TEST, COLL_TEST, roleName).withActions("listCollections"),
-				EnableAuthentication.user(DB_TEST, USERNAME_NORMAL_USER, PASSWORD_NORMAL_USER).withRoles(roleName, "readWrite")
-			)
-			.withRunningMongod();
+				AuthenticationSetup.role(DB_TEST, COLL_TEST, roleName)
+					.withActions("listCollections"),
+				AuthenticationSetup.user(DB_TEST, UsernamePassword.of(USERNAME_NORMAL_USER, PASSWORD_NORMAL_USER)).withRoles(roleName, "readWrite")
+			));
 
 
 		try (final TransitionWalker.ReachedState<RunningMongodProcess> running = startMongod(true, withRunningMongod)) {
@@ -85,7 +90,7 @@ public class MongodAuthTest {
 			final MongoCredential credentialAdmin =
 				MongoCredential.createCredential(USERNAME_ADMIN, DB_ADMIN, PASSWORD_ADMIN.toCharArray());
 
-			try (final MongoClient clientAdmin = new MongoClient(address, credentialAdmin, MongoClientOptions.builder().build())) {
+			try (final MongoClient clientAdmin = mongoClient(address, credentialAdmin)) {
 				final MongoDatabase db = clientAdmin.getDatabase(DB_TEST);
 				db.getCollection(COLL_TEST)
 					.insertOne(new Document(ImmutableMap.of("key", "value")));
@@ -94,8 +99,7 @@ public class MongodAuthTest {
 			final MongoCredential credentialNormalUser =
 				MongoCredential.createCredential(USERNAME_NORMAL_USER, DB_TEST, PASSWORD_NORMAL_USER.toCharArray());
 
-			try (final MongoClient clientNormalUser =
-				new MongoClient(address, credentialNormalUser, MongoClientOptions.builder().build())) {
+			try (final MongoClient clientNormalUser =mongoClient(address, credentialNormalUser)) {
 				final ArrayList<String> actual = clientNormalUser.getDatabase(DB_TEST).listCollectionNames().into(new ArrayList<>());
 				assertThat(actual).containsExactly(COLL_TEST);
 			}
@@ -105,11 +109,10 @@ public class MongodAuthTest {
 	@Test
 	@Disabled("readAnyDatabase is not assignable")
 	public void readAnyDatabaseRole() {
-		Listener withRunningMongod = EnableAuthentication.of(USERNAME_ADMIN, PASSWORD_ADMIN)
+		Listener withRunningMongod = ClientActions.setupAuthentication(new SyncClientAdapter(), DB_ADMIN, AuthenticationSetup.of(UsernamePassword.of(USERNAME_ADMIN, PASSWORD_ADMIN))
 			.withEntries(
-				EnableAuthentication.user(DB_TEST, USERNAME_NORMAL_USER, PASSWORD_NORMAL_USER).withRoles("readAnyDatabase")
-			)
-			.withRunningMongod();
+				AuthenticationSetup.user(DB_TEST, UsernamePassword.of(USERNAME_NORMAL_USER, PASSWORD_NORMAL_USER)).withRoles("readAnyDatabase")
+			));
 
 		try (final TransitionWalker.ReachedState<RunningMongodProcess> running = startMongod(withRunningMongod)) {
 			final ServerAddress address = getServerAddress(running);
@@ -122,7 +125,7 @@ public class MongodAuthTest {
 			final MongoCredential credentialAdmin =
 				MongoCredential.createCredential(USERNAME_ADMIN, DB_ADMIN, PASSWORD_ADMIN.toCharArray());
 
-			try (final MongoClient clientAdmin = new MongoClient(address, credentialAdmin, MongoClientOptions.builder().build())) {
+			try (final MongoClient clientAdmin = mongoClient(address, credentialAdmin)) {
 				final MongoDatabase db = clientAdmin.getDatabase(DB_TEST);
 //				// Create normal user and grant them the builtin "readAnyDatabase" role.
 //				// FIXME This unexpectedly fails with "No role named readAnyDatabase@test-db".
@@ -134,8 +137,7 @@ public class MongodAuthTest {
 			final MongoCredential credentialNormalUser =
 				MongoCredential.createCredential(USERNAME_NORMAL_USER, DB_TEST, PASSWORD_NORMAL_USER.toCharArray());
 
-			try (final MongoClient clientNormalUser =
-				new MongoClient(address, credentialNormalUser, MongoClientOptions.builder().build())) {
+			try (final MongoClient clientNormalUser = mongoClient(address, credentialNormalUser)) {
 				final ArrayList<String> actual = clientNormalUser.getDatabase(DB_TEST).listCollectionNames().into(new ArrayList<>());
 				assertThat(actual)
 					.containsExactly(COLL_TEST);
@@ -145,11 +147,10 @@ public class MongodAuthTest {
 
 	@Test
 	public void readRole() {
-		Listener withRunningMongod = EnableAuthentication.of(USERNAME_ADMIN, PASSWORD_ADMIN)
+		Listener withRunningMongod = ClientActions.setupAuthentication(new SyncClientAdapter(), DB_ADMIN, AuthenticationSetup.of(UsernamePassword.of(USERNAME_ADMIN, PASSWORD_ADMIN))
 			.withEntries(
-				EnableAuthentication.user(DB_TEST, USERNAME_NORMAL_USER, PASSWORD_NORMAL_USER).withRoles("read")
-			)
-			.withRunningMongod();
+				AuthenticationSetup.user(DB_TEST, UsernamePassword.of(USERNAME_NORMAL_USER, PASSWORD_NORMAL_USER)).withRoles("read")
+			));
 
 		try (final TransitionWalker.ReachedState<RunningMongodProcess> running = startMongod(withRunningMongod)) {
 			final ServerAddress address = getServerAddress(running);
@@ -157,7 +158,7 @@ public class MongodAuthTest {
 			final MongoCredential credentialAdmin =
 				MongoCredential.createCredential(USERNAME_ADMIN, DB_ADMIN, PASSWORD_ADMIN.toCharArray());
 
-			try (final MongoClient clientAdmin = new MongoClient(address, credentialAdmin, MongoClientOptions.builder().build())) {
+			try (final MongoClient clientAdmin = mongoClient(address, credentialAdmin)) {
 				final MongoDatabase db = clientAdmin.getDatabase(DB_TEST);
 				db.getCollection(COLL_TEST).insertOne(new Document(ImmutableMap.of("key", "value")));
 			}
@@ -165,10 +166,32 @@ public class MongodAuthTest {
 			final MongoCredential credentialNormalUser =
 				MongoCredential.createCredential(USERNAME_NORMAL_USER, DB_TEST, PASSWORD_NORMAL_USER.toCharArray());
 			
-			try (final MongoClient clientNormalUser =
-				new MongoClient(address, credentialNormalUser, MongoClientOptions.builder().build())) {
+			try (final MongoClient clientNormalUser = mongoClient(address, credentialNormalUser)) {
 				final List<String> expected = Lists.newArrayList(COLL_TEST);
 				final ArrayList<String> actual = clientNormalUser.getDatabase(DB_TEST).listCollectionNames().into(new ArrayList<>());
+				Assertions.assertIterableEquals(expected, actual);
+			}
+		}
+	}
+
+	@Test
+	public void withoutAnyAditionalConfig() {
+		Listener withRunningMongod = ClientActions.setupAuthentication(new SyncClientAdapter(), DB_ADMIN,
+			AuthenticationSetup.of(UsernamePassword.of(USERNAME_ADMIN, PASSWORD_ADMIN))
+		);
+
+		try (final TransitionWalker.ReachedState<RunningMongodProcess> running = startMongod(true, withRunningMongod)) {
+			final ServerAddress address = getServerAddress(running);
+
+			final MongoCredential credentialAdmin =
+				MongoCredential.createCredential(USERNAME_ADMIN, DB_ADMIN, PASSWORD_ADMIN.toCharArray());
+
+			try (final MongoClient clientAdmin = mongoClient(address, credentialAdmin)) {
+				final MongoDatabase db = clientAdmin.getDatabase(DB_TEST);
+				db.getCollection(COLL_TEST).insertOne(new Document(ImmutableMap.of("key", "value")));
+
+				final List<String> expected = Lists.newArrayList(COLL_TEST);
+				final ArrayList<String> actual = clientAdmin.getDatabase(DB_TEST).listCollectionNames().into(new ArrayList<>());
 				Assertions.assertIterableEquals(expected, actual);
 			}
 		}

@@ -21,7 +21,8 @@
 package de.flapdoodle.embed.mongo.transitions;
 
 import com.google.common.collect.ImmutableMap;
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.commands.*;
 import de.flapdoodle.embed.mongo.config.Storage;
@@ -85,7 +86,8 @@ class MongosTest {
 
 						try (TransitionWalker.ReachedState<RunningMongosProcess> mongosConfigClusterServer = startMongos("mongos#c", version, mongosConfigClusterArguments)) {
 
-							try(MongoClient client = new MongoClient(serverAddress(mongosConfigClusterServer.current().getServerAddress()))) {
+							com.mongodb.ServerAddress serverAddress = serverAddress(mongosConfigClusterServer.current().getServerAddress());
+							try(MongoClient client = MongoClients.create("mongodb://" + serverAddress)) {
 								MongoDatabase adminDb = client.getDatabase("admin");
 								Document result = adminDb.runCommand(new Document(ImmutableMap.of(
 									"addShard", shardReplicaSetName + "/" + shardServerOne.current().getServerAddress() + "," + shardServerTwo.current().getServerAddress()
@@ -108,7 +110,8 @@ class MongosTest {
 			members.add(new Document(ImmutableMap.of("_id",idx++,"host",other.toString())));
 		}
 
-		try (MongoClient client = new MongoClient(serverAddress(one))) {
+		com.mongodb.ServerAddress serverAddress = serverAddress(one);
+		try (MongoClient client = MongoClients.create("mongodb://" + serverAddress)) {
 			MongoDatabase adminDB = client.getDatabase("admin");
 			Document result = adminDB.runCommand(new Document("replSetInitiate", new Document(
 				configServer

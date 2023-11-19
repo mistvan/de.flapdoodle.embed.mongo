@@ -21,39 +21,27 @@
 package de.flapdoodle.embed.mongo.doc;
 
 import com.google.common.io.Resources;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCommandException;
 import com.mongodb.MongoCredential;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import de.flapdoodle.embed.mongo.client.*;
 import de.flapdoodle.embed.mongo.commands.MongoImportArguments;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.commands.MongosArguments;
 import de.flapdoodle.embed.mongo.commands.ServerAddress;
-import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.IFeatureAwareVersion;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.examples.EnableAuthentication;
-import de.flapdoodle.embed.mongo.examples.FileStreamProcessor;
 import de.flapdoodle.embed.mongo.transitions.*;
 import de.flapdoodle.embed.mongo.types.DatabaseDir;
 import de.flapdoodle.embed.mongo.types.DistributionBaseUrl;
 import de.flapdoodle.embed.mongo.util.FileUtils;
-import de.flapdoodle.embed.process.config.DownloadConfig;
-import de.flapdoodle.embed.process.config.TimeoutConfig;
-import de.flapdoodle.embed.process.io.ProcessOutput;
-import de.flapdoodle.embed.process.io.Processors;
-import de.flapdoodle.embed.process.io.directories.PersistentDir;
-import de.flapdoodle.embed.process.net.DownloadToPath;
-import de.flapdoodle.embed.process.net.HttpProxyFactory;
-import de.flapdoodle.embed.process.runtime.Network;
-import de.flapdoodle.embed.process.transitions.DownloadPackage;
 import de.flapdoodle.reverse.*;
 import de.flapdoodle.reverse.transitions.Derive;
 import de.flapdoodle.reverse.transitions.Start;
-import de.flapdoodle.testdoc.Includes;
 import de.flapdoodle.testdoc.Recorder;
 import de.flapdoodle.testdoc.Recording;
 import de.flapdoodle.testdoc.TabSize;
@@ -63,14 +51,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.Proxy;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Optional;
 
+import static de.flapdoodle.embed.mongo.MongoClientUtil.mongoClient;
 import static de.flapdoodle.embed.mongo.ServerAddressMapping.serverAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -85,7 +70,8 @@ public class HowToDocTest {
 		recording.begin();
 
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance().start(Version.Main.PRODUCTION)) {
-			try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+			com.mongodb.ServerAddress serverAddress = serverAddress(running.current().getServerAddress());
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 				MongoDatabase db = mongo.getDatabase("test");
 				MongoCollection<Document> col = db.getCollection("testCol");
 				col.insertOne(new Document("testDoc", new Date()));
@@ -202,23 +188,21 @@ public class HowToDocTest {
 	public void testMongosAndMongod() {
 		recording.begin();
 		Version.Main version = Version.Main.PRODUCTION;
+		Storage storage = Storage.of("testRepSet", 5000);
+
+		Listener withRunningMongod = ClientActions.initReplicaSet(new SyncClientAdapter(), version, storage);
 
 		Mongod mongod = new Mongod() {
 			@Override
 			public Transition<MongodArguments> mongodArguments() {
 				return Start.to(MongodArguments.class).initializedWith(MongodArguments.defaults()
 					.withIsConfigServer(true)
-					.withReplication(Storage.of("testRepSet", 5000)));
+					.withReplication(storage));
 			}
 		};
 
-		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.start(version)) {
-
+		try (TransitionWalker.ReachedState<RunningMongodProcess> runningMongod = mongod.start(version, withRunningMongod)) {
 			ServerAddress serverAddress = runningMongod.current().getServerAddress();
-
-			try (MongoClient mongo = new MongoClient(serverAddress(serverAddress))) {
-				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
-			}
 
 			Mongos mongos = new Mongos() {
 				@Override public Start<MongosArguments> mongosArguments() {
@@ -230,7 +214,8 @@ public class HowToDocTest {
 			};
 
 			try (TransitionWalker.ReachedState<RunningMongosProcess> runningMongos = mongos.start(version)) {
-				try (MongoClient mongo = new MongoClient(serverAddress(runningMongos.current().getServerAddress()))) {
+				com.mongodb.ServerAddress serverAddress1 = serverAddress(runningMongos.current().getServerAddress());
+				try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress1)) {
 					assertThat(mongo.listDatabaseNames()).contains("admin", "config");
 				}
 			}
@@ -278,16 +263,17 @@ public class HowToDocTest {
 
 	@Test
 	public void setupUserAndRoles() {
-		recording.include(EnableAuthentication.class, Includes.WithoutImports, Includes.WithoutPackage, Includes.Trim);
 		recording.begin();
+		SyncClientAdapter clientAdapter = new SyncClientAdapter();
 
-		Listener withRunningMongod = EnableAuthentication.of("i-am-admin", "admin-password")
-			.withEntries(
-				EnableAuthentication.role("test-db", "test-collection", "can-list-collections")
-					.withActions("listCollections"),
-				EnableAuthentication.user("test-db", "read-only", "user-password")
-					.withRoles("can-list-collections", "read")
-			).withRunningMongod();
+		Listener withRunningMongod = ClientActions.setupAuthentication(clientAdapter, "admin",
+			AuthenticationSetup.of(UsernamePassword.of("i-am-admin", "admin-password"))
+				.withEntries(
+					AuthenticationSetup.role("test-db", "test-collection", "can-list-collections")
+						.withActions("listCollections"),
+					ImmutableUser.of("test-db", UsernamePassword.of("read-only", "user-password"))
+						.withRoles("can-list-collections", "read")
+				));
 
 		try (TransitionWalker.ReachedState<RunningMongodProcess> running = Mongod.instance()
 			.withMongodArguments(
@@ -295,20 +281,18 @@ public class HowToDocTest {
 					.initializedWith(MongodArguments.defaults().withAuth(true)))
 			.start(Version.Main.PRODUCTION, withRunningMongod)) {
 
-			try (MongoClient mongo = new MongoClient(
+			try (MongoClient mongo = mongoClient(
 				serverAddress(running.current().getServerAddress()),
-				MongoCredential.createCredential("i-am-admin", "admin", "admin-password".toCharArray()),
-				MongoClientOptions.builder().build())) {
+				MongoCredential.createCredential("i-am-admin", "admin", "admin-password".toCharArray()))) {
 
 				MongoDatabase db = mongo.getDatabase("test-db");
 				MongoCollection<Document> col = db.getCollection("test-collection");
 				col.insertOne(new Document("testDoc", new Date()));
 			}
 
-			try (MongoClient mongo = new MongoClient(
+			try (MongoClient mongo = mongoClient(
 				serverAddress(running.current().getServerAddress()),
-				MongoCredential.createCredential("read-only", "test-db", "user-password".toCharArray()),
-				MongoClientOptions.builder().build())) {
+				MongoCredential.createCredential("read-only", "test-db", "user-password".toCharArray()))) {
 
 				MongoDatabase db = mongo.getDatabase("test-db");
 				MongoCollection<Document> col = db.getCollection("test-collection");
@@ -325,7 +309,8 @@ public class HowToDocTest {
 
 
 	protected static void assertRunningMongoDB(TransitionWalker.ReachedState<RunningMongodProcess> running) {
-		try (MongoClient mongo = new MongoClient(serverAddress(running.current().getServerAddress()))) {
+		com.mongodb.ServerAddress serverAddress = serverAddress(running.current().getServerAddress());
+		try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 			MongoDatabase db = mongo.getDatabase("test");
 			MongoCollection<Document> col = db.getCollection("testCol");
 			col.insertOne(new Document("testDoc", new Date()));

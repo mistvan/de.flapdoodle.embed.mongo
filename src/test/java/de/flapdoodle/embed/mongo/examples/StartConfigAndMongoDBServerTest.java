@@ -20,7 +20,9 @@
  */
 package de.flapdoodle.embed.mongo.examples;
 
-import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import de.flapdoodle.embed.mongo.commands.MongodArguments;
 import de.flapdoodle.embed.mongo.commands.MongosArguments;
 import de.flapdoodle.embed.mongo.config.Storage;
@@ -56,7 +58,8 @@ public class StartConfigAndMongoDBServerTest {
 			.walker()
 			.initState(StateID.of(RunningMongodProcess.class))) {
 
-			try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
+			ServerAddress serverAddress1 = serverAddress(runningMongod.current().getServerAddress());
+			try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress1)) {
 				mongo.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
 			}
 
@@ -69,7 +72,8 @@ public class StartConfigAndMongoDBServerTest {
 				.walker()
 				.initState(StateID.of(RunningMongosProcess.class))) {
 
-				try (MongoClient mongo = new MongoClient(serverAddress(runningMongod.current().getServerAddress()))) {
+				ServerAddress serverAddress = serverAddress(runningMongod.current().getServerAddress());
+				try (MongoClient mongo = MongoClients.create("mongodb://" + serverAddress)) {
 					assertThat(mongo.listDatabaseNames()).contains("admin","config","local");
 				}
 
