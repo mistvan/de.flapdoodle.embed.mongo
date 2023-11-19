@@ -176,7 +176,7 @@ public class MongodAuthTest {
 
 	@Test
 	public void withoutAnyAditionalConfig() {
-		Listener withRunningMongod = ClientActions.setupAuthentication(new SyncClientAdapter(), DB_ADMIN,
+		Listener withRunningMongod = ClientActions.setupAuthentication(new SyncClientAdapter(), DB_TEST,
 			AuthenticationSetup.of(UsernamePassword.of(USERNAME_ADMIN, PASSWORD_ADMIN))
 		);
 

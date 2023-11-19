@@ -61,6 +61,8 @@ public abstract class ClientActions {
 
 		if (setup.entries().isEmpty()) {
 			setupRoles = Arrays.asList(
+				MongoClientAction.createUser(databaseName, admin.name(), admin.password(), "readWrite")
+					.withCredentials(MongoClientAction.credentials("admin", admin.name(), admin.password())),
 				// test list collections to fail fast if something went wrong
 				MongoClientAction.runCommand(databaseName, MongoClientAction.listCollections())
 					.withCredentials(MongoClientAction.credentials(databaseName, admin.name(), admin.password()))
