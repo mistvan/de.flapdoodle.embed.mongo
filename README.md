@@ -62,6 +62,8 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 
 #### Unreleased
 
+- dependency updates                         
+
 #### 4.11.1
 
 - update mongo driver version
