@@ -62,6 +62,9 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 
 #### Unreleased
 
+- dependency updates
+- bugfix in embed.process
+
 #### 4.12.0
 
 - dependency updates
