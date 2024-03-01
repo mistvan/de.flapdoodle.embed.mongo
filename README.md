@@ -25,6 +25,12 @@ Embedded MongoDB will provide a platform neutral way for running mongodb in unit
 - you run your tests
 - java kills the mongo process
 
+## Warning for Apple Mac Silicon users
+Apple Mac M1/M2 users can experience issue: Bad CPU type in executable.
+
+Install rosetta support on your m1/m2 mac using `softwareupdate --install-rosetta`.
+This helps to fix issues with running downloaded embedded mongo distribution.
+
 
 ## License
 
@@ -45,7 +51,7 @@ We use http://www.apache.org/licenses/LICENSE-2.0
 - in Scala tests using [scalatest-embedmongo](https://github.com/SimplyScala/scalatest-embedmongo)
 
 ## Howto
-                    
+
 - [Use Cases](docs/UseCases.md)
 - [Basics](docs/Howto.md)
 - [Customizations](docs/Customizations.md)
